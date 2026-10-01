@@ -19,11 +19,25 @@ select {
     justify-content: center;
     align-items: flex-end;
     box-shadow: rgb(69 81 115 / 12%) 0px 0px 16px;
+    box-sizing: border-box;
 }
 
-.location-locator-field {
-    width: 70%;
+/* ---------------------------------
+   FIELD WIDTHS
+--------------------------------- */
+
+.location-locator-suburb-field {
+    position: relative;
+    width: 50%;
 }
+
+.location-locator-filter>.location-locator-field:not(.location-locator-suburb-field) {
+    width: 30%;
+}
+
+/* ---------------------------------
+   LABELS
+--------------------------------- */
 
 .location-locator-filter label {
     display: block;
@@ -36,65 +50,286 @@ select {
     white-space: nowrap;
 }
 
+/* ---------------------------------
+   SUBURB INPUT
+--------------------------------- */
+
+.location-locator-autocomplete {
+    position: relative;
+    width: 100%;
+}
+
+.location-locator-input {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px;
+    border: 1px solid #dce1eb !important;
+    border-radius: 10px !important;
+    background-color: #fff;
+    color: var(--e-global-color-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.location-locator-input::placeholder {
+    color: #66708a;
+    opacity: 1;
+}
+
+.location-locator-input:hover {
+    border-color: #455273 !important;
+}
+
+.location-locator-input:focus {
+    outline: none;
+    border-color: #455273 !important;
+    box-shadow: none !important;
+}
+
+/* ---------------------------------
+   LGA SELECT
+--------------------------------- */
+
 .location-locator-filter select {
     width: 100%;
     height: 50px;
     padding: 0 42px 0 16px;
+    margin: 0;
     border: 1px solid #dce1eb;
     border-radius: 10px;
     background-color: #fff;
     color: var(--e-global-color-primary);
+    font-family: 'DM Sans', sans-serif;
     font-size: 16px;
+    font-weight: 400;
     outline: none;
     cursor: pointer;
+
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23455273' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
     background-repeat: no-repeat;
     background-position: right 16px center;
     background-size: 16px;
+    box-sizing: border-box;
+}
+
+.location-locator-filter select:hover {
+    border-color: #455273;
 }
 
 .location-locator-filter select:focus {
     outline: none;
     border-color: #455273;
+    box-shadow: none;
 }
 
-.location-locator-filter button {
+/* CUSTOM LGA DROPDOWN */
+
+.location-locator-custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.location-locator-select-trigger {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px;
+    border: 1px solid #dce1eb !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    color: #66708a !important;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.location-locator-select-trigger:hover,
+.location-locator-custom-select.is-open .location-locator-select-trigger {
+    border-color: #455273 !important;
+}
+
+.location-locator-select-trigger:focus {
+    outline: none;
+    box-shadow: none !important;
+}
+
+.location-locator-select-value {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.location-locator-select-arrow {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 25%;
+    margin-left: 12px;
+    color: #455273;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.location-locator-custom-select.is-open .location-locator-select-arrow {
+    transform: rotate(180deg);
+}
+
+/* OPTIONS */
+
+.location-locator-select-options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 9999;
+    background: #fff;
+    border: 1px solid #dce1eb;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgb(69 81 115 / 12%);
+    box-sizing: border-box;
+}
+
+.location-locator-custom-select.is-open .location-locator-select-options {
+    display: block;
+}
+
+.location-locator-select-option {
+    padding: 12px 16px;
+    color: #455273;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.location-locator-select-option:hover {
+    background: #f5f7fa;
+}
+
+.location-locator-select-option.is-selected {
+    background: #f5f7fa;
+    font-weight: 500;
+}
+
+.location-locator-select-option:first-child {
+    border-radius: 10px 10px 0 0;
+}
+
+.location-locator-select-option:last-child {
+    border-radius: 0 0 10px 10px;
+}
+
+/* ---------------------------------
+   AUTOCOMPLETE
+--------------------------------- */
+
+.location-locator-suggestions {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 9999;
+
+    background: #fff;
+    border: 1px solid #dce1eb;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgb(69 81 115 / 12%);
+
+    box-sizing: border-box;
+}
+
+.location-locator-suggestion {
+    padding: 12px 16px;
+    color: #455273;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.location-locator-suggestion:hover {
+    background: #f5f7fa;
+}
+
+.location-locator-suggestion:first-child {
+    border-radius: 10px 10px 0 0;
+}
+
+.location-locator-suggestion:last-child {
+    border-radius: 0 0 10px 10px;
+}
+
+/* ---------------------------------
+   SEARCH BUTTON
+--------------------------------- */
+
+.location-locator-filter>button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20%;
     height: 48px;
     padding: 0 24px;
+
     border: 0;
     border-radius: 4px;
+
     background: #455273;
     color: #fff;
+
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
     font-weight: 600;
+
     cursor: pointer;
-    transition: background 0.2s ease;
+    opacity: 0.9;
+
+    transition:
+        opacity 0.3s ease,
+        background-color 0.3s ease;
 }
 
-.location-locator-filter button:hover {
-    background: #35415f;
+.location-locator-filter>button:hover {
+    opacity: 1;
+    background: #455173 !important;
+    color: #fff !important;
 }
 
-.location-locator-filter>label,
-.location-locator-filter>select {
-    margin-bottom: 0;
+.location-locator-filter>button:focus {
+    background: #455173 !important;
+    color: #fff !important;
+    outline: none;
 }
 
-.location-locator-filter>label {
-    position: absolute;
-}
-
-.location-locator-filter select {
-    margin-top: 16px;
-}
+/* ---------------------------------
+   OTHER
+--------------------------------- */
 
 .location-hidden {
     display: none;
@@ -109,34 +344,43 @@ select {
     cursor: pointer;
 }
 
+/* ---------------------------------
+   MOBILE
+--------------------------------- */
+
 @media (max-width: 767px) {
-
-
-    .location-locator-field {
-        width: 100%;
-    }
 
     .location-locator-filter {
         width: 100%;
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
+        gap: 16px;
         margin-bottom: 32px;
+        padding: 24px;
+    }
+
+    .location-locator-suburb-field,
+    .location-locator-filter>.location-locator-field:not(.location-locator-suburb-field),
+    .location-locator-filter>button {
+        width: 100%;
     }
 
     .location-locator-filter label {
         position: static;
-        margin-bottom: 0;
+        width: fit-content;
+        margin-bottom: 8px;
         font-size: 16px;
     }
 
+    .location-locator-input,
     .location-locator-filter select {
         width: 100%;
-        margin-top: 0;
+        height: 50px;
     }
 
-    .location-locator-filter button {
+    .location-locator-filter>button {
         width: 100%;
+        height: 48px;
     }
 
 }
