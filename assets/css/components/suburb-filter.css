@@ -1,0 +1,142 @@
+select {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+}
+
+.custom-location-locator .suburb-filter-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.location-locator-filter {
+    width: 75%;
+    gap: 16px;
+    padding: 32px;
+    margin-bottom: 70px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    box-shadow: rgb(69 81 115 / 12%) 0px 0px 16px;
+}
+
+.location-locator-field {
+    width: 70%;
+}
+
+.location-locator-filter label {
+    display: block;
+    width: fit-content;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    color: #66708a;
+    white-space: nowrap;
+}
+
+.location-locator-filter select {
+    width: 100%;
+    height: 50px;
+    padding: 0 42px 0 16px;
+    border: 1px solid #dce1eb;
+    border-radius: 10px;
+    background-color: #fff;
+    color: var(--e-global-color-primary);
+    font-size: 16px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23455273' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+}
+
+.location-locator-filter select:focus {
+    outline: none;
+    border-color: #455273;
+}
+
+.location-locator-filter button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    height: 48px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 4px;
+    background: #455273;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.location-locator-filter button:hover {
+    background: #35415f;
+}
+
+.location-locator-filter>label,
+.location-locator-filter>select {
+    margin-bottom: 0;
+}
+
+.location-locator-filter>label {
+    position: absolute;
+}
+
+.location-locator-filter select {
+    margin-top: 16px;
+}
+
+.location-hidden {
+    display: none;
+}
+
+.location-load-more {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.location-load-more-button {
+    cursor: pointer;
+}
+
+@media (max-width: 767px) {
+
+
+    .location-locator-field {
+        width: 100%;
+    }
+
+    .location-locator-filter {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 32px;
+    }
+
+    .location-locator-filter label {
+        position: static;
+        margin-bottom: 0;
+        font-size: 16px;
+    }
+
+    .location-locator-filter select {
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .location-locator-filter button {
+        width: 100%;
+    }
+
+}
