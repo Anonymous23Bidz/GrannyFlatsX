@@ -33,7 +33,7 @@ function hello_child_enqueue_assets()
 
     /**
      * ---------------------------------------------------------
-     * Child theme stylesheet
+     * Child Theme Stylesheet
      * ---------------------------------------------------------
      */
     $style_css = $theme_path . '/style.css';
@@ -54,6 +54,8 @@ function hello_child_enqueue_assets()
     /**
      * ---------------------------------------------------------
      * Main CSS
+     *
+     * main.css imports the component/page CSS files.
      * ---------------------------------------------------------
      */
     $main_css = $theme_path . '/assets/css/main.css';
@@ -64,102 +66,6 @@ function hello_child_enqueue_assets()
             $theme_uri . '/assets/css/main.css',
             array('hello-child-style'),
             filemtime($main_css)
-        );
-    }
-
-    /**
-     * ---------------------------------------------------------
-     * Suburb Locator Filter CSS
-     * ---------------------------------------------------------
-     */
-    $suburb_filter_css = $theme_path . '/assets/css/components/suburb-filter.css';
-
-    if (file_exists($suburb_filter_css)) {
-        wp_enqueue_style(
-            'hello-child-suburb-filter',
-            $theme_uri . '/assets/css/components/suburb-filter.css',
-            array('hello-child-main'),
-            filemtime($suburb_filter_css)
-        );
-    }
-
-    /**
-     * ---------------------------------------------------------
-     * Bootstrap CSS
-     * ---------------------------------------------------------
-     */
-    $bootstrap_css = $theme_path . '/assets/css/pages/bootstrap.css';
-
-    if (file_exists($bootstrap_css)) {
-        wp_enqueue_style(
-            'hello-child-bootstrap',
-            $theme_uri . '/assets/css/pages/bootstrap.css',
-            array('hello-child-main'),
-            filemtime($bootstrap_css)
-        );
-    }
-
-    /**
-     * ---------------------------------------------------------
-     * Single Location CSS
-     * ---------------------------------------------------------
-     */
-    $single_location_css = $theme_path . '/assets/css/pages/single-location.css';
-
-    if (file_exists($single_location_css)) {
-        wp_enqueue_style(
-            'hello-child-single-location',
-            $theme_uri . '/assets/css/pages/single-location.css',
-            array('hello-child-main'),
-            filemtime($single_location_css)
-        );
-    }
-
-    /**
-     * ---------------------------------------------------------
-     * Accordion CSS
-     * ---------------------------------------------------------
-     */
-    $accordion_css = $theme_path . '/assets/css/components/accordion.css';
-
-    if (file_exists($accordion_css)) {
-        wp_enqueue_style(
-            'hello-child-accordion',
-            $theme_uri . '/assets/css/components/accordion.css',
-            array('hello-child-main'),
-            filemtime($accordion_css)
-        );
-    }
-
-    /**
-     * ---------------------------------------------------------
-     * Property Check Form CSS
-     * ---------------------------------------------------------
-     */
-    $property_check_css = $theme_path . '/assets/css/components/property-check.css';
-
-    if (file_exists($property_check_css)) {
-        wp_enqueue_style(
-            'hello-child-property-check',
-            $theme_uri . '/assets/css/components/property-check.css',
-            array('hello-child-main'),
-            filemtime($property_check_css)
-        );
-    }
-
-    /**
-     * ---------------------------------------------------------
-     * Floor Plan Filter CSS
-     * ---------------------------------------------------------
-     */
-    $floor_plan_css = $theme_path . '/assets/css/components/floor-plan-filter.css';
-
-    if (file_exists($floor_plan_css)) {
-        wp_enqueue_style(
-            'hello-child-floor-plan',
-            $theme_uri . '/assets/css/components/floor-plan-filter.css',
-            array('hello-child-main'),
-            filemtime($floor_plan_css)
         );
     }
 
