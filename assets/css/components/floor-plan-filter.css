@@ -145,6 +145,7 @@
     display: inline-block;
     margin-top: 16px;
     color: var(--e-global-color-primary) !important;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none;
 }
@@ -288,5 +289,478 @@
     .floor-plan-view-button {
         font-size: 15px;
         padding: 0 20px;
+    }
+}
+
+/* --------------------------------------------------
+   FPF Component Scope (Prevents Outside Conflicts)
+-------------------------------------------------- */
+.fpf-wrapper {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.fpf-wrapper * {
+    box-sizing: border-box;
+}
+
+/* White Filter Card Container */
+.fpf-wrapper .fpf-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+}
+
+/* Row Layout Grids */
+.fpf-wrapper .fpf-grid {
+    display: grid;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.fpf-wrapper .fpf-grid-top {
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 20px;
+}
+
+.fpf-field.fpf-features-field {
+    min-width: 578px;
+}
+
+.fpf-wrapper .fpf-grid-bottom {
+    grid-template-columns: 2fr 1fr 1fr;
+}
+
+/* Field & Labels */
+.fpf-wrapper .fpf-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.fpf-wrapper .fpf-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #3e445b;
+    margin-bottom: 8px;
+}
+
+/* Custom Select & Inputs */
+.fpf-wrapper .fpf-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.fpf-wrapper .fpf-select-trigger,
+.fpf-wrapper .fpf-native-select,
+.fpf-wrapper .fpf-dimensions-box {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 200;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: all 0.2s ease;
+}
+
+.fpf-wrapper .fpf-select-trigger:hover,
+.fpf-wrapper .fpf-native-select:hover,
+.fpf-select-trigger:active,
+.fpf-wrapper .fpf-dimensions-box:focus-within {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #a4b0c3 !important;
+}
+
+.fpf-wrapper .fpf-arrow {
+    font-size: 12px;
+    color: #94a3b8;
+    pointer-events: none;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Space Available Input Group */
+.fpf-wrapper .fpf-dimensions-box {
+    cursor: default;
+    padding: 0 12px;
+}
+
+.fpf-wrapper .fpf-dim-input {
+    width: 100px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 14px;
+    color: #475569;
+    outline: none;
+}
+
+.fpf-wrapper .fpf-dim-multiply {
+    color: #94a3b8;
+    margin: 0 6px;
+    font-size: 13px;
+}
+
+.fpf-wrapper .fpf-dim-unit {
+    color: #94a3b8;
+    margin-left: 6px;
+    font-size: 14px;
+}
+
+/* Bedroom Popover Styling */
+.fpf-wrapper .fpf-popover {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 360px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    z-index: 999;
+}
+
+.fpf-wrapper .fpf-layout-popover {
+    width: 580px;
+}
+
+.fpf-wrapper .fpf-select-container.is-open .fpf-popover {
+    display: grid;
+}
+
+.fpf-wrapper .fpf-popover-section {
+    margin-bottom: 20px;
+}
+
+.fpf-wrapper .fpf-popover-section:last-child {
+    margin-bottom: 0;
+}
+
+.fpf-wrapper .fpf-popover-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+/* Radio Group Container */
+.fpf-wrapper .fpf-pill-group {
+    display: flex;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+/* Radio Option Wrapper */
+.fpf-wrapper .fpf-radio-label {
+    flex: 1;
+    display: flex;
+    margin: 0;
+    cursor: pointer;
+    border-right: 1px solid #e2e8f0;
+}
+
+.fpf-wrapper .fpf-radio-label:last-child {
+    border-right: none;
+}
+
+/* Visually Hide Native Radio Input */
+.fpf-wrapper .fpf-radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+/* Custom Pill Button Appearance */
+.fpf-wrapper .fpf-pill-btn {
+    width: 100%;
+    padding: 10px 4px;
+    background: #ffffff;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.fpf-pill-btn.fpf-layout-grid {
+    display: grid;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.fpf-layout-icon {
+    display: block;
+    background-color: #455273;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+.fpf-radio-input:checked+.fpf-pill-btn .fpf-layout-icon {
+    background-color: #ffffff;
+}
+
+.fpf-wrapper .fpf-radio-input:checked+.fpf-pill-btn {
+    background-color: #d4a338;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.fpf-wrapper .fpf-radio-label:hover .fpf-pill-btn {
+    color: #475569;
+}
+
+.fpf-wrapper .fpf-radio-input:checked+.fpf-pill-btn:hover {
+    color: #ffffff;
+}
+
+/* Subbar Controls & Tag Pills */
+.fpf-wrapper .fpf-subbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.fpf-wrapper .fpf-subbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Toggle Switch */
+
+.fpf-toggle-switch {
+    display: flex;
+    background: #ffffff;
+    padding: 3px;
+    border-radius: 30px;
+    border: 1px solid #e2e8f0;
+}
+
+.fpf-toggle-switch input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.fpf-toggle-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: none;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.fpf-toggle-switch input[type="radio"]:checked+.fpf-toggle-btn {
+    background-color: #d4a338;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.fpf-wrapper .fpf-toggle-btn.is-active {
+    background-color: #d4a338;
+    color: #ffffff;
+}
+
+/* Tag Pills */
+.fpf-wrapper .fpf-tags-list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.fpf-wrapper .fpf-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #2b3858;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.fpf-wrapper .fpf-tag-remove {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    padding: 0;
+}
+
+/* Sort Bar */
+.fpf-wrapper .fpf-subbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fpf-tag-remove:hover {
+    background: transparent !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+.fpf-wrapper .fpf-sort-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3e445b;
+}
+
+.fpf-wrapper .fpf-sort-container {
+    width: 150px;
+}
+
+/* Popover Container Styling */
+.fpf-wrapper .fpf-popover.fpf-features-popover {
+    min-width: 578px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 28px;
+    z-index: 1000;
+}
+
+/* Category Sections */
+.fpf-wrapper .fpf-popover-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fpf-wrapper .fpf-feature-category-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #838eab;
+    /* Muted slate header */
+    margin-bottom: 4px;
+}
+
+/* Custom Checkbox Item */
+.fpf-wrapper .fpf-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #434d6d;
+    font-weight: 500;
+    user-select: none;
+}
+
+.fpf-wrapper .fpf-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Custom Checkbox Box */
+.fpf-wrapper .fpf-checkbox-custom {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.fpf-wrapper .fpf-checkbox-custom::after {
+    content: "";
+    width: 5px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.15s ease-in-out;
+    margin-bottom: 2px;
+}
+
+.fpf-wrapper .fpf-checkbox-input:checked+.fpf-checkbox-custom {
+    background-color: #c89a38;
+    border-color: #c89a38;
+}
+
+.fpf-wrapper .fpf-checkbox-input:checked+.fpf-checkbox-custom::after {
+    transform: rotate(45deg) scale(1);
+}
+
+@media (max-width: 768px) {
+    .fpf-wrapper .fpf-popover.fpf-features-popover {
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+
+    .fpf-wrapper .fpf-grid-top,
+    .fpf-wrapper .fpf-grid-bottom {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+
+    .fpf-wrapper .fpf-grid-top,
+    .fpf-wrapper .fpf-grid-bottom {
+        grid-template-columns: 1fr;
+    }
+
+    .fpf-wrapper .fpf-subbar {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
