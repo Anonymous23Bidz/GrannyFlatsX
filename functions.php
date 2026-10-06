@@ -57,3 +57,4 @@ require_once get_stylesheet_directory() . '/inc/shortcodes/accordion.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/breadcrumbs.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/property-check.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/suburb-filter.php';
+require_once get_stylesheet_directory() . '/inc/shortcodes/floorplan-filter.php';

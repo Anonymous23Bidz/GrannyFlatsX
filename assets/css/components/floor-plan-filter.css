@@ -641,9 +641,9 @@
 }
 
 .fpf-tag-remove:hover {
-    background: transparent;
-    border: none;
-    color: #fff;
+    background: transparent !important;
+    border: none !important;
+    color: #fff !important;
 }
 
 .fpf-wrapper .fpf-sort-label {
