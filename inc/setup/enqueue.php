@@ -55,9 +55,6 @@ function hello_child_enqueue_assets()
      * ---------------------------------------------------------
      * Main CSS
      * ---------------------------------------------------------
-     *
-     * main.css imports:
-     * /assets/css/pages/single-location.css
      */
     $main_css = $theme_path . '/assets/css/main.css';
 
@@ -70,10 +67,9 @@ function hello_child_enqueue_assets()
         );
     }
 
-
     /**
      * ---------------------------------------------------------
-     * Suburb Locator Filter
+     * Suburb Locator Filter CSS
      * ---------------------------------------------------------
      */
     $suburb_filter_css = $theme_path . '/assets/css/components/suburb-filter.css';
@@ -87,6 +83,11 @@ function hello_child_enqueue_assets()
         );
     }
 
+    /**
+     * ---------------------------------------------------------
+     * Bootstrap CSS
+     * ---------------------------------------------------------
+     */
     $bootstrap_css = $theme_path . '/assets/css/pages/bootstrap.css';
 
     if (file_exists($bootstrap_css)) {
@@ -97,7 +98,6 @@ function hello_child_enqueue_assets()
             filemtime($bootstrap_css)
         );
     }
-
 
     /**
      * ---------------------------------------------------------
@@ -115,10 +115,9 @@ function hello_child_enqueue_assets()
         );
     }
 
-
     /**
      * ---------------------------------------------------------
-     * Accordion
+     * Accordion CSS
      * ---------------------------------------------------------
      */
     $accordion_css = $theme_path . '/assets/css/components/accordion.css';
@@ -128,16 +127,15 @@ function hello_child_enqueue_assets()
             'hello-child-accordion',
             $theme_uri . '/assets/css/components/accordion.css',
             array('hello-child-main'),
-            filemtime($single_location_css)
+            filemtime($accordion_css)
         );
     }
 
     /**
      * ---------------------------------------------------------
-     * Property Check Form
+     * Property Check Form CSS
      * ---------------------------------------------------------
      */
-
     $property_check_css = $theme_path . '/assets/css/components/property-check.css';
 
     if (file_exists($property_check_css)) {
@@ -151,17 +149,17 @@ function hello_child_enqueue_assets()
 
     /**
      * ---------------------------------------------------------
-     * floor-plan-filter CSS
+     * Floor Plan Filter CSS
      * ---------------------------------------------------------
      */
-    $single_location_css = $theme_path . '/assets/css/components/floor-plan-filter.css';
+    $floor_plan_css = $theme_path . '/assets/css/components/floor-plan-filter.css';
 
-    if (file_exists($single_location_css)) {
+    if (file_exists($floor_plan_css)) {
         wp_enqueue_style(
             'hello-child-floor-plan',
             $theme_uri . '/assets/css/components/floor-plan-filter.css',
             array('hello-child-main'),
-            filemtime($single_location_css)
+            filemtime($floor_plan_css)
         );
     }
 
@@ -184,11 +182,9 @@ function hello_child_enqueue_assets()
 
     /**
      * ---------------------------------------------------------
-     * Suburb filter JavaScript
+     * Suburb Filter JavaScript
      * ---------------------------------------------------------
-     *
      */
-
     $suburb_filter_js = $theme_path . '/assets/js/components/suburb-filter.js';
 
     if (file_exists($suburb_filter_js)) {
@@ -206,7 +202,6 @@ function hello_child_enqueue_assets()
      * Accordion JavaScript
      * ---------------------------------------------------------
      */
-
     $accordion_js = $theme_path . '/assets/js/components/accordion.js';
 
     if (file_exists($accordion_js)) {
@@ -219,17 +214,31 @@ function hello_child_enqueue_assets()
         );
     }
 
+    /**
+     * ---------------------------------------------------------
+     * Bedroom Filter JavaScript
+     * ---------------------------------------------------------
+     */
+    $bedroom_js = $theme_path . '/assets/js/components/bedroom-filter.js';
+
+    if (file_exists($bedroom_js)) {
+        wp_enqueue_script(
+            'hello-child-bedroom',
+            $theme_uri . '/assets/js/components/bedroom-filter.js',
+            array('jquery'),
+            filemtime($bedroom_js),
+            true
+        );
+    }
 
     /**
      * ---------------------------------------------------------
      * Property Check Form JavaScript
      * ---------------------------------------------------------
      */
-
     $property_check_js = $theme_path . '/assets/js/components/property-check.js';
 
     if (file_exists($property_check_js)) {
-
         wp_enqueue_script(
             'property-check-form',
             $theme_uri . '/assets/js/components/property-check.js',
@@ -238,9 +247,6 @@ function hello_child_enqueue_assets()
             true
         );
 
-        /**
-         * Pass WordPress AJAX URL to Property Check JavaScript.
-         */
         wp_localize_script(
             'property-check-form',
             'propertyCheckAjax',
@@ -270,6 +276,11 @@ function hello_child_enqueue_assets()
         }
     }
 
+    /**
+     * ---------------------------------------------------------
+     * Google Maps Places
+     * ---------------------------------------------------------
+     */
     wp_enqueue_script(
         'google-maps-places',
         'https://maps.googleapis.com/maps/api/js?key=AIzaSyDOgoIk4iUqfBL2SVmVOWe75MooDpMz-AM&libraries=places',
@@ -282,10 +293,7 @@ function hello_child_enqueue_assets()
      * ---------------------------------------------------------
      * Floor Plan AJAX Filter
      * ---------------------------------------------------------
-     *
-     * Only load on single Location pages.
      */
-
     $floor_plan_js = $theme_path . '/assets/js/components/floor-plan-filter.js';
 
     if (file_exists($floor_plan_js)) {
@@ -296,21 +304,7 @@ function hello_child_enqueue_assets()
             filemtime($floor_plan_js),
             true
         );
-        // ...
-    }
-    if (file_exists($floor_plan_js)) {
 
-        wp_enqueue_script(
-            'floor-plan-filter',
-            $theme_uri . '/components/floor-plan-filter.js',
-            array('jquery'),
-            filemtime($floor_plan_js),
-            true
-        );
-
-        /**
-         * Pass AJAX URL + nonce to JavaScript.
-         */
         wp_localize_script(
             'floor-plan-filter',
             'floorPlanFilter',
@@ -323,29 +317,3 @@ function hello_child_enqueue_assets()
 }
 
 add_action('wp_enqueue_scripts', 'hello_child_enqueue_assets');
-
-add_action('acf/init', function () {
-
-    if (function_exists('acf_add_options_page')) {
-
-        acf_add_options_page(array(
-            'page_title' => 'Granny Flats X Settings',
-            'menu_title' => 'Granny Flats X',
-            'menu_slug'  => 'granny-flats-x-settings',
-            'capability' => 'manage_options',
-            'redirect'   => false,
-            'position'   => 200,
-        ));
-    }
-});
-
-function my_child_theme_enqueue_fontawesome()
-{
-    wp_enqueue_style(
-        'font-awesome-6',
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-        array(),
-        '6.5.1'
-    );
-}
-add_action('wp_enqueue_scripts', 'my_child_theme_enqueue_fontawesome', 99);
