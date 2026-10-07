@@ -807,7 +807,7 @@ function custom_floorplan_filter_shortcode($atts)
                         Space available
                     </label>
 
-                    <div class="fpf-dimensions-box">
+                    <div>
 
                         <input
                             type="number"

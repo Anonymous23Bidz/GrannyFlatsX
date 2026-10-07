@@ -425,8 +425,7 @@
 }
 
 .fpf-wrapper .fpf-select-trigger,
-.fpf-wrapper .fpf-native-select,
-.fpf-wrapper .fpf-dimensions-box {
+.fpf-wrapper .fpf-native-select {
     width: 100%;
     height: 48px;
     padding: 0 16px;
@@ -474,9 +473,9 @@
 
 .fpf-wrapper .fpf-dim-input {
     width: 100px;
-    height: 32px;
+    height: 48px;
     border: 1px solid #e2e8f0;
-    border-radius: 6px;
+    border-radius: 12px;
     text-align: center;
     font-size: 14px;
     color: #475569;
@@ -491,7 +490,7 @@
 .fpf-wrapper .fpf-dim-multiply {
     color: #94a3b8;
     margin: 0 6px;
-    font-size: 13px;
+    font-size: 20px;
 }
 
 .fpf-wrapper .fpf-dim-unit {
@@ -659,6 +658,10 @@
     background: #ffffff;
     padding: 3px;
     border-radius: 30px;
+    border: 1px solid #e2e8f0;
+}
+
+.fpf-wrapper .fpf-dim-input:focus {
     border: 1px solid #e2e8f0;
 }
 
