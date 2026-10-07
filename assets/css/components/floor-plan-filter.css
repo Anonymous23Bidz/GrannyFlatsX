@@ -111,8 +111,8 @@
 }
 
 .floor-plan-image .fpf-floorplan-image {
-    width: 185px;
-    height: 185px !important;
+    width: 140px;
+    height: auto !important;
     object-fit: contain;
 }
 
@@ -566,10 +566,10 @@
 }
 
 .floor-plan-details .icons {
-    width: 22px;
+    width: 19px;
     height: 100%;
     border-radius: 0;
-    margin-top: 3px;
+    margin-top: 0px;
 }
 
 /* Visually Hide Native Radio Input */
