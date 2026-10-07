@@ -221,7 +221,6 @@ function filter_floor_plans_ajax()
                 $features           = get_field('features_filter', $post_id);
                 $floor_area_value   = get_field('floor_area', $post_id);
                 $design_style_value = get_field('design_style', $post_id);
-                $design_review      = get_field('design_review', $post_id);
             ?>
 
                 <article class="floor-plan-card">
@@ -267,18 +266,6 @@ function filter_floor_plans_ajax()
                                         <i class="fa-solid fa-arrow-up-long"></i>
                                     </span>
                                     <span><?php echo esc_html($design_style_value); ?></span>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if ($design_review) : ?>
-                                <div class="floor-plan-meta">
-                                    <span><?php echo esc_html($design_review); ?></span>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if (has_excerpt()) : ?>
-                                <div class="floor-plan-excerpt">
-                                    <?php echo wp_kses_post(get_the_excerpt()); ?>
                                 </div>
                             <?php endif; ?>
 
