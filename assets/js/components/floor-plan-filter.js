@@ -12,19 +12,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         const viewRadios = wrapper.querySelectorAll('input[type="radio"][name$="-view"]');
-
         const floorAreaSelect = wrapper.querySelector('select[name="floor_area"]');
         const bestForSelect = wrapper.querySelector('select[name="best_for"]');
-
+        const livingAreaSelect = wrapper.querySelector('select[name="living_area"]');
         const sortBySelect = wrapper.querySelector('select[name="sort_by"]');
+        const spaceWidthInput = wrapper.querySelector('.fpf-space-width');
+        const spaceDepthInput = wrapper.querySelector('.fpf-space-depth');
         const floorPlanGrid = wrapper.querySelector('.floor-plan-grid');
-
         const tagsList = wrapper.querySelector('.fpf-tags-list');
-
         const featuresContainer = wrapper.querySelector('.fpf-features-container');
         const featureCheckboxes = wrapper.querySelectorAll('.fpf-checkbox-input');
 
-
+        /*
+         * Update Select Trigger
+         */
         function updateSelectTrigger(radio) {
 
             const container = radio.closest('.fpf-select-container');
@@ -39,15 +40,136 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            if (!radio.value) {
+            /*
+             * Bedroom + Bedroom Size + Bathroom combined trigger
+             */
+            const bedroomRadio = container.querySelector(
+                'input[name$="-bedrooms"]:checked'
+            );
+
+            const bedroomSizeRadio = container.querySelector(
+                'input[name$="-bedroom-size"]:checked'
+            );
+
+            const bathroomRadio = container.querySelector(
+                'input[name$="-bathrooms"]:checked'
+            );
+
+            if (bedroomRadio || bedroomSizeRadio || bathroomRadio) {
+
+                const selectedParts = [];
+
+                /*
+                 * Bedroom
+                 */
+                if (
+                    bedroomRadio &&
+                    bedroomRadio.value !== '' &&
+                    bedroomRadio.value !== 'all'
+                ) {
+
+                    const bedroomLabel = bedroomRadio.nextElementSibling;
+
+                    if (bedroomLabel) {
+
+                        let bedroomText = bedroomLabel.textContent.trim();
+
+                        bedroomText = bedroomText.replace(
+                            /\s*bedrooms?\s*$/i,
+                            ''
+                        );
+
+                        if (bedroomText.toLowerCase() === 'studio') {
+
+                            selectedParts.push('Studio');
+
+                        } else {
+
+                            selectedParts.push(
+                                bedroomText + (
+                                    bedroomText === '1'
+                                        ? ' Bed'
+                                        : ' Beds'
+                                )
+                            );
+                        }
+                    }
+                }
+
+                /*
+                 * Bedroom Size
+                 */
+                if (
+                    bedroomSizeRadio &&
+                    bedroomSizeRadio.value !== ''
+                ) {
+
+                    const bedroomSizeLabel =
+                        bedroomSizeRadio.nextElementSibling;
+
+                    if (bedroomSizeLabel) {
+
+                        const sizeValue =
+                            bedroomSizeRadio.value.toLowerCase();
+
+                        selectedParts.push(
+                            sizeValue === 'queen'
+                                ? 'Queen: under 10m²'
+                                : sizeValue === 'king'
+                                    ? 'King: over 10m²'
+                                    : bedroomSizeLabel.textContent.trim()
+                        );
+                    }
+                }
+
+                /*
+                 * Bathroom
+                 */
+                if (
+                    bathroomRadio &&
+                    bathroomRadio.value !== ''
+                ) {
+
+                    const bathroomLabel =
+                        bathroomRadio.nextElementSibling;
+
+                    if (bathroomLabel) {
+
+                        let bathroomText =
+                            bathroomLabel.textContent.trim();
+
+                        bathroomText = bathroomText.replace(
+                            /\s*bathrooms?\s*$/i,
+                            ''
+                        );
+
+                        selectedParts.push(
+                            bathroomText + (
+                                bathroomText === '1'
+                                    ? ' Bath'
+                                    : ' Baths'
+                            )
+                        );
+                    }
+                }
 
                 triggerText.textContent =
-                    container.classList.contains('fpf-features-container')
-                        ? 'Any Features'
-                        : container.querySelector('.fpf-layout-popover')
-                            ? 'Any Layout'
-                            : 'Any';
+                    selectedParts.length
+                        ? selectedParts.join(', ')
+                        : 'Any';
 
+                return;
+            }
+
+            /*
+             * Other dropdowns
+             */
+
+            if (!radio.value) {
+                triggerText.textContent =
+                    container.querySelector('.fpf-layout-popover')
+                        ? 'Any Layout'
+                        : 'Any';
                 return;
             }
 
@@ -58,16 +180,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const layoutName = label.querySelector('.fpf-layout-name');
+            const layoutName =
+                label.querySelector('.fpf-layout-name');
 
-            triggerText.textContent = layoutName
-                ? layoutName.textContent.trim()
-                : label.textContent.trim();
+            triggerText.textContent =
+                layoutName
+                    ? layoutName.textContent.trim()
+                    : label.textContent.trim();
         }
 
         /*
- * Sort Floor Plans
- */
+         * Sort Floor Plans
+         */
         function sortFloorPlans() {
 
             if (!floorPlanGrid || !sortBySelect) {
@@ -81,13 +205,17 @@ document.addEventListener('DOMContentLoaded', function () {
             );
 
             if (sortValue === 'default') {
+
                 cardsArray.sort(function (a, b) {
+
                     return Number(a.dataset.originalOrder) -
                         Number(b.dataset.originalOrder);
+
                 });
             }
 
             if (sortValue === 'title_asc') {
+
                 cardsArray.sort(function (a, b) {
 
                     const titleA = a.dataset.title || '';
@@ -101,23 +229,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             sensitivity: 'base'
                         }
                     );
-
                 });
             }
 
             if (sortValue === 'size_desc') {
+
                 cardsArray.sort(function (a, b) {
 
-                    const sizeA = parseFloat(
-                        a.dataset.floorArea || 0
-                    );
+                    const sizeA =
+                        parseFloat(a.dataset.floorArea || 0);
 
-                    const sizeB = parseFloat(
-                        b.dataset.floorArea || 0
-                    );
+                    const sizeB =
+                        parseFloat(b.dataset.floorArea || 0);
 
                     return sizeB - sizeA;
-
                 });
             }
 
@@ -126,82 +251,138 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-
         /*
          * Filtering
          */
+        /*
+ * Filtering
+ */
 
         function filterFloorPlans() {
 
             const selectedBedroom =
-                wrapper.querySelector('input[name$="-bedrooms"]:checked');
+                wrapper.querySelector(
+                    'input[name$="-bedrooms"]:checked'
+                );
+
+            const selectedBedroomSize =
+                wrapper.querySelector(
+                    'input[name$="-bedroom-size"]:checked'
+                )?.value || '';
+
+            const selectedBathroom =
+                wrapper.querySelector(
+                    'input[name$="-bathrooms"]:checked'
+                )?.value || '';
 
             const selectedLayout =
-                wrapper.querySelector('input[name$="-layout"]:checked');
+                wrapper.querySelector(
+                    'input[name$="-layout"]:checked'
+                );
+
+            const selectedLivingArea =
+                livingAreaSelect
+                    ? livingAreaSelect.value
+                    : '';
 
             const bedroomValue =
-                selectedBedroom ? selectedBedroom.value : 'all';
+                selectedBedroom
+                    ? selectedBedroom.value
+                    : 'all';
 
             const layoutValue =
-                selectedLayout ? selectedLayout.value : '';
+                selectedLayout
+                    ? selectedLayout.value
+                    : '';
 
             const floorAreaValue =
-                floorAreaSelect ? floorAreaSelect.value : '';
+                floorAreaSelect
+                    ? floorAreaSelect.value
+                    : '';
 
             const bestForValue =
-                bestForSelect ? bestForSelect.value : '';
-
+                bestForSelect
+                    ? bestForSelect.value
+                    : '';
 
             const selectedFeatures = Array.from(
-                wrapper.querySelectorAll('.fpf-checkbox-input:checked')
+                wrapper.querySelectorAll(
+                    '.fpf-checkbox-input:checked'
+                )
             ).map(function (checkbox) {
 
                 return String(checkbox.value);
 
             });
 
+            /*
+            * Space Available
+            *
+            * ACF values are stored in millimetres.
+            * User inputs are also millimetres.
+            */
 
+            const availableWidth = spaceWidthInput
+                ? parseFloat(spaceWidthInput.value)
+                : NaN;
+
+            const availableDepth = spaceDepthInput
+                ? parseFloat(spaceDepthInput.value)
+                : NaN;
+
+            const hasSpaceFilter =
+                !isNaN(availableWidth) &&
+                !isNaN(availableDepth) &&
+                availableWidth > 0 &&
+                availableDepth > 0;
             /*
              * Check every floor plan
              */
 
             cards.forEach(function (card) {
 
-                const cardBedrooms = (card.dataset.bedrooms || '')
-                    .split(',')
-                    .map(function (id) {
-                        return id.trim();
-                    })
-                    .filter(Boolean);
+                const cardBedrooms =
+                    (card.dataset.bedrooms || '')
+                        .split(',')
+                        .map(function (id) {
+                            return id.trim();
+                        })
+                        .filter(Boolean);
 
+                const cardBathrooms =
+                    (card.dataset.bathrooms || '')
+                        .split(',')
+                        .map(function (id) {
+                            return id.trim();
+                        })
+                        .filter(Boolean);
 
-                const cardLayouts = (card.dataset.layout || '')
-                    .split(',')
-                    .map(function (id) {
-                        return id.trim();
-                    })
-                    .filter(Boolean);
+                const cardLayouts =
+                    (card.dataset.layout || '')
+                        .split(',')
+                        .map(function (id) {
+                            return id.trim();
+                        })
+                        .filter(Boolean);
 
+                const cardBestFor =
+                    (card.dataset.bestFor || '')
+                        .split(',')
+                        .map(function (id) {
+                            return id.trim();
+                        })
+                        .filter(Boolean);
 
-                const cardBestFor = (card.dataset.bestFor || '')
-                    .split(',')
-                    .map(function (id) {
-                        return id.trim();
-                    })
-                    .filter(Boolean);
-
-
-                const cardFeatures = (card.dataset.features || '')
-                    .split(',')
-                    .map(function (id) {
-                        return id.trim();
-                    })
-                    .filter(Boolean);
-
+                const cardFeatures =
+                    (card.dataset.features || '')
+                        .split(',')
+                        .map(function (id) {
+                            return id.trim();
+                        })
+                        .filter(Boolean);
 
                 const cardFloorArea =
                     card.dataset.floorArea || '';
-
 
                 /*
                  * Bedroom
@@ -210,8 +391,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 const bedroomMatches =
                     bedroomValue === 'all' ||
                     bedroomValue === '' ||
-                    cardBedrooms.includes(String(bedroomValue));
+                    cardBedrooms.includes(
+                        String(bedroomValue)
+                    );
 
+                /*
+                 * Bedroom Size
+                 */
+
+                const cardBedroomSize =
+                    card.dataset.bedroomSize || '';
+
+                const bedroomSizeMatch =
+                    !selectedBedroomSize ||
+                    cardBedroomSize === selectedBedroomSize;
+
+                /*
+                 * Bathroom
+                 */
+
+                const bathroomMatches =
+                    selectedBathroom === '' ||
+                    cardBathrooms.includes(
+                        String(selectedBathroom)
+                    );
 
                 /*
                  * Layout
@@ -220,8 +423,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 const layoutMatches =
                     layoutValue === '' ||
                     layoutValue === 'all' ||
-                    cardLayouts.includes(String(layoutValue));
-
+                    cardLayouts.includes(
+                        String(layoutValue)
+                    );
 
                 /*
                  * Floor Area
@@ -231,21 +435,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     floorAreaValue === '' ||
                     cardFloorArea === floorAreaValue;
 
-
                 /*
                  * Best For
                  */
 
                 const bestForMatches =
                     bestForValue === '' ||
-                    cardBestFor.includes(String(bestForValue));
-
+                    cardBestFor.includes(
+                        String(bestForValue)
+                    );
 
                 /*
                  * Features
-                 *
-                 * ALL selected features must exist
-                 * on the floor plan.
                  */
 
                 const featuresMatch =
@@ -256,6 +457,67 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     });
 
+                /*
+                 * Living Area
+                 */
+
+                const cardLivingArea =
+                    parseFloat(
+                        card.dataset.livingArea || 0
+                    );
+
+                let livingAreaMatches = true;
+
+                if (selectedLivingArea === 'small') {
+
+                    livingAreaMatches =
+                        cardLivingArea < 20;
+
+                }
+
+                if (selectedLivingArea === 'large') {
+
+                    livingAreaMatches =
+                        cardLivingArea > 20;
+
+                }
+
+                /*
+                * Space Available
+                */
+                let spaceAvailableMatches = true;
+
+                if (hasSpaceFilter) {
+
+                    const cardPlanLengthMm = parseFloat(
+                        card.dataset.planLengthMm || 0
+                    );
+
+                    const cardPlanWidthMm = parseFloat(
+                        card.dataset.planWidthMm || 0
+                    );
+
+                    if (
+                        cardPlanLengthMm > 0 &&
+                        cardPlanWidthMm > 0
+                    ) {
+
+                        spaceAvailableMatches =
+                            (
+                                cardPlanLengthMm <= availableWidth &&
+                                cardPlanWidthMm <= availableDepth
+                            ) ||
+                            (
+                                cardPlanLengthMm <= availableDepth &&
+                                cardPlanWidthMm <= availableWidth
+                            );
+
+                    } else {
+
+                        spaceAvailableMatches = false;
+
+                    }
+                }
 
                 /*
                  * Show / hide card
@@ -263,21 +525,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 card.style.display =
                     bedroomMatches &&
+                        bedroomSizeMatch &&
+                        bathroomMatches &&
                         layoutMatches &&
                         floorAreaMatches &&
                         bestForMatches &&
-                        featuresMatch
+                        featuresMatch &&
+                        livingAreaMatches &&
+                        spaceAvailableMatches
                         ? ''
                         : 'none';
 
             });
-        }
 
+        }
 
         /*
          * Add Filter Pill
          */
-
         function addFilterTag(labelText, resetFunction) {
 
             if (!tagsList || !labelText) {
@@ -311,11 +576,9 @@ document.addEventListener('DOMContentLoaded', function () {
             tagsList.appendChild(tag);
         }
 
-
         /*
          * Update Filter Pills
          */
-
         function updateFilterTags() {
 
             if (!tagsList) {
@@ -324,13 +587,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tagsList.innerHTML = '';
 
-
             /*
              * Bedroom
              */
-
             const selectedBedroom =
-                wrapper.querySelector('input[name$="-bedrooms"]:checked');
+                wrapper.querySelector(
+                    'input[name$="-bedrooms"]:checked'
+                );
 
             if (
                 selectedBedroom &&
@@ -343,11 +606,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (label) {
 
-                    const labelText =
+                    let labelText =
                         label.textContent.trim();
 
+                    labelText = labelText.replace(
+                        /\s*bedrooms?\s*$/i,
+                        ''
+                    );
+
+                    if (
+                        labelText.toLowerCase() === 'studio'
+                    ) {
+
+                        labelText = 'Studio';
+
+                    } else {
+
+                        labelText +=
+                            labelText === '1'
+                                ? ' Bedroom'
+                                : ' Bedrooms';
+                    }
+
                     addFilterTag(
-                        labelText + ' Bedrooms',
+                        labelText,
                         function () {
 
                             const anyRadio =
@@ -362,22 +644,124 @@ document.addEventListener('DOMContentLoaded', function () {
                                 updateSelectTrigger(anyRadio);
                                 filterFloorPlans();
                                 updateFilterTags();
-
                             }
-
                         }
                     );
-
                 }
             }
 
+            /*
+             * Bedroom Size
+             */
+            const selectedBedroomSize =
+                wrapper.querySelector(
+                    'input[name$="-bedroom-size"]:checked'
+                );
+
+            if (
+                selectedBedroomSize &&
+                selectedBedroomSize.value !== ''
+            ) {
+
+                const label =
+                    selectedBedroomSize.nextElementSibling;
+
+                if (label) {
+
+                    let labelText =
+                        label.textContent.trim();
+
+                    const sizeValue =
+                        selectedBedroomSize.value.toLowerCase();
+
+                    if (sizeValue === 'queen') {
+                        labelText = 'Queen: under 10m²';
+                    } else if (sizeValue === 'king') {
+                        labelText = 'King: over 10m²';
+                    }
+
+                    addFilterTag(
+                        labelText,
+                        function () {
+
+                            const anyRadio =
+                                wrapper.querySelector(
+                                    'input[name$="-bedroom-size"][value=""]'
+                                );
+
+                            if (anyRadio) {
+
+                                anyRadio.checked = true;
+
+                                updateSelectTrigger(anyRadio);
+                                filterFloorPlans();
+                                updateFilterTags();
+                            }
+                        }
+                    );
+                }
+            }
+
+            /*
+             * Bathroom
+             */
+            const selectedBathroom =
+                wrapper.querySelector(
+                    'input[name$="-bathrooms"]:checked'
+                );
+
+            if (
+                selectedBathroom &&
+                selectedBathroom.value !== ''
+            ) {
+
+                const label =
+                    selectedBathroom.nextElementSibling;
+
+                if (label) {
+
+                    let labelText =
+                        label.textContent.trim();
+
+                    labelText = labelText.replace(
+                        /\s*bathrooms?\s*$/i,
+                        ''
+                    );
+
+                    labelText +=
+                        labelText === '1'
+                            ? ' Bathroom'
+                            : ' Bathrooms';
+
+                    addFilterTag(
+                        labelText,
+                        function () {
+
+                            const anyRadio =
+                                wrapper.querySelector(
+                                    'input[name$="-bathrooms"][value=""]'
+                                );
+
+                            if (anyRadio) {
+
+                                anyRadio.checked = true;
+
+                                updateSelectTrigger(anyRadio);
+                                filterFloorPlans();
+                                updateFilterTags();
+                            }
+                        }
+                    );
+                }
+            }
 
             /*
              * Layout
              */
-
             const selectedLayout =
-                wrapper.querySelector('input[name$="-layout"]:checked');
+                wrapper.querySelector(
+                    'input[name$="-layout"]:checked'
+                );
 
             if (
                 selectedLayout &&
@@ -390,7 +774,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (label) {
 
                     const layoutName =
-                        label.querySelector('.fpf-layout-name');
+                        label.querySelector(
+                            '.fpf-layout-name'
+                        );
 
                     const labelText =
                         layoutName
@@ -418,21 +804,16 @@ document.addEventListener('DOMContentLoaded', function () {
                                     updateSelectTrigger(anyRadio);
                                     filterFloorPlans();
                                     updateFilterTags();
-
                                 }
-
                             }
                         );
-
                     }
                 }
             }
 
-
             /*
              * Floor Area
              */
-
             if (
                 floorAreaSelect &&
                 floorAreaSelect.value !== ''
@@ -453,18 +834,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             filterFloorPlans();
                             updateFilterTags();
-
                         }
                     );
-
                 }
             }
-
 
             /*
              * Best For
              */
-
             if (
                 bestForSelect &&
                 bestForSelect.value !== ''
@@ -485,18 +862,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             filterFloorPlans();
                             updateFilterTags();
+                        }
+                    );
+                }
+            }
+
+            /*
+            * Living Area
+            */
+
+            if (
+                livingAreaSelect &&
+                livingAreaSelect.value !== ''
+            ) {
+
+                const selectedOption =
+                    livingAreaSelect.options[
+                    livingAreaSelect.selectedIndex
+                    ];
+
+                if (selectedOption) {
+
+                    addFilterTag(
+                        selectedOption.textContent.trim(),
+                        function () {
+
+                            livingAreaSelect.value = '';
+
+                            filterFloorPlans();
+                            updateFilterTags();
 
                         }
                     );
 
                 }
-            }
 
+            }
 
             /*
              * Features
              */
-
             const selectedFeatures =
                 wrapper.querySelectorAll(
                     '.fpf-checkbox-input:checked'
@@ -505,7 +910,9 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedFeatures.forEach(function (checkbox) {
 
                 const label =
-                    checkbox.closest('.fpf-checkbox-label');
+                    checkbox.closest(
+                        '.fpf-checkbox-label'
+                    );
 
                 if (!label) {
                     return;
@@ -513,7 +920,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const labelText =
                     checkbox.dataset.featureName ||
-                    label.querySelector('span:last-child')?.textContent.trim();
+                    label.querySelector(
+                        'span:last-child'
+                    )?.textContent.trim();
 
                 if (!labelText) {
                     return;
@@ -526,22 +935,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         checkbox.checked = false;
 
                         updateFeatureTrigger();
-
                         filterFloorPlans();
                         updateFilterTags();
-
                     }
                 );
-
             });
-
         }
 
-
         /*
-         * Update Features trigger text
+         * Update Features Trigger
          */
-
         function updateFeatureTrigger() {
 
             if (!featuresContainer) {
@@ -549,7 +952,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const triggerText =
-                featuresContainer.querySelector('.fpf-trigger-text');
+                featuresContainer.querySelector(
+                    '.fpf-trigger-text'
+                );
 
             if (!triggerText) {
                 return;
@@ -566,16 +971,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     : 'Any Features';
         }
 
-
         /*
          * Dropdowns
          */
-
         selectContainers.forEach(function (container) {
-
-            /*
-             * Features is handled separately
-             */
 
             if (
                 container.classList.contains(
@@ -586,63 +985,59 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const trigger =
-                container.querySelector('.fpf-select-trigger');
+                container.querySelector(
+                    '.fpf-select-trigger'
+                );
 
             const radios =
-                container.querySelectorAll('.fpf-radio-input');
+                container.querySelectorAll(
+                    '.fpf-radio-input'
+                );
 
             if (!trigger) {
                 return;
             }
 
+            trigger.addEventListener(
+                'click',
+                function (e) {
 
-            /*
-             * Open / close dropdown
-             */
+                    e.preventDefault();
+                    e.stopPropagation();
 
-            trigger.addEventListener('click', function (e) {
+                    selectContainers.forEach(
+                        function (otherContainer) {
 
-                e.preventDefault();
-                e.stopPropagation();
+                            if (
+                                otherContainer !== container
+                            ) {
 
-                selectContainers.forEach(function (otherContainer) {
+                                otherContainer.classList.remove(
+                                    'is-open'
+                                );
+                            }
+                        }
+                    );
 
-                    if (otherContainer !== container) {
-
-                        otherContainer.classList.remove(
-                            'is-open'
-                        );
-
-                    }
-
-                });
-
-                container.classList.toggle('is-open');
-
-            });
-
-
-            /*
-             * Radio changes
-             */
+                    container.classList.toggle(
+                        'is-open'
+                    );
+                }
+            );
 
             radios.forEach(function (radio) {
 
-                radio.addEventListener('change', function () {
+                radio.addEventListener(
+                    'change',
+                    function () {
 
-                    updateSelectTrigger(radio);
+                        updateSelectTrigger(radio);
+                        filterFloorPlans();
+                        updateFilterTags();
 
-                    filterFloorPlans();
-                    updateFilterTags();
-
-                });
-
+                    }
+                );
             });
-
-
-            /*
-             * Initial radio
-             */
 
             const checkedRadio =
                 container.querySelector(
@@ -652,21 +1047,17 @@ document.addEventListener('DOMContentLoaded', function () {
             if (checkedRadio) {
                 updateSelectTrigger(checkedRadio);
             }
-
         });
-
 
         /*
          * Features
          */
-
         if (featuresContainer) {
 
             const featuresTrigger =
                 featuresContainer.querySelector(
                     '.fpf-select-trigger'
                 );
-
 
             if (featuresTrigger) {
 
@@ -688,49 +1079,37 @@ document.addEventListener('DOMContentLoaded', function () {
                                     container.classList.remove(
                                         'is-open'
                                     );
-
                                 }
-
                             }
                         );
 
                         featuresContainer.classList.toggle(
                             'is-open'
                         );
-
                     }
                 );
-
             }
 
+            featureCheckboxes.forEach(
+                function (checkbox) {
 
-            /*
-             * Feature checkbox changes
-             */
+                    checkbox.addEventListener(
+                        'change',
+                        function () {
 
-            featureCheckboxes.forEach(function (checkbox) {
+                            updateFeatureTrigger();
+                            filterFloorPlans();
+                            updateFilterTags();
 
-                checkbox.addEventListener(
-                    'change',
-                    function () {
-
-                        updateFeatureTrigger();
-
-                        filterFloorPlans();
-                        updateFilterTags();
-
-                    }
-                );
-
-            });
-
+                        }
+                    );
+                }
+            );
         }
-
 
         /*
          * Floor Area
          */
-
         if (floorAreaSelect) {
 
             floorAreaSelect.addEventListener(
@@ -742,14 +1121,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 }
             );
-
         }
-
 
         /*
          * Best For
          */
-
         if (bestForSelect) {
 
             bestForSelect.addEventListener(
@@ -761,12 +1137,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 }
             );
-
         }
 
         /*
-        * Sort By
-        */
+         * Sort By
+         */
         if (sortBySelect) {
 
             sortBySelect.addEventListener(
@@ -777,13 +1152,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 }
             );
+        }
+
+        /*
+ * Living Area
+ */
+
+        if (livingAreaSelect) {
+
+            livingAreaSelect.addEventListener(
+                'change',
+                function () {
+                    filterFloorPlans();
+                    updateFilterTags();
+                }
+            );
 
         }
 
+        /*
+         * Space Available
+         */
+
+        if (spaceWidthInput && spaceDepthInput) {
+
+            spaceWidthInput.addEventListener(
+                'input',
+                function () {
+                    filterFloorPlans();
+                    updateFilterTags();
+                }
+            );
+
+            spaceDepthInput.addEventListener(
+                'input',
+                function () {
+                    filterFloorPlans();
+                    updateFilterTags();
+                }
+            );
+
+        }
 
         /*
-        * View Toggle
-        */
+         * View Toggle
+         */
         function updateView() {
 
             const selectedView = wrapper.querySelector(
@@ -794,52 +1207,77 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const facadeImages = wrapper.querySelectorAll(
-                '.fpf-facade-image'
-            );
-
-            const floorplanImages = wrapper.querySelectorAll(
-                '.fpf-floorplan-image'
+            const cards = wrapper.querySelectorAll(
+                '.floor-plan-card'
             );
 
             const showFacade = selectedView.value === 'facade';
 
-            facadeImages.forEach(function (image) {
+            cards.forEach(function (card) {
 
-                image.style.display = showFacade
-                    ? 'block'
-                    : 'none';
+                const image = showFacade
+                    ? card.querySelector('.fpf-facade-image')
+                    : card.querySelector('.fpf-floorplan-image');
 
+                const allImages = card.querySelectorAll(
+                    '.fpf-floorplan-image, .fpf-facade-image'
+                );
+
+                card.classList.add('is-loading');
+
+                allImages.forEach(function (img) {
+                    img.style.display = 'none';
+                });
+
+                if (!image) {
+                    card.classList.remove('is-loading');
+                    return;
+                }
+
+                image.style.display = 'block';
+
+                if (image.complete) {
+                    card.classList.remove('is-loading');
+                } else {
+                    image.addEventListener(
+                        'load',
+                        function () {
+                            card.classList.remove('is-loading');
+                        },
+                        { once: true }
+                    );
+
+                    image.addEventListener(
+                        'error',
+                        function () {
+                            card.classList.remove('is-loading');
+                        },
+                        { once: true }
+                    );
+                }
             });
-
-            floorplanImages.forEach(function (image) {
-
-                image.style.display = showFacade
-                    ? 'none'
-                    : 'block';
-
-            });
-
         }
 
         viewRadios.forEach(function (radio) {
 
-            radio.addEventListener('change', function () {
+            radio.addEventListener(
+                'change',
+                function () {
 
-                updateView();
+                    updateView();
 
-            });
-
+                }
+            );
         });
 
-        /* Initial view */
+        /*
+         * Initial view
+         */
         updateView();
-
 
         /*
          * Close dropdowns
          */
-
         document.addEventListener(
             'click',
             function (e) {
@@ -852,24 +1290,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     wrapper.querySelectorAll(
                         '.fpf-select-container.is-open'
-                    ).forEach(function (container) {
+                    ).forEach(
+                        function (container) {
 
-                        container.classList.remove(
-                            'is-open'
-                        );
+                            container.classList.remove(
+                                'is-open'
+                            );
 
-                    });
-
+                        }
+                    );
                 }
-
             }
         );
-
 
         /*
          * Initial State
          */
-
         updateFeatureTrigger();
         filterFloorPlans();
         sortFloorPlans();

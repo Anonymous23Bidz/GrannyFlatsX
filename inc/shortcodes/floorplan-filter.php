@@ -11,6 +11,7 @@ function custom_floorplan_filter_shortcode($atts)
      * Taxonomies
      */
     $bedroom_taxonomy = 'fp_bedrooms';
+    $bathroom_taxonomy = 'fp_bathrooms';
     $bestfor_taxonomy = 'fp_best-for';
     $layout_taxonomy  = 'fp_layout';
     $features_taxonomy = 'feature';
@@ -24,6 +25,14 @@ function custom_floorplan_filter_shortcode($atts)
         'orderby'    => 'name',
         'order'      => 'ASC',
     ]);
+
+    $bathroom_filter_terms = get_terms([
+        'taxonomy'   => $bathroom_taxonomy,
+        'hide_empty' => false,
+        'orderby'    => 'name',
+        'order'      => 'ASC',
+    ]);
+
 
     /*
      * Best For terms
@@ -78,6 +87,12 @@ function custom_floorplan_filter_shortcode($atts)
 
             $floorplan_id = get_the_ID();
 
+            $plan_length_mm = get_field('plan_length_mm', $floorplan_id);
+            $plan_width_mm = get_field('plan_width_mm', $floorplan_id);
+
+            $plan_length_mm = is_numeric($plan_length_mm) ? (float) $plan_length_mm : 0;
+            $plan_width_mm = is_numeric($plan_width_mm) ? (float) $plan_width_mm : 0;
+
             /*
              * Bedrooms
              */
@@ -106,6 +121,40 @@ function custom_floorplan_filter_shortcode($atts)
                 $floorplan_id,
                 $bestfor_taxonomy
             );
+
+            /*
+            * Bathrooms
+            */
+            $floorplan_bathroom_terms = get_the_terms(
+                $floorplan_id,
+                $bathroom_taxonomy
+            );
+
+            $floorplan_bathrooms = [];
+            $floorplan_bathroom_ids = [];
+
+            /*
+            * Bedroom Size
+            */
+            $bed_1 = get_field('bed_1_area', $floorplan_id);
+            $bed_1_number = is_numeric($bed_1)
+                ? (float) $bed_1
+                : (float) preg_replace('/[^0-9.]/', '', (string) $bed_1);
+
+            $bedroom_size = '';
+
+            if ($bed_1 !== '' && $bed_1 !== null) {
+                $bedroom_size = $bed_1_number < 10 ? 'queen' : 'king';
+            }
+            if (
+                !is_wp_error($floorplan_bathroom_terms) &&
+                !empty($floorplan_bathroom_terms)
+            ) {
+                foreach ($floorplan_bathroom_terms as $bathroom_term) {
+                    $floorplan_bathrooms[] = $bathroom_term->name;
+                    $floorplan_bathroom_ids[] = $bathroom_term->term_id;
+                }
+            }
 
             $floorplan_bestfor = [];
 
@@ -161,29 +210,24 @@ function custom_floorplan_filter_shortcode($atts)
              * Floor Plan Data
              */
             $floorplans[] = [
-
                 'id' => $floorplan_id,
                 'title' => get_the_title($floorplan_id),
                 'url' => get_permalink($floorplan_id),
-                'featured_image' => get_the_post_thumbnail_url(
-                    $floorplan_id,
-                    'full'
-                ) ?: '',
-
-                'design_thumbnail' => get_field(
-                    'design_image_for_thumbnail_----_alt_display',
-                    $floorplan_id
-                ),
-
+                'featured_image' => get_the_post_thumbnail_url($floorplan_id, 'full') ?: '',
+                'design_thumbnail' => get_field('design_image_for_thumbnail_----_alt_display', $floorplan_id),
                 'bedrooms' => $floorplan_bedrooms,
                 'bedroom_ids' => $floorplan_bedroom_ids,
+                'bed_1' => $bed_1,
+                'bedroom_size' => $bedroom_size,
+                'bathrooms' => $floorplan_bathrooms,
+                'bathroom_ids' => $floorplan_bathroom_ids,
                 'best_for' => $floorplan_bestfor,
                 'layout' => $floorplan_layout,
                 'features' => $floorplan_features,
-                'floor_area' => get_field(
-                    'floor_area',
-                    $floorplan_id
-                ),
+                'floor_area' => get_field('floor_area', $floorplan_id),
+                'living_area' => get_field('living_area', $floorplan_id),
+                'plan_length_mm' => $plan_length_mm,
+                'plan_width_mm' => $plan_width_mm,
             ];
         }
 
@@ -341,7 +385,19 @@ function custom_floorplan_filter_shortcode($atts)
                                 <div class="fpf-pill-group">
 
                                     <label class="fpf-radio-label">
+                                        <input
+                                            type="radio"
+                                            name="<?php echo esc_attr($instance_id); ?>-bedroom-size"
+                                            value=""
+                                            class="fpf-radio-input"
+                                            checked>
 
+                                        <span class="fpf-pill-btn">
+                                            Any
+                                        </span>
+                                    </label>
+
+                                    <label class="fpf-radio-label">
                                         <input
                                             type="radio"
                                             name="<?php echo esc_attr($instance_id); ?>-bedroom-size"
@@ -349,13 +405,11 @@ function custom_floorplan_filter_shortcode($atts)
                                             class="fpf-radio-input">
 
                                         <span class="fpf-pill-btn">
-                                            Queen: under 12 m²
+                                            Queen: under 10 m²
                                         </span>
-
                                     </label>
 
                                     <label class="fpf-radio-label">
-
                                         <input
                                             type="radio"
                                             name="<?php echo esc_attr($instance_id); ?>-bedroom-size"
@@ -363,9 +417,8 @@ function custom_floorplan_filter_shortcode($atts)
                                             class="fpf-radio-input">
 
                                         <span class="fpf-pill-btn">
-                                            King: 12 m² and over
+                                            King: 10 m² and over
                                         </span>
-
                                     </label>
 
                                 </div>
@@ -374,85 +427,50 @@ function custom_floorplan_filter_shortcode($atts)
 
                             <!-- Bathrooms -->
                             <div class="fpf-popover-section">
-
                                 <span class="fpf-popover-title">
                                     Bathrooms
                                 </span>
 
                                 <div class="fpf-pill-group">
 
+                                    <!-- Any -->
                                     <label class="fpf-radio-label">
-
                                         <input
                                             type="radio"
                                             name="<?php echo esc_attr($instance_id); ?>-bathrooms"
                                             value=""
-                                            class="fpf-radio-input">
+                                            class="fpf-radio-input"
+                                            checked>
 
                                         <span class="fpf-pill-btn">
                                             Any
                                         </span>
-
                                     </label>
 
-                                    <label class="fpf-radio-label">
+                                    <?php if (
+                                        !is_wp_error($bathroom_filter_terms) &&
+                                        !empty($bathroom_filter_terms)
+                                    ) : ?>
 
-                                        <input
-                                            type="radio"
-                                            name="<?php echo esc_attr($instance_id); ?>-bathrooms"
-                                            value="1"
-                                            class="fpf-radio-input">
+                                        <?php foreach ($bathroom_filter_terms as $bathroom_term) : ?>
 
-                                        <span class="fpf-pill-btn">
-                                            1
-                                        </span>
+                                            <label class="fpf-radio-label">
+                                                <input
+                                                    type="radio"
+                                                    name="<?php echo esc_attr($instance_id); ?>-bathrooms"
+                                                    value="<?php echo esc_attr($bathroom_term->term_id); ?>"
+                                                    class="fpf-radio-input">
 
-                                    </label>
+                                                <span class="fpf-pill-btn">
+                                                    <?php echo esc_html($bathroom_term->name); ?>
+                                                </span>
+                                            </label>
 
-                                    <label class="fpf-radio-label">
+                                        <?php endforeach; ?>
 
-                                        <input
-                                            type="radio"
-                                            name="<?php echo esc_attr($instance_id); ?>-bathrooms"
-                                            value="1.5"
-                                            class="fpf-radio-input">
-
-                                        <span class="fpf-pill-btn">
-                                            1.5
-                                        </span>
-
-                                    </label>
-
-                                    <label class="fpf-radio-label">
-
-                                        <input
-                                            type="radio"
-                                            name="<?php echo esc_attr($instance_id); ?>-bathrooms"
-                                            value="2"
-                                            class="fpf-radio-input">
-
-                                        <span class="fpf-pill-btn">
-                                            2
-                                        </span>
-
-                                    </label>
-
-                                    <label class="fpf-radio-label">
-
-                                        <input
-                                            type="radio"
-                                            name="<?php echo esc_attr($instance_id); ?>-bathrooms"
-                                            value="2.5+"
-                                            class="fpf-radio-input">
-
-                                        <span class="fpf-pill-btn">
-                                            2.5+
-                                        </span>
-
-                                    </label>
+                                    <?php endif; ?>
 
                                 </div>
-
                             </div>
 
                         </div>
@@ -536,7 +554,7 @@ function custom_floorplan_filter_shortcode($atts)
                                             class="fpf-radio-input" checked>
 
                                         <span class="fpf-pill-btn">
-                                            Any Layout
+                                            Any <br> Layout
                                         </span>
 
                                     </label>
@@ -566,7 +584,7 @@ function custom_floorplan_filter_shortcode($atts)
                                             'step-shaped' => [
                                                 'order'  => 5,
                                                 'icon'   => 'step-shaped.svg',
-                                                'height' => '20px',
+                                                'height' => '23px',
                                             ],
                                             'compact' => [
                                                 'order'  => 2,
@@ -780,6 +798,9 @@ function custom_floorplan_filter_shortcode($atts)
                 </div>
 
                 <!-- Space Available -->
+
+                <!-- Space Available -->
+
                 <div class="fpf-field">
 
                     <label class="fpf-label">
@@ -790,10 +811,11 @@ function custom_floorplan_filter_shortcode($atts)
 
                         <input
                             type="number"
-                            step="0.1"
-                            class="fpf-dim-input"
-                            value="3.5"
-                            placeholder="3.5">
+                            step="1"
+                            min="0"
+                            class="fpf-dim-input fpf-space-width"
+                            placeholder="Width"
+                            aria-label="Available width in millimetres">
 
                         <span class="fpf-dim-multiply">
                             ×
@@ -801,13 +823,14 @@ function custom_floorplan_filter_shortcode($atts)
 
                         <input
                             type="number"
-                            step="0.1"
-                            class="fpf-dim-input"
-                            value="2"
-                            placeholder="2">
+                            step="1"
+                            min="0"
+                            class="fpf-dim-input fpf-space-depth"
+                            placeholder="Length"
+                            aria-label="Available length in millimetres">
 
                         <span class="fpf-dim-unit">
-                            m
+                            mm
                         </span>
 
                     </div>
@@ -824,25 +847,11 @@ function custom_floorplan_filter_shortcode($atts)
 
                 <!-- Floorplan / Facade Toggle -->
                 <div class="fpf-toggle-switch">
-
-                    <input
-                        type="radio"
-                        id="<?php echo esc_attr($instance_id); ?>-facade"
-                        name="<?php echo esc_attr($instance_id); ?>-view"
-                        value="facade"
-                        checked>
-
-                    <label
-                        for="<?php echo esc_attr($instance_id); ?>-facade"
-                        class="fpf-toggle-btn">
-                        Facade
-                    </label>
-
                     <input
                         type="radio"
                         id="<?php echo esc_attr($instance_id); ?>-floorplan"
                         name="<?php echo esc_attr($instance_id); ?>-view"
-                        value="floorplan">
+                        value="floorplan" checked>
 
                     <label
                         for="<?php echo esc_attr($instance_id); ?>-floorplan"
@@ -850,6 +859,17 @@ function custom_floorplan_filter_shortcode($atts)
                         Floorplan
                     </label>
 
+                    <input
+                        type="radio"
+                        id="<?php echo esc_attr($instance_id); ?>-facade"
+                        name="<?php echo esc_attr($instance_id); ?>-view"
+                        value="facade">
+
+                    <label
+                        for="<?php echo esc_attr($instance_id); ?>-facade"
+                        class="fpf-toggle-btn">
+                        Facade
+                    </label>
                 </div>
 
                 <!-- Filter Tags -->
@@ -875,11 +895,11 @@ function custom_floorplan_filter_shortcode($atts)
                         </option>
 
                         <option value="title_asc">
-                            Title (A-Z)
+                            A-Z
                         </option>
 
                         <option value="size_desc">
-                            Size (High to Low)
+                            Biggest to Smallest
                         </option>
 
                     </select>
@@ -901,16 +921,23 @@ function custom_floorplan_filter_shortcode($atts)
                     class="floor-plan-card"
                     data-title="<?php echo esc_attr(strtolower($floorplan['title'])); ?>"
                     data-bedrooms="<?php echo esc_attr(implode(',', $floorplan['bedroom_ids'])); ?>"
+                    data-bathrooms="<?php echo esc_attr(implode(',', $floorplan['bathroom_ids'])); ?>"
+                    data-bedroom-size="<?php echo esc_attr($floorplan['bedroom_size']); ?>"
                     data-best-for="<?php echo esc_attr(implode(',', $floorplan['best_for'])); ?>"
                     data-layout="<?php echo esc_attr(implode(',', $floorplan['layout'])); ?>"
                     data-features="<?php echo esc_attr(implode(',', $floorplan['features'])); ?>"
-                    data-floor-area="<?php echo esc_attr($floorplan['floor_area']); ?>">
+                    data-living-area="<?php echo esc_attr($floorplan['living_area']); ?>"
+                    data-floor-area="<?php echo esc_attr($floorplan['floor_area']); ?>"
+                    data-plan-length-mm="<?php echo esc_attr($floorplan['plan_length_mm']); ?>"
+                    data-plan-width-mm="<?php echo esc_attr($floorplan['plan_width_mm']); ?>">
 
                     <a
                         href="<?php echo esc_url($floorplan['url']); ?>"
                         class="floor-plan-card-link">
 
                         <div class="floor-plan-image">
+
+                            <span class="fpf-image-spinner" aria-hidden="true"></span>
 
                             <?php if ($floorplan['featured_image']) : ?>
 
@@ -949,11 +976,26 @@ function custom_floorplan_filter_shortcode($atts)
                             <h3 class="floor-plan-title">
                                 <?php echo esc_html($floorplan['title']); ?>
                             </h3>
-                            <?php if (!empty($floorplan['bedrooms'])) : ?>
-                                <label class="floor-plan-details">
-                                    <?php echo esc_html(implode(', ', $floorplan['bedrooms'])); ?> Bed
-                                </label>
-                            <?php endif; ?>
+                            <div class="floor-plan-detail-wrapper">
+                                <?php if (!empty($floorplan['bedrooms'])) : ?>
+                                    <p class="floor-plan-details">
+                                        <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/bed-icon.svg'); ?>" alt="Bedroom Icon">
+                                        <?php echo esc_html(implode(', ', $floorplan['bedrooms'])); ?> Bed
+                                    </p>
+                                <?php endif; ?>
+                                <?php if (!empty($floorplan['bathrooms'])) : ?>
+                                    <p class="floor-plan-details">
+                                        <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/bath-icon.svg'); ?>" alt="Bathroom Icon">
+                                        <?php echo esc_html(implode(', ', $floorplan['bathrooms'])); ?> Bath
+                                    </p>
+                                <?php endif; ?>
+                                <?php if (!empty($floorplan['living_area'])) : ?>
+                                    <p class="floor-plan-details">
+                                        <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/ruler-icon.svg'); ?>" alt="Ruler Icon">
+                                        <?php echo esc_html($floorplan['living_area']); ?> m²
+                                    </p>
+                                <?php endif; ?>
+                            </div>
                             <span class="floor-plan-link">
                                 View floor plan <i class="fa-solid fa-arrow-right"></i>
                             </span>

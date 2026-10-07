@@ -183,10 +183,6 @@ select {
     transition: transform 0.2s ease;
 }
 
-.location-locator-custom-select.is-open .location-locator-select-arrow {
-    transform: rotate(180deg);
-}
-
 /* OPTIONS */
 
 .location-locator-select-options {
