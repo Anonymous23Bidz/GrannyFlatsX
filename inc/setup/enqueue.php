@@ -33,6 +33,20 @@ function hello_child_enqueue_assets()
 
     /**
      * ---------------------------------------------------------
+     * Font Awesome
+     * ---------------------------------------------------------
+     */
+
+    wp_enqueue_style(
+        'font-awesome-6',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
+        array(),
+        '6.5.2'
+    );
+
+
+    /**
+     * ---------------------------------------------------------
      * Child Theme Stylesheet
      * ---------------------------------------------------------
      */
