@@ -69,6 +69,7 @@ function custom_floorplan_filter_shortcode($atts)
 
     $floorplans = [];
 
+
     if ($floorplan_query->have_posts()) {
 
         while ($floorplan_query->have_posts()) {
@@ -86,13 +87,15 @@ function custom_floorplan_filter_shortcode($atts)
             );
 
             $floorplan_bedrooms = [];
+            $floorplan_bedroom_ids = [];
 
             if (
                 !is_wp_error($floorplan_bedroom_terms) &&
                 !empty($floorplan_bedroom_terms)
             ) {
                 foreach ($floorplan_bedroom_terms as $bedroom_term) {
-                    $floorplan_bedrooms[] = $bedroom_term->term_id;
+                    $floorplan_bedrooms[] = $bedroom_term->name;
+                    $floorplan_bedroom_ids[] = $bedroom_term->term_id;
                 }
             }
 
@@ -173,6 +176,7 @@ function custom_floorplan_filter_shortcode($atts)
                 ),
 
                 'bedrooms' => $floorplan_bedrooms,
+                'bedroom_ids' => $floorplan_bedroom_ids,
                 'best_for' => $floorplan_bestfor,
                 'layout' => $floorplan_layout,
                 'features' => $floorplan_features,
@@ -896,7 +900,7 @@ function custom_floorplan_filter_shortcode($atts)
                 <article
                     class="floor-plan-card"
                     data-title="<?php echo esc_attr(strtolower($floorplan['title'])); ?>"
-                    data-bedrooms="<?php echo esc_attr(implode(',', $floorplan['bedrooms'])); ?>"
+                    data-bedrooms="<?php echo esc_attr(implode(',', $floorplan['bedroom_ids'])); ?>"
                     data-best-for="<?php echo esc_attr(implode(',', $floorplan['best_for'])); ?>"
                     data-layout="<?php echo esc_attr(implode(',', $floorplan['layout'])); ?>"
                     data-features="<?php echo esc_attr(implode(',', $floorplan['features'])); ?>"
@@ -945,13 +949,13 @@ function custom_floorplan_filter_shortcode($atts)
                             <h3 class="floor-plan-title">
                                 <?php echo esc_html($floorplan['title']); ?>
                             </h3>
-
+                            <?php if (!empty($floorplan['bedrooms'])) : ?>
+                                <label class="floor-plan-details">
+                                    <?php echo esc_html(implode(', ', $floorplan['bedrooms'])); ?> Bed
+                                </label>
+                            <?php endif; ?>
                             <span class="floor-plan-link">
-
-                                View floor plan
-
-                                <i class="fa-solid fa-arrow-right"></i>
-
+                                View floor plan <i class="fa-solid fa-arrow-right"></i>
                             </span>
 
                         </div>
