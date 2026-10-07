@@ -378,6 +378,7 @@
 .fpf-wrapper .fpf-select-trigger:hover,
 .fpf-wrapper .fpf-native-select:hover,
 .fpf-select-trigger:active,
+.fpf-select-trigger:focus,
 .fpf-wrapper .fpf-dimensions-box:focus-within {
     border-radius: 12px !important;
     border: 1px solid #e2e8f0 !important;
