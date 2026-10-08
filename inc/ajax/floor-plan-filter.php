@@ -230,6 +230,7 @@ function filter_floor_plans_ajax()
                         <?php if ($image) : ?>
                             <div class="floor-plan-image">
                                 <img
+                                    class="bedroom-image-list"
                                     src="<?php echo esc_url($image['url']); ?>"
                                     alt="<?php echo esc_attr($title); ?>"
                                     loading="lazy">
