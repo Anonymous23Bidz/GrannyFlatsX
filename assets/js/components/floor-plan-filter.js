@@ -1155,8 +1155,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         /*
- * Living Area
- */
+        * Living Area
+        */
 
         if (livingAreaSelect) {
 

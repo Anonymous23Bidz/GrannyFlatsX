@@ -46,7 +46,7 @@ require_once get_stylesheet_directory() . '/inc/integrations/elementor.php';
  * AJAX
  */
 require_once get_stylesheet_directory() . '/inc/ajax/ajax.php';
-require_once get_stylesheet_directory() . '/inc/ajax/floor-plan-filter.php';
+require_once get_stylesheet_directory() . '/inc/ajax/bedrooms-ajax-filter.php';
 
 /**
  * Shortcodes
