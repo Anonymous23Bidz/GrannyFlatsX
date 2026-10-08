@@ -196,6 +196,7 @@ function custom_suburb_filter_shortcode($atts)
                                 <div class="floor-plan-image">
 
                                     <img
+                                        class="floor-plan-location-image"
                                         src="<?php echo esc_url($location['image']); ?>"
                                         alt="<?php echo esc_attr($location['title']); ?>"
                                         loading="lazy">
@@ -207,6 +208,7 @@ function custom_suburb_filter_shortcode($atts)
                                 <div class="floor-plan-image">
 
                                     <img
+                                        class="floor-plan-location-image"
                                         src="<?php echo esc_url($fallback_image); ?>"
                                         alt="<?php echo esc_attr($location['title']); ?>"
                                         loading="lazy">

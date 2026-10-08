@@ -111,7 +111,8 @@
 }
 
 .floor-plan-image .bedroom-image-list,
-.floor-plan-image .fpf-facade-image {
+.floor-plan-image .fpf-facade-image,
+.floor-plan-image .floor-plan-location-image {
     height: 175px;
     width: 100%;
     object-fit: cover;
