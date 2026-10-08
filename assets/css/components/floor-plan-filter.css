@@ -110,23 +110,19 @@
     border-radius: 0px;
 }
 
-.floor-plan-image .bedroom-image-list {
-    border-radius: 0px !important;
+.floor-plan-image .bedroom-image-list,
+.floor-plan-image .fpf-facade-image {
     height: 175px;
+    width: 100%;
     object-fit: cover;
+    border-radius: 0px !important;
+    transform: scale(1.10);
 }
 
 .floor-plan-image .fpf-floorplan-image {
     width: 140px;
     height: 175px;
     object-fit: contain;
-    border-radius: 0;
-}
-
-.floor-plan-image .fpf-facade-image {
-    width: 100%;
-    height: 175px;
-    object-fit: cover;
     border-radius: 0;
 }
 

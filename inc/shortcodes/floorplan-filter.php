@@ -213,7 +213,7 @@ function custom_floorplan_filter_shortcode($atts)
                 'id' => $floorplan_id,
                 'title' => get_the_title($floorplan_id),
                 'url' => get_permalink($floorplan_id),
-                'featured_image' => get_the_post_thumbnail_url($floorplan_id, 'full') ?: '',
+                'featured_image' => get_the_post_thumbnail_url($floorplan_id, 'small') ?: '',
                 'design_thumbnail' => get_field('design_image_for_thumbnail_----_alt_display', $floorplan_id),
                 'bedrooms' => $floorplan_bedrooms,
                 'bedroom_ids' => $floorplan_bedroom_ids,
