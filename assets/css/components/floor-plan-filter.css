@@ -91,7 +91,7 @@
 .floor-plan-card {
     overflow: hidden;
     background: #fff;
-    border: 1px solid #e0e4eb;
+    border: 1px solid #c3cad7;
     border-radius: 16px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
