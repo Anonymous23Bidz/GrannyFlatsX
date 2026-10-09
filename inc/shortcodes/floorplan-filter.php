@@ -93,6 +93,8 @@ function custom_floorplan_filter_shortcode($atts)
             $plan_length_mm = is_numeric($plan_length_mm) ? (float) $plan_length_mm : 0;
             $plan_width_mm = is_numeric($plan_width_mm) ? (float) $plan_width_mm : 0;
 
+            $floorplan_image = get_field('floorplan_image', $floorplan_id);
+
             /*
              * Bedrooms
              */
@@ -213,7 +215,7 @@ function custom_floorplan_filter_shortcode($atts)
                 'id' => $floorplan_id,
                 'title' => get_the_title($floorplan_id),
                 'url' => get_permalink($floorplan_id),
-                'featured_image' => get_the_post_thumbnail_url($floorplan_id, 'small') ?: '',
+                'floorplan_image' => get_field('floorplan_image', $floorplan_id),
                 'design_thumbnail' => get_field('design_image_for_thumbnail_----_alt_display', $floorplan_id),
                 'bedrooms' => $floorplan_bedrooms,
                 'bedroom_ids' => $floorplan_bedroom_ids,
@@ -250,8 +252,6 @@ function custom_floorplan_filter_shortcode($atts)
             $floor_area_values[] = $floor_area;
         }
     }
-
-    $floor_area_values = array_unique($floor_area_values);
 
     sort($floor_area_values, SORT_NUMERIC);
 
@@ -939,15 +939,12 @@ function custom_floorplan_filter_shortcode($atts)
 
                             <span class="fpf-image-spinner" aria-hidden="true"></span>
 
-                            <?php if ($floorplan['featured_image']) : ?>
-
+                            <?php if (!empty($floorplan['floorplan_image'])) : ?>
                                 <img
                                     class="fpf-image fpf-floorplan-image"
-                                    src="<?php echo esc_url($floorplan['featured_image']); ?>"
+                                    src="<?php echo esc_url($floorplan['floorplan_image']['url']); ?>"
                                     alt="<?php echo esc_attr($floorplan['title']); ?>">
-
                             <?php endif; ?>
-
                             <?php if ($floorplan['design_thumbnail']) : ?>
 
                                 <?php
