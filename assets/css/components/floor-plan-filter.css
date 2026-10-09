@@ -121,8 +121,9 @@
 }
 
 .floor-plan-image .fpf-floorplan-image {
-    width: 140px;
-    height: 175px;
+    width: 80%;
+    height: 170px;
+    padding: 16px 16px 0;
     object-fit: contain;
     border-radius: 0;
 }
