@@ -226,7 +226,6 @@ function custom_floorplan_filter_shortcode($atts)
                 'best_for' => $floorplan_bestfor,
                 'layout' => $floorplan_layout,
                 'features' => $floorplan_features,
-                'floor_area' => get_field('floor_area', $floorplan_id),
                 'living_area' => get_field('living_area', $floorplan_id),
                 'plan_length_mm' => $plan_length_mm,
                 'plan_width_mm' => $plan_width_mm,
@@ -481,35 +480,27 @@ function custom_floorplan_filter_shortcode($atts)
 
                 <!-- Floor Area -->
                 <div class="fpf-field">
-
-                    <label class="fpf-label">
-                        Floor Area
-                    </label>
-
+                    <label class="fpf-label">Floor Area</label>
                     <div class="fpf-select-container">
+                        <?php
+                        $floor_area_options = [
+                            'under-45' => 'Under 45 m²',
+                            '45-55'    => '45 to 55 m²',
+                            '55-60'    => '55 to 60 m²',
+                            'over-60'  => 'Over 60 m²',
+                        ];
+                        ?>
 
-                        <select
-                            class="fpf-native-select"
-                            name="floor_area">
-
-                            <option value="">
-                                Any Size
-                            </option>
-
-                            <?php foreach ($floor_area_values as $floor_area) : ?>
-
-                                <option value="<?php echo esc_attr($floor_area); ?>">
-                                    <?php echo esc_html($floor_area); ?>
+                        <select class="fpf-native-select" name="floor_area">
+                            <option value="">Any Size</option>
+                            <?php foreach ($floor_area_options as $value => $label) : ?>
+                                <option value="<?php echo esc_attr($value); ?>">
+                                    <?php echo esc_html($label); ?>
                                 </option>
-
                             <?php endforeach; ?>
-
                         </select>
-
                         <i class="fa-solid fa-chevron-down fpf-arrow"></i>
-
                     </div>
-
                 </div>
 
                 <!-- Layout -->
@@ -927,7 +918,6 @@ function custom_floorplan_filter_shortcode($atts)
                     data-layout="<?php echo esc_attr(implode(',', $floorplan['layout'])); ?>"
                     data-features="<?php echo esc_attr(implode(',', $floorplan['features'])); ?>"
                     data-living-area="<?php echo esc_attr($floorplan['living_area']); ?>"
-                    data-floor-area="<?php echo esc_attr($floorplan['floor_area']); ?>"
                     data-plan-length-mm="<?php echo esc_attr($floorplan['plan_length_mm']); ?>"
                     data-plan-width-mm="<?php echo esc_attr($floorplan['plan_width_mm']); ?>">
 

@@ -1,1316 +1,376 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
+    const wrappers = [...document.querySelectorAll('.fpf-wrapper')];
+    const $ = (el, selector) => el.querySelector(selector);
+    const $$ = (el, selector) => [...el.querySelectorAll(selector)];
+    const value = (el, fallback = '') => el?.value ?? fallback;
+    const split = str => String(str || '').split(',').map(v => v.trim()).filter(Boolean);
 
-    const fpfContainers = document.querySelectorAll('.fpf-wrapper');
+    const getChecked = (wrapper, suffix) =>
+        $(wrapper, `input[name$="-${suffix}"]:checked`);
 
-    fpfContainers.forEach(function (wrapper) {
+    const getCards = wrapper =>
+        $$(wrapper, '.floor-plan-grid .floor-plan-card');
 
-        const selectContainers = wrapper.querySelectorAll('.fpf-select-container');
-        const cards = wrapper.querySelectorAll('.floor-plan-card');
+    const getLabel = radio =>
+        radio?.nextElementSibling?.textContent.trim() || '';
 
-        cards.forEach(function (card, index) {
-            card.dataset.originalOrder = index;
+    const closeDropdowns = wrapper =>
+        $$(wrapper, '.fpf-select-container.is-open')
+            .forEach(el => el.classList.remove('is-open'));
+
+    // Update dropdown labels.
+    const updateTrigger = radio => {
+        const container = radio?.closest('.fpf-select-container');
+        const text = $(container, '.fpf-trigger-text');
+        if (!text) return;
+
+        const bedroom = getChecked(container, 'bedrooms');
+        const size = getChecked(container, 'bedroom-size');
+        const bathroom = getChecked(container, 'bathrooms');
+
+        if (bedroom || size || bathroom) {
+            const parts = [];
+
+            if (bedroom && !['', 'all'].includes(bedroom.value)) {
+                const name = getLabel(bedroom).replace(/\s*bedrooms?\s*$/i, '');
+                parts.push(/^studio$/i.test(name) ? 'Studio' : `${name} ${name === '1' ? 'Bed' : 'Beds'}`);
+            }
+
+            if (size?.value) {
+                const name = size.value.toLowerCase();
+                parts.push(name === 'queen' ? 'Queen: under 10m²'
+                    : name === 'king' ? 'King: over 10m²' : getLabel(size));
+            }
+
+            if (bathroom?.value) {
+                const name = getLabel(bathroom).replace(/\s*bathrooms?\s*$/i, '');
+                parts.push(`${name} ${name === '1' ? 'Bath' : 'Baths'}`);
+            }
+
+            text.textContent = parts.join(', ') || 'Any';
+            return;
+        }
+
+        if (!radio.value) {
+            text.textContent = $(container, '.fpf-layout-popover')
+                ? 'Any Layout' : 'Any';
+            return;
+        }
+
+        text.textContent =
+            $(radio.nextElementSibling, '.fpf-layout-name')?.textContent.trim()
+            || getLabel(radio) || 'Any';
+    };
+
+    // Update the selected features label.
+    const updateFeatureTrigger = wrapper => {
+        const text = $(wrapper, '.fpf-features-container .fpf-trigger-text');
+        if (!text) return;
+
+        const count = $$(wrapper, '.fpf-checkbox-input:checked').length;
+        text.textContent = count ? `${count} Features` : 'Any Features';
+    };
+
+    // Filter cards using all selected criteria.
+    const filterCards = wrapper => {
+        const cards = getCards(wrapper);
+        const bedroom = getChecked(wrapper, 'bedrooms');
+        const bedroomSize = value(getChecked(wrapper, 'bedroom-size'));
+        const bathroom = value(getChecked(wrapper, 'bathrooms'));
+        const layout = value(getChecked(wrapper, 'layout'));
+        const floorArea = value($(wrapper, 'select[name="floor_area"]'));
+        const bestFor = value($(wrapper, 'select[name="best_for"]'));
+        const livingArea = value($(wrapper, 'select[name="living_area"]'));
+        const features = $$(wrapper, '.fpf-checkbox-input:checked').map(el => el.value);
+
+        const width = parseFloat(value($(wrapper, '.fpf-space-width')));
+        const depth = parseFloat(value($(wrapper, '.fpf-space-depth')));
+        const hasSpace = Number.isFinite(width) && Number.isFinite(depth) && width > 0 && depth > 0;
+
+        cards.forEach(card => {
+            const matches = [
+                !bedroom || ['', 'all'].includes(bedroom.value) || split(card.dataset.bedrooms).includes(bedroom.value),
+                !bedroomSize || (card.dataset.bedroomSize || '') === bedroomSize,
+                !bathroom || split(card.dataset.bathrooms).includes(bathroom),
+                !layout || layout === 'all' || split(card.dataset.layout).includes(layout),
+                !floorArea || (() => {
+                    const area = Number(card.dataset.livingArea);
+
+                    if (!Number.isFinite(area) || area <= 0) return false;
+
+                    switch (floorArea) {
+                        case 'under-45':
+                            return area < 45;
+
+                        case '45-55':
+                            return area >= 45 && area < 55;
+
+                        case '55-60':
+                            return area >= 55 && area <= 60;
+
+                        case 'over-60':
+                            return area > 60;
+
+                        default:
+                            return true;
+                    }
+                })(),
+                !bestFor || split(card.dataset.bestFor).includes(bestFor),
+                features.every(feature => split(card.dataset.features).includes(feature)),
+                !livingArea || (livingArea === 'small'
+                    ? Number(card.dataset.livingArea) < 20
+                    : livingArea === 'large'
+                        ? Number(card.dataset.livingArea) > 20
+                        : true)
+            ].every(Boolean);
+
+            const length = parseFloat(card.dataset.planLengthMm);
+            const planWidth = parseFloat(card.dataset.planWidthMm);
+
+            const fitsSpace = !hasSpace || (
+                Number.isFinite(length) && Number.isFinite(planWidth) &&
+                length > 0 && planWidth > 0 &&
+                ((length <= width && planWidth <= depth) ||
+                    (length <= depth && planWidth <= width))
+            );
+
+            card.style.display = matches && fitsSpace ? '' : 'none';
+        });
+    };
+
+    // Sort cards while preserving their original order.
+    const sortCards = wrapper => {
+        const grid = $(wrapper, '.floor-plan-grid');
+        const sort = value($(wrapper, 'select[name="sort_by"]'), 'default');
+
+        if (!grid) return;
+
+        const cards = getCards(wrapper);
+
+        cards.sort((a, b) => {
+            switch (sort) {
+                case 'title_asc':
+                    return (a.dataset.title || '').localeCompare(
+                        b.dataset.title || '',
+                        undefined,
+                        { numeric: true, sensitivity: 'base' }
+                    );
+
+                case 'size_desc':
+                    return (
+                        (parseFloat(b.dataset.livingArea) || 0) -
+                        (parseFloat(a.dataset.livingArea) || 0)
+                    );
+
+                default:
+                    return (
+                        Number(a.dataset.originalOrder) -
+                        Number(b.dataset.originalOrder)
+                    );
+            }
         });
 
-        const viewRadios = wrapper.querySelectorAll('input[type="radio"][name$="-view"]');
-        const floorAreaSelect = wrapper.querySelector('select[name="floor_area"]');
-        const bestForSelect = wrapper.querySelector('select[name="best_for"]');
-        const livingAreaSelect = wrapper.querySelector('select[name="living_area"]');
-        const sortBySelect = wrapper.querySelector('select[name="sort_by"]');
-        const spaceWidthInput = wrapper.querySelector('.fpf-space-width');
-        const spaceDepthInput = wrapper.querySelector('.fpf-space-depth');
-        const floorPlanGrid = wrapper.querySelector('.floor-plan-grid');
-        const tagsList = wrapper.querySelector('.fpf-tags-list');
-        const featuresContainer = wrapper.querySelector('.fpf-features-container');
-        const featureCheckboxes = wrapper.querySelectorAll('.fpf-checkbox-input');
+        cards.forEach(card => grid.appendChild(card));
+    };
 
-        /*
-         * Update Select Trigger
-         */
-        function updateSelectTrigger(radio) {
+    // Create removable filter tags safely.
+    const updateTags = wrapper => {
+        const list = $(wrapper, '.fpf-tags-list');
+        if (!list) return;
 
-            const container = radio.closest('.fpf-select-container');
+        list.replaceChildren();
 
-            if (!container) {
-                return;
-            }
-
-            const triggerText = container.querySelector('.fpf-trigger-text');
-
-            if (!triggerText) {
-                return;
-            }
-
-            /*
-             * Bedroom + Bedroom Size + Bathroom combined trigger
-             */
-            const bedroomRadio = container.querySelector(
-                'input[name$="-bedrooms"]:checked'
-            );
-
-            const bedroomSizeRadio = container.querySelector(
-                'input[name$="-bedroom-size"]:checked'
-            );
-
-            const bathroomRadio = container.querySelector(
-                'input[name$="-bathrooms"]:checked'
-            );
-
-            if (bedroomRadio || bedroomSizeRadio || bathroomRadio) {
-
-                const selectedParts = [];
-
-                /*
-                 * Bedroom
-                 */
-                if (
-                    bedroomRadio &&
-                    bedroomRadio.value !== '' &&
-                    bedroomRadio.value !== 'all'
-                ) {
-
-                    const bedroomLabel = bedroomRadio.nextElementSibling;
-
-                    if (bedroomLabel) {
-
-                        let bedroomText = bedroomLabel.textContent.trim();
-
-                        bedroomText = bedroomText.replace(
-                            /\s*bedrooms?\s*$/i,
-                            ''
-                        );
-
-                        if (bedroomText.toLowerCase() === 'studio') {
-
-                            selectedParts.push('Studio');
-
-                        } else {
-
-                            selectedParts.push(
-                                bedroomText + (
-                                    bedroomText === '1'
-                                        ? ' Bed'
-                                        : ' Beds'
-                                )
-                            );
-                        }
-                    }
-                }
-
-                /*
-                 * Bedroom Size
-                 */
-                if (
-                    bedroomSizeRadio &&
-                    bedroomSizeRadio.value !== ''
-                ) {
-
-                    const bedroomSizeLabel =
-                        bedroomSizeRadio.nextElementSibling;
-
-                    if (bedroomSizeLabel) {
-
-                        const sizeValue =
-                            bedroomSizeRadio.value.toLowerCase();
-
-                        selectedParts.push(
-                            sizeValue === 'queen'
-                                ? 'Queen: under 10m²'
-                                : sizeValue === 'king'
-                                    ? 'King: over 10m²'
-                                    : bedroomSizeLabel.textContent.trim()
-                        );
-                    }
-                }
-
-                /*
-                 * Bathroom
-                 */
-                if (
-                    bathroomRadio &&
-                    bathroomRadio.value !== ''
-                ) {
-
-                    const bathroomLabel =
-                        bathroomRadio.nextElementSibling;
-
-                    if (bathroomLabel) {
-
-                        let bathroomText =
-                            bathroomLabel.textContent.trim();
-
-                        bathroomText = bathroomText.replace(
-                            /\s*bathrooms?\s*$/i,
-                            ''
-                        );
-
-                        selectedParts.push(
-                            bathroomText + (
-                                bathroomText === '1'
-                                    ? ' Bath'
-                                    : ' Baths'
-                            )
-                        );
-                    }
-                }
-
-                triggerText.textContent =
-                    selectedParts.length
-                        ? selectedParts.join(', ')
-                        : 'Any';
-
-                return;
-            }
-
-            /*
-             * Other dropdowns
-             */
-
-            if (!radio.value) {
-                triggerText.textContent =
-                    container.querySelector('.fpf-layout-popover')
-                        ? 'Any Layout'
-                        : 'Any';
-                return;
-            }
-
-            const label = radio.nextElementSibling;
-
-            if (!label) {
-                triggerText.textContent = 'Any';
-                return;
-            }
-
-            const layoutName =
-                label.querySelector('.fpf-layout-name');
-
-            triggerText.textContent =
-                layoutName
-                    ? layoutName.textContent.trim()
-                    : label.textContent.trim();
-        }
-
-        /*
-         * Sort Floor Plans
-         */
-        function sortFloorPlans() {
-
-            if (!floorPlanGrid || !sortBySelect) {
-                return;
-            }
-
-            const sortValue = sortBySelect.value;
-
-            const cardsArray = Array.from(
-                floorPlanGrid.querySelectorAll('.floor-plan-card')
-            );
-
-            if (sortValue === 'default') {
-
-                cardsArray.sort(function (a, b) {
-
-                    return Number(a.dataset.originalOrder) -
-                        Number(b.dataset.originalOrder);
-
-                });
-            }
-
-            if (sortValue === 'title_asc') {
-
-                cardsArray.sort(function (a, b) {
-
-                    const titleA = a.dataset.title || '';
-                    const titleB = b.dataset.title || '';
-
-                    return titleA.localeCompare(
-                        titleB,
-                        undefined,
-                        {
-                            numeric: true,
-                            sensitivity: 'base'
-                        }
-                    );
-                });
-            }
-
-            if (sortValue === 'size_desc') {
-
-                cardsArray.sort(function (a, b) {
-
-                    const sizeA =
-                        parseFloat(a.dataset.floorArea || 0);
-
-                    const sizeB =
-                        parseFloat(b.dataset.floorArea || 0);
-
-                    return sizeB - sizeA;
-                });
-            }
-
-            cardsArray.forEach(function (card) {
-                floorPlanGrid.appendChild(card);
-            });
-        }
-
-        /*
-         * Filtering
-         */
-        /*
- * Filtering
- */
-
-        function filterFloorPlans() {
-
-            const selectedBedroom =
-                wrapper.querySelector(
-                    'input[name$="-bedrooms"]:checked'
-                );
-
-            const selectedBedroomSize =
-                wrapper.querySelector(
-                    'input[name$="-bedroom-size"]:checked'
-                )?.value || '';
-
-            const selectedBathroom =
-                wrapper.querySelector(
-                    'input[name$="-bathrooms"]:checked'
-                )?.value || '';
-
-            const selectedLayout =
-                wrapper.querySelector(
-                    'input[name$="-layout"]:checked'
-                );
-
-            const selectedLivingArea =
-                livingAreaSelect
-                    ? livingAreaSelect.value
-                    : '';
-
-            const bedroomValue =
-                selectedBedroom
-                    ? selectedBedroom.value
-                    : 'all';
-
-            const layoutValue =
-                selectedLayout
-                    ? selectedLayout.value
-                    : '';
-
-            const floorAreaValue =
-                floorAreaSelect
-                    ? floorAreaSelect.value
-                    : '';
-
-            const bestForValue =
-                bestForSelect
-                    ? bestForSelect.value
-                    : '';
-
-            const selectedFeatures = Array.from(
-                wrapper.querySelectorAll(
-                    '.fpf-checkbox-input:checked'
-                )
-            ).map(function (checkbox) {
-
-                return String(checkbox.value);
-
-            });
-
-            /*
-            * Space Available
-            *
-            * ACF values are stored in millimetres.
-            * User inputs are also millimetres.
-            */
-
-            const availableWidth = spaceWidthInput
-                ? parseFloat(spaceWidthInput.value)
-                : NaN;
-
-            const availableDepth = spaceDepthInput
-                ? parseFloat(spaceDepthInput.value)
-                : NaN;
-
-            const hasSpaceFilter =
-                !isNaN(availableWidth) &&
-                !isNaN(availableDepth) &&
-                availableWidth > 0 &&
-                availableDepth > 0;
-            /*
-             * Check every floor plan
-             */
-
-            cards.forEach(function (card) {
-
-                const cardBedrooms =
-                    (card.dataset.bedrooms || '')
-                        .split(',')
-                        .map(function (id) {
-                            return id.trim();
-                        })
-                        .filter(Boolean);
-
-                const cardBathrooms =
-                    (card.dataset.bathrooms || '')
-                        .split(',')
-                        .map(function (id) {
-                            return id.trim();
-                        })
-                        .filter(Boolean);
-
-                const cardLayouts =
-                    (card.dataset.layout || '')
-                        .split(',')
-                        .map(function (id) {
-                            return id.trim();
-                        })
-                        .filter(Boolean);
-
-                const cardBestFor =
-                    (card.dataset.bestFor || '')
-                        .split(',')
-                        .map(function (id) {
-                            return id.trim();
-                        })
-                        .filter(Boolean);
-
-                const cardFeatures =
-                    (card.dataset.features || '')
-                        .split(',')
-                        .map(function (id) {
-                            return id.trim();
-                        })
-                        .filter(Boolean);
-
-                const cardFloorArea =
-                    card.dataset.floorArea || '';
-
-                /*
-                 * Bedroom
-                 */
-
-                const bedroomMatches =
-                    bedroomValue === 'all' ||
-                    bedroomValue === '' ||
-                    cardBedrooms.includes(
-                        String(bedroomValue)
-                    );
-
-                /*
-                 * Bedroom Size
-                 */
-
-                const cardBedroomSize =
-                    card.dataset.bedroomSize || '';
-
-                const bedroomSizeMatch =
-                    !selectedBedroomSize ||
-                    cardBedroomSize === selectedBedroomSize;
-
-                /*
-                 * Bathroom
-                 */
-
-                const bathroomMatches =
-                    selectedBathroom === '' ||
-                    cardBathrooms.includes(
-                        String(selectedBathroom)
-                    );
-
-                /*
-                 * Layout
-                 */
-
-                const layoutMatches =
-                    layoutValue === '' ||
-                    layoutValue === 'all' ||
-                    cardLayouts.includes(
-                        String(layoutValue)
-                    );
-
-                /*
-                 * Floor Area
-                 */
-
-                const floorAreaMatches =
-                    floorAreaValue === '' ||
-                    cardFloorArea === floorAreaValue;
-
-                /*
-                 * Best For
-                 */
-
-                const bestForMatches =
-                    bestForValue === '' ||
-                    cardBestFor.includes(
-                        String(bestForValue)
-                    );
-
-                /*
-                 * Features
-                 */
-
-                const featuresMatch =
-                    selectedFeatures.length === 0 ||
-                    selectedFeatures.every(function (feature) {
-
-                        return cardFeatures.includes(feature);
-
-                    });
-
-                /*
-                 * Living Area
-                 */
-
-                const cardLivingArea =
-                    parseFloat(
-                        card.dataset.livingArea || 0
-                    );
-
-                let livingAreaMatches = true;
-
-                if (selectedLivingArea === 'small') {
-
-                    livingAreaMatches =
-                        cardLivingArea < 20;
-
-                }
-
-                if (selectedLivingArea === 'large') {
-
-                    livingAreaMatches =
-                        cardLivingArea > 20;
-
-                }
-
-                /*
-                * Space Available
-                */
-                let spaceAvailableMatches = true;
-
-                if (hasSpaceFilter) {
-
-                    const cardPlanLengthMm = parseFloat(
-                        card.dataset.planLengthMm || 0
-                    );
-
-                    const cardPlanWidthMm = parseFloat(
-                        card.dataset.planWidthMm || 0
-                    );
-
-                    if (
-                        cardPlanLengthMm > 0 &&
-                        cardPlanWidthMm > 0
-                    ) {
-
-                        spaceAvailableMatches =
-                            (
-                                cardPlanLengthMm <= availableWidth &&
-                                cardPlanWidthMm <= availableDepth
-                            ) ||
-                            (
-                                cardPlanLengthMm <= availableDepth &&
-                                cardPlanWidthMm <= availableWidth
-                            );
-
-                    } else {
-
-                        spaceAvailableMatches = false;
-
-                    }
-                }
-
-                /*
-                 * Show / hide card
-                 */
-
-                card.style.display =
-                    bedroomMatches &&
-                        bedroomSizeMatch &&
-                        bathroomMatches &&
-                        layoutMatches &&
-                        floorAreaMatches &&
-                        bestForMatches &&
-                        featuresMatch &&
-                        livingAreaMatches &&
-                        spaceAvailableMatches
-                        ? ''
-                        : 'none';
-
-            });
-
-        }
-
-        /*
-         * Add Filter Pill
-         */
-        function addFilterTag(labelText, resetFunction) {
-
-            if (!tagsList || !labelText) {
-                return;
-            }
+        const addTag = (label, reset) => {
+            if (!label) return;
 
             const tag = document.createElement('span');
-            const removeButton = document.createElement('button');
+            const button = document.createElement('button');
 
             tag.className = 'fpf-tag-pill';
-
-            removeButton.type = 'button';
-            removeButton.className = 'fpf-tag-remove';
-            removeButton.innerHTML = '&times;';
-
-            tag.appendChild(
-                document.createTextNode(labelText + ' ')
-            );
-
-            tag.appendChild(removeButton);
-
-            removeButton.addEventListener('click', function (e) {
-
-                e.preventDefault();
-                e.stopPropagation();
-
-                resetFunction();
-
+            button.className = 'fpf-tag-remove';
+            button.type = 'button';
+            button.textContent = '×';
+            button.setAttribute('aria-label', `Remove ${label} filter`);
+            tag.append(document.createTextNode(`${label} `), button);
+            button.addEventListener('click', () => {
+                reset();
+                refresh(wrapper);
             });
 
-            tagsList.appendChild(tag);
+            list.appendChild(tag);
+        };
+
+        const resetRadio = suffix => {
+            const radios = $$(wrapper, `input[name$="-${suffix}"]`);
+            const any = radios.find(r => r.value === '' || r.value === 'all');
+            if (any) any.checked = true;
+            else radios.forEach(r => { r.checked = false; });
+
+            updateTrigger(any || radios[0]);
+        };
+
+        const bedroom = getChecked(wrapper, 'bedrooms');
+        if (bedroom && !['', 'all'].includes(bedroom.value)) {
+            const name = getLabel(bedroom).replace(/\s*bedrooms?\s*$/i, '');
+            addTag(/^studio$/i.test(name) ? 'Studio' : `${name} ${name === '1' ? 'Bedroom' : 'Bedrooms'}`,
+                () => resetRadio('bedrooms'));
         }
 
-        /*
-         * Update Filter Pills
-         */
-        function updateFilterTags() {
-
-            if (!tagsList) {
-                return;
-            }
-
-            tagsList.innerHTML = '';
-
-            /*
-             * Bedroom
-             */
-            const selectedBedroom =
-                wrapper.querySelector(
-                    'input[name$="-bedrooms"]:checked'
-                );
-
-            if (
-                selectedBedroom &&
-                selectedBedroom.value !== 'all' &&
-                selectedBedroom.value !== ''
-            ) {
-
-                const label =
-                    selectedBedroom.nextElementSibling;
-
-                if (label) {
-
-                    let labelText =
-                        label.textContent.trim();
-
-                    labelText = labelText.replace(
-                        /\s*bedrooms?\s*$/i,
-                        ''
-                    );
-
-                    if (
-                        labelText.toLowerCase() === 'studio'
-                    ) {
-
-                        labelText = 'Studio';
-
-                    } else {
-
-                        labelText +=
-                            labelText === '1'
-                                ? ' Bedroom'
-                                : ' Bedrooms';
-                    }
-
-                    addFilterTag(
-                        labelText,
-                        function () {
-
-                            const anyRadio =
-                                wrapper.querySelector(
-                                    'input[name$="-bedrooms"][value="all"]'
-                                );
-
-                            if (anyRadio) {
-
-                                anyRadio.checked = true;
-
-                                updateSelectTrigger(anyRadio);
-                                filterFloorPlans();
-                                updateFilterTags();
-                            }
-                        }
-                    );
-                }
-            }
-
-            /*
-             * Bedroom Size
-             */
-            const selectedBedroomSize =
-                wrapper.querySelector(
-                    'input[name$="-bedroom-size"]:checked'
-                );
-
-            if (
-                selectedBedroomSize &&
-                selectedBedroomSize.value !== ''
-            ) {
-
-                const label =
-                    selectedBedroomSize.nextElementSibling;
-
-                if (label) {
-
-                    let labelText =
-                        label.textContent.trim();
-
-                    const sizeValue =
-                        selectedBedroomSize.value.toLowerCase();
-
-                    if (sizeValue === 'queen') {
-                        labelText = 'Queen: under 10m²';
-                    } else if (sizeValue === 'king') {
-                        labelText = 'King: over 10m²';
-                    }
-
-                    addFilterTag(
-                        labelText,
-                        function () {
-
-                            const anyRadio =
-                                wrapper.querySelector(
-                                    'input[name$="-bedroom-size"][value=""]'
-                                );
-
-                            if (anyRadio) {
-
-                                anyRadio.checked = true;
-
-                                updateSelectTrigger(anyRadio);
-                                filterFloorPlans();
-                                updateFilterTags();
-                            }
-                        }
-                    );
-                }
-            }
-
-            /*
-             * Bathroom
-             */
-            const selectedBathroom =
-                wrapper.querySelector(
-                    'input[name$="-bathrooms"]:checked'
-                );
-
-            if (
-                selectedBathroom &&
-                selectedBathroom.value !== ''
-            ) {
-
-                const label =
-                    selectedBathroom.nextElementSibling;
-
-                if (label) {
-
-                    let labelText =
-                        label.textContent.trim();
-
-                    labelText = labelText.replace(
-                        /\s*bathrooms?\s*$/i,
-                        ''
-                    );
-
-                    labelText +=
-                        labelText === '1'
-                            ? ' Bathroom'
-                            : ' Bathrooms';
-
-                    addFilterTag(
-                        labelText,
-                        function () {
-
-                            const anyRadio =
-                                wrapper.querySelector(
-                                    'input[name$="-bathrooms"][value=""]'
-                                );
-
-                            if (anyRadio) {
-
-                                anyRadio.checked = true;
-
-                                updateSelectTrigger(anyRadio);
-                                filterFloorPlans();
-                                updateFilterTags();
-                            }
-                        }
-                    );
-                }
-            }
-
-            /*
-             * Layout
-             */
-            const selectedLayout =
-                wrapper.querySelector(
-                    'input[name$="-layout"]:checked'
-                );
-
-            if (
-                selectedLayout &&
-                selectedLayout.value !== ''
-            ) {
-
-                const label =
-                    selectedLayout.nextElementSibling;
-
-                if (label) {
-
-                    const layoutName =
-                        label.querySelector(
-                            '.fpf-layout-name'
-                        );
-
-                    const labelText =
-                        layoutName
-                            ? layoutName.textContent.trim()
-                            : label.textContent.trim();
-
-                    if (
-                        labelText &&
-                        labelText !== 'Any Layout'
-                    ) {
-
-                        addFilterTag(
-                            labelText,
-                            function () {
-
-                                const anyRadio =
-                                    wrapper.querySelector(
-                                        'input[name$="-layout"][value=""]'
-                                    );
-
-                                if (anyRadio) {
-
-                                    anyRadio.checked = true;
-
-                                    updateSelectTrigger(anyRadio);
-                                    filterFloorPlans();
-                                    updateFilterTags();
-                                }
-                            }
-                        );
-                    }
-                }
-            }
-
-            /*
-             * Floor Area
-             */
-            if (
-                floorAreaSelect &&
-                floorAreaSelect.value !== ''
-            ) {
-
-                const selectedOption =
-                    floorAreaSelect.options[
-                    floorAreaSelect.selectedIndex
-                    ];
-
-                if (selectedOption) {
-
-                    addFilterTag(
-                        selectedOption.textContent.trim(),
-                        function () {
-
-                            floorAreaSelect.value = '';
-
-                            filterFloorPlans();
-                            updateFilterTags();
-                        }
-                    );
-                }
-            }
-
-            /*
-             * Best For
-             */
-            if (
-                bestForSelect &&
-                bestForSelect.value !== ''
-            ) {
-
-                const selectedOption =
-                    bestForSelect.options[
-                    bestForSelect.selectedIndex
-                    ];
-
-                if (selectedOption) {
-
-                    addFilterTag(
-                        selectedOption.textContent.trim(),
-                        function () {
-
-                            bestForSelect.value = '';
-
-                            filterFloorPlans();
-                            updateFilterTags();
-                        }
-                    );
-                }
-            }
-
-            /*
-            * Living Area
-            */
-
-            if (
-                livingAreaSelect &&
-                livingAreaSelect.value !== ''
-            ) {
-
-                const selectedOption =
-                    livingAreaSelect.options[
-                    livingAreaSelect.selectedIndex
-                    ];
-
-                if (selectedOption) {
-
-                    addFilterTag(
-                        selectedOption.textContent.trim(),
-                        function () {
-
-                            livingAreaSelect.value = '';
-
-                            filterFloorPlans();
-                            updateFilterTags();
-
-                        }
-                    );
-
-                }
-
-            }
-
-            /*
-             * Features
-             */
-            const selectedFeatures =
-                wrapper.querySelectorAll(
-                    '.fpf-checkbox-input:checked'
-                );
-
-            selectedFeatures.forEach(function (checkbox) {
-
-                const label =
-                    checkbox.closest(
-                        '.fpf-checkbox-label'
-                    );
-
-                if (!label) {
-                    return;
-                }
-
-                const labelText =
-                    checkbox.dataset.featureName ||
-                    label.querySelector(
-                        'span:last-child'
-                    )?.textContent.trim();
-
-                if (!labelText) {
-                    return;
-                }
-
-                addFilterTag(
-                    labelText,
-                    function () {
-
-                        checkbox.checked = false;
-
-                        updateFeatureTrigger();
-                        filterFloorPlans();
-                        updateFilterTags();
-                    }
-                );
+        const size = getChecked(wrapper, 'bedroom-size');
+        if (size?.value) {
+            const name = size.value.toLowerCase();
+            addTag(name === 'queen' ? 'Queen: under 10m²'
+                : name === 'king' ? 'King: over 10m²' : getLabel(size),
+                () => resetRadio('bedroom-size'));
+        }
+
+        const bathroom = getChecked(wrapper, 'bathrooms');
+        if (bathroom?.value) {
+            const name = getLabel(bathroom).replace(/\s*bathrooms?\s*$/i, '');
+            addTag(`${name} ${name === '1' ? 'Bathroom' : 'Bathrooms'}`,
+                () => resetRadio('bathrooms'));
+        }
+
+        const layout = getChecked(wrapper, 'layout');
+        if (layout?.value) {
+            addTag($(layout.nextElementSibling, '.fpf-layout-name')?.textContent.trim() || getLabel(layout),
+                () => resetRadio('layout'));
+        }
+
+        ['floor_area', 'best_for', 'living_area'].forEach(name => {
+            const select = $(wrapper, `select[name="${name}"]`);
+            if (!select?.value) return;
+
+            addTag(select.selectedOptions[0]?.textContent.trim(), () => {
+                select.value = '';
             });
-        }
-
-        /*
-         * Update Features Trigger
-         */
-        function updateFeatureTrigger() {
-
-            if (!featuresContainer) {
-                return;
-            }
-
-            const triggerText =
-                featuresContainer.querySelector(
-                    '.fpf-trigger-text'
-                );
-
-            if (!triggerText) {
-                return;
-            }
-
-            const selectedFeatures =
-                featuresContainer.querySelectorAll(
-                    '.fpf-checkbox-input:checked'
-                );
-
-            triggerText.textContent =
-                selectedFeatures.length
-                    ? selectedFeatures.length + ' Features'
-                    : 'Any Features';
-        }
-
-        /*
-         * Dropdowns
-         */
-        selectContainers.forEach(function (container) {
-
-            if (
-                container.classList.contains(
-                    'fpf-features-container'
-                )
-            ) {
-                return;
-            }
-
-            const trigger =
-                container.querySelector(
-                    '.fpf-select-trigger'
-                );
-
-            const radios =
-                container.querySelectorAll(
-                    '.fpf-radio-input'
-                );
-
-            if (!trigger) {
-                return;
-            }
-
-            trigger.addEventListener(
-                'click',
-                function (e) {
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    selectContainers.forEach(
-                        function (otherContainer) {
-
-                            if (
-                                otherContainer !== container
-                            ) {
-
-                                otherContainer.classList.remove(
-                                    'is-open'
-                                );
-                            }
-                        }
-                    );
-
-                    container.classList.toggle(
-                        'is-open'
-                    );
-                }
-            );
-
-            radios.forEach(function (radio) {
-
-                radio.addEventListener(
-                    'change',
-                    function () {
-
-                        updateSelectTrigger(radio);
-                        filterFloorPlans();
-                        updateFilterTags();
-
-                    }
-                );
-            });
-
-            const checkedRadio =
-                container.querySelector(
-                    '.fpf-radio-input:checked'
-                );
-
-            if (checkedRadio) {
-                updateSelectTrigger(checkedRadio);
-            }
         });
 
-        /*
-         * Features
-         */
-        if (featuresContainer) {
+        $$(wrapper, '.fpf-checkbox-input:checked').forEach(checkbox => {
+            const label = checkbox.closest('.fpf-checkbox-label');
+            const name = checkbox.dataset.featureName ||
+                $('span:last-child', label)?.textContent.trim();
 
-            const featuresTrigger =
-                featuresContainer.querySelector(
-                    '.fpf-select-trigger'
-                );
+            addTag(name, () => {
+                checkbox.checked = false;
+                updateFeatureTrigger(wrapper);
+            });
+        });
+    };
 
-            if (featuresTrigger) {
+    // Refresh dependent UI after changes.
+    const refresh = wrapper => {
+        filterCards(wrapper);
+        updateTags(wrapper);
+        updateFeatureTrigger(wrapper);
+    };
 
-                featuresTrigger.addEventListener(
-                    'click',
-                    function (e) {
+    // Switch floorplan/facade images.
+    const updateView = wrapper => {
+        const view = getChecked(wrapper, 'view')?.value;
+        if (!view) return;
 
-                        e.preventDefault();
-                        e.stopPropagation();
+        getCards(wrapper).forEach(card => {
+            const images = $$(card, '.fpf-floorplan-image, .fpf-facade-image');
+            const selected = $(card, view === 'facade'
+                ? '.fpf-facade-image' : '.fpf-floorplan-image');
 
-                        selectContainers.forEach(
-                            function (container) {
+            images.forEach(img => { img.style.display = 'none'; });
 
-                                if (
-                                    container !==
-                                    featuresContainer
-                                ) {
-
-                                    container.classList.remove(
-                                        'is-open'
-                                    );
-                                }
-                            }
-                        );
-
-                        featuresContainer.classList.toggle(
-                            'is-open'
-                        );
-                    }
-                );
-            }
-
-            featureCheckboxes.forEach(
-                function (checkbox) {
-
-                    checkbox.addEventListener(
-                        'change',
-                        function () {
-
-                            updateFeatureTrigger();
-                            filterFloorPlans();
-                            updateFilterTags();
-
-                        }
-                    );
-                }
-            );
-        }
-
-        /*
-         * Floor Area
-         */
-        if (floorAreaSelect) {
-
-            floorAreaSelect.addEventListener(
-                'change',
-                function () {
-
-                    filterFloorPlans();
-                    updateFilterTags();
-
-                }
-            );
-        }
-
-        /*
-         * Best For
-         */
-        if (bestForSelect) {
-
-            bestForSelect.addEventListener(
-                'change',
-                function () {
-
-                    filterFloorPlans();
-                    updateFilterTags();
-
-                }
-            );
-        }
-
-        /*
-         * Sort By
-         */
-        if (sortBySelect) {
-
-            sortBySelect.addEventListener(
-                'change',
-                function () {
-
-                    sortFloorPlans();
-
-                }
-            );
-        }
-
-        /*
-        * Living Area
-        */
-
-        if (livingAreaSelect) {
-
-            livingAreaSelect.addEventListener(
-                'change',
-                function () {
-                    filterFloorPlans();
-                    updateFilterTags();
-                }
-            );
-
-        }
-
-        /*
-         * Space Available
-         */
-
-        if (spaceWidthInput && spaceDepthInput) {
-
-            spaceWidthInput.addEventListener(
-                'input',
-                function () {
-                    filterFloorPlans();
-                    updateFilterTags();
-                }
-            );
-
-            spaceDepthInput.addEventListener(
-                'input',
-                function () {
-                    filterFloorPlans();
-                    updateFilterTags();
-                }
-            );
-
-        }
-
-        /*
-         * View Toggle
-         */
-        function updateView() {
-
-            const selectedView = wrapper.querySelector(
-                'input[name$="-view"]:checked'
-            );
-
-            if (!selectedView) {
+            if (!selected) {
+                card.classList.remove('is-loading');
                 return;
             }
 
-            const cards = wrapper.querySelectorAll(
-                '.floor-plan-card'
-            );
+            selected.style.display = 'block';
+            card.classList.toggle('is-loading', !selected.complete);
 
-            const showFacade = selectedView.value === 'facade';
+            if (!selected.complete) {
+                ['load', 'error'].forEach(event => selected.addEventListener(
+                    event, () => card.classList.remove('is-loading'), { once: true }
+                ));
+            }
+        });
+    };
 
-            cards.forEach(function (card) {
+    wrappers.forEach(wrapper => {
+        const cards = getCards(wrapper);
+        const selects = $$(wrapper, '.fpf-select-container');
+        const features = $(wrapper, '.fpf-features-container');
 
-                const image = showFacade
-                    ? card.querySelector('.fpf-facade-image')
-                    : card.querySelector('.fpf-floorplan-image');
+        cards.forEach((card, index) => {
+            if (!('originalOrder' in card.dataset)) card.dataset.originalOrder = index;
+        });
 
-                const allImages = card.querySelectorAll(
-                    '.fpf-floorplan-image, .fpf-facade-image'
-                );
+        selects.forEach(container => {
+            const trigger = $(container, '.fpf-select-trigger');
+            if (!trigger) return;
 
-                card.classList.add('is-loading');
+            trigger.addEventListener('click', event => {
+                event.preventDefault();
+                event.stopPropagation();
 
-                allImages.forEach(function (img) {
-                    img.style.display = 'none';
+                const open = !container.classList.contains('is-open');
+                closeDropdowns(wrapper);
+                if (open) container.classList.add('is-open');
+            });
+
+            $$(container, '.fpf-radio-input').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateTrigger(radio);
+                    refresh(wrapper);
+                    closeDropdowns(wrapper);
                 });
 
-                if (!image) {
-                    card.classList.remove('is-loading');
-                    return;
-                }
-
-                image.style.display = 'block';
-
-                if (image.complete) {
-                    card.classList.remove('is-loading');
-                } else {
-                    image.addEventListener(
-                        'load',
-                        function () {
-                            card.classList.remove('is-loading');
-                        },
-                        { once: true }
-                    );
-
-                    image.addEventListener(
-                        'error',
-                        function () {
-                            card.classList.remove('is-loading');
-                        },
-                        { once: true }
-                    );
-                }
+                if (radio.checked) updateTrigger(radio);
             });
-        }
-
-        viewRadios.forEach(function (radio) {
-
-            radio.addEventListener(
-                'change',
-                function () {
-
-                    updateView();
-
-                }
-            );
         });
 
-        /*
-         * Initial view
-         */
-        updateView();
+        $$(wrapper, '.fpf-checkbox-input').forEach(checkbox => {
+            checkbox.addEventListener('change', () => refresh(wrapper));
+        });
 
-        /*
-         * Close dropdowns
-         */
-        document.addEventListener(
-            'click',
-            function (e) {
+        ['floor_area', 'best_for', 'living_area'].forEach(name => {
+            $(wrapper, `select[name="${name}"]`)?.addEventListener('change', () => refresh(wrapper));
+        });
 
-                if (
-                    !e.target.closest(
-                        '.fpf-select-container'
-                    )
-                ) {
+        ['.fpf-space-width', '.fpf-space-depth'].forEach(selector => {
+            $(wrapper, selector)?.addEventListener('input', () => refresh(wrapper));
+        });
 
-                    wrapper.querySelectorAll(
-                        '.fpf-select-container.is-open'
-                    ).forEach(
-                        function (container) {
+        $(wrapper, 'select[name="sort_by"]')?.addEventListener('change', () => sortCards(wrapper));
 
-                            container.classList.remove(
-                                'is-open'
-                            );
+        $$(wrapper, 'input[type="radio"][name$="-view"]').forEach(radio => {
+            radio.addEventListener('change', () => updateView(wrapper));
+        });
 
-                        }
-                    );
-                }
-            }
-        );
-
-        /*
-         * Initial State
-         */
-        updateFeatureTrigger();
-        filterFloorPlans();
-        sortFloorPlans();
-        updateFilterTags();
-
+        // Initial state.
+        updateFeatureTrigger(wrapper);
+        sortCards(wrapper);
+        refresh(wrapper);
+        updateView(wrapper);
     });
 
+    // One outside-click listener for every filter wrapper.
+    document.addEventListener('click', event => {
+        wrappers.forEach(wrapper => {
+            if (!wrapper.contains(event.target)) closeDropdowns(wrapper);
+        });
+    });
+
+    // View All reveals every card in its own results wrapper.
+    document.querySelectorAll('.fpf-wrapper .floor-plan-grid').forEach(grid => {
+        const wrapper = grid.closest('.fpf-wrapper');
+        const button = $(wrapper, '.fpf-view-all-btn');
+        const container = $(wrapper, '.fpf-view-all-wrap');
+
+        button?.addEventListener('click', event => {
+            event.preventDefault();
+            getCards(wrapper).forEach(card => {
+                card.style.display = '';
+                card.hidden = false;
+            });
+            if (container) container.hidden = true;
+        });
+    });
 });
