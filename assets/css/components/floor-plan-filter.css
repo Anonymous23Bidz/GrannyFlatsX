@@ -122,8 +122,8 @@
 
 .floor-plan-image .fpf-floorplan-image {
     width: 76%;
-    height: 170px;
-    padding: 24px 16px 0;
+    height: 175px;
+    padding: 16px 16px 16px;
     object-fit: contain;
     border-radius: 0;
 }
@@ -134,6 +134,7 @@
 
 .fpf-wrapper .floor-plan-image {
     position: relative;
+    border-bottom: 1px solid #c3cad7;
 }
 
 .fpf-wrapper .fpf-floorplan-image,
@@ -729,7 +730,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 300px;
+    width: 240px;
 }
 
 .fpf-tag-remove:hover {
