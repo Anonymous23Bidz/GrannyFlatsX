@@ -826,8 +826,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         /* WordPress AJAX URL */
-        if (!window.propertyCheckAjaxUrl) {
-            console.error('propertyCheckAjaxUrl is missing.');
+        const ajaxUrl = window.propertyCheckAjax?.ajax_url;
+
+        if (!ajaxUrl) {
+            console.error('propertyCheckAjax.ajax_url is missing.');
             if (errorElement) {
                 errorElement.textContent = 'Unable to connect to the server. Please try again.';
                 errorElement.classList.add('show');
@@ -866,7 +868,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
 
             var response = await fetch(
-                window.propertyCheckAjaxUrl,
+                ajaxUrl,
                 {
                     method: 'POST',
                     body: formData,
