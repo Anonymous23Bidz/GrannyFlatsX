@@ -1,0 +1,206 @@
+input[type=date]:focus,
+input[type=email]:focus,
+input[type=number]:focus,
+input[type=password]:focus,
+input[type=search]:focus,
+input[type=tel]:focus,
+input[type=text]:focus,
+input[type=time]:focus,
+input[type=url]:focus,
+select:focus,
+input[type=date]:hover,
+input[type=email]:hover,
+input[type=number]:hover,
+input[type=password]:hover,
+input[type=search]:hover,
+input[type=tel]:hover,
+input[type=text]:hover,
+input[type=time]:hover,
+input[type=url]:hover,
+select:hover,
+textarea:hover {
+    border: 1px solid #dce1eb !important;
+}
+
+.get-quote-form p {
+    color: var(--e-global-color-text) !important;
+    font-weight: 600;
+}
+
+.btn-outline {
+    background: #fff !important;
+    color: var(--e-global-color-primary) !important;
+    border: 2px solid var(--e-global-color-primary) !important;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    background: var(--e-global-color-primary) !important;
+    color: #fff !important;
+}
+
+.btn-primary {
+    background: var(--e-global-color-primary) !important;
+    color: #fff !important;
+    border: 2px solid var(--e-global-color-primary) !important;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    opacity: 1 !important;
+    background: var(--e-global-color-primary) !important;
+    color: #fff !important;
+}
+
+.get-quote-form .gqf-navigation .btn-outline {
+    width: 35%;
+}
+
+.get-quote-form .gqf-navigation .btn-primary {
+    opacity: .9;
+    width: 65%;
+}
+
+.get-quote-form {
+    width: 100%;
+}
+
+.get-quote-form .progress-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    width: 100%;
+}
+
+.get-quote-form .gqf-progress {
+    flex: 1;
+    min-width: 0;
+    height: 6px;
+    margin: 0;
+    overflow: hidden;
+    background: #e5e5e5;
+    border-radius: 10px;
+}
+
+.get-quote-form .gqf-progress-bar {
+    width: 20%;
+    height: 100%;
+    background: var(--e-global-color-primary);
+    transition: width 0.4s ease-in-out;
+}
+
+.get-quote-form .gqf-progress-label {
+    color: #868BA0;
+    flex-shrink: 0;
+    margin: 0 0 24px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.get-quote-form .gqf-step {
+    display: none;
+}
+
+.get-quote-form .gqf-step.is-active {
+    display: block;
+}
+
+.input-icon-wrapper {
+    margin: 16px 0;
+}
+
+.get-quote-form .file-input-wrapper {
+    margin-top: 24px;
+}
+
+.get-quote-form .gqf-input {
+    color: var(--e-global-color-primary);
+    width: 100%;
+    padding-left: 40px !important;
+    box-sizing: border-box;
+    height: 48px;
+    padding: 0 14px;
+    font: 400 15px DM Sans, sans-serif;
+    background-color: var(--e-global-color-ef42499);
+    border-style: solid;
+    border-color: #02010100;
+    border-radius: 12px 12px;
+}
+
+.get-quote-form .gqf-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.get-quote-form .gqf-navigation button {
+    padding: 12px 24px;
+    border: 0;
+    cursor: pointer;
+}
+
+.get-quote-form .gqf-navigation button:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.get-quote-form .gqf-navigation button[hidden] {
+    display: none;
+}
+
+.get-quote-form .gqf-next:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.get-quote-form .answer-wrapper {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.get-quote-form .gqf-radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.get-quote-form .gqf-radio-label {
+    display: inline-block;
+    padding: 14px 24px;
+    background-color: #f1f3f7;
+    color: #3b4256;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+}
+
+.get-quote-form .gqf-radio-label:hover {
+    background-color: #e4e7ee;
+}
+
+.get-quote-form .gqf-radio-input:checked+.gqf-radio-label {
+    background-color: #434e70;
+    color: #ffffff;
+    border-color: #434e70;
+}
+
+.get-quote-form .gqf-radio-input:focus-visible+.gqf-radio-label {
+    outline: 2px solid #434e70;
+    outline-offset: 2px;
+}
+
+.gqf-message {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}

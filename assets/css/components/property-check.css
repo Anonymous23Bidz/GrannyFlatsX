@@ -1,33 +1,9 @@
-:root {
-    /* Brand Colors */
-    --navy: #243357;
-    --navy-raised: #2E3F66;
-    --navy-hover: #263859;
-    --navy-line: #4A5A7D;
-    --navy-border: #3D4E71;
-    --gold: #C9A44E;
-    --gold-light: #E0BC6B;
-    --gold-dark: #8B6A1F;
-    --gold-ink: #412402;
-    --card: #F4F6FB;
-    --muted: #B3BDD2;
-    --faint: #8794AF;
-    --faint-subtle: #6B7896;
-    --tick: #5DCAA5;
-    --error: #F7C1C1;
-    --white: #FFFFFF;
-
-    /* Layout & Structure */
-    --radius-card: 12px;
-    --radius-ctrl: 8px;
-}
-
 /* Base Wrapper & Grid */
 .gfx-wrap {
     max-width: 1080px;
     margin: 0 auto;
     font-family: DM Sans, system-ui, sans-serif;
-    color: var(--navy);
+    color: var(--e-global-color-primary);
     -webkit-font-smoothing: antialiased;
 }
 
@@ -82,7 +58,7 @@
     flex: 0 0 42px;
     height: 42px;
     border-radius: 10px;
-    background: var(--navy);
+    background: var(--e-global-color-primary);
     color: var(--white);
     display: flex;
     align-items: center;
@@ -106,7 +82,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 25px;
     font-weight: 600;
-    color: var(--navy);
+    color: var(--e-global-color-primary);
     line-height: 1.25;
     margin: 0;
 }
@@ -118,7 +94,7 @@
 
 .gfx-form-sub {
     font-size: 14px;
-    color: var(--navy);
+    color: var(--e-global-color-primary);
     line-height: 1.6;
     margin: 8px 0 22px;
 }
@@ -136,7 +112,7 @@
     height: 40px;
     margin: 8px 0;
     color: #fff;
-    background: var(--navy);
+    background: var(--e-global-color-primary);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -203,7 +179,7 @@
 .gfx-label {
     font-size: 15px;
     font-weight: 600;
-    color: var(--navy);
+    color: var(--e-global-color-primary);
     margin-bottom: 10px;
 }
 
@@ -241,7 +217,7 @@
     height: 50px;
     border: none !important;
     border-radius: 8px !important;
-    background-color: var(--navy) !important;
+    background-color: var(--e-global-color-primary) !important;
     font: 500 15px DM Sans, sans-serif;
     margin-top: 18px !important;
     cursor: pointer;
@@ -251,7 +227,7 @@
 }
 
 .gfx-btn:hover {
-    background-color: var(--navy) !important;
+    background-color: var(--e-global-color-primary) !important;
     color: #fff !important;
 }
 
@@ -270,7 +246,7 @@
     padding: 0 20px;
     background: transparent;
     color: var(--muted);
-    border: 1px solid var(--navy-line);
+    border: 1px solid #4A5A7D;
 }
 
 .gfx-row {
@@ -302,7 +278,7 @@
     padding: 13px 8px;
     background: var(--white);
     color: var(--card);
-    border: 1px solid var(--navy-line);
+    border: 1px solid #4A5A7D;
     border-radius: var(--radius-ctrl);
     font: 400 14px DM Sans, sans-serif;
     cursor: pointer;
@@ -310,20 +286,20 @@
 }
 
 .gfx-chip:hover {
-    background: var(--navy) !important;
+    background: var(--e-global-color-primary) !important;
     color: var(--white) !important;
-    border-color: var(--navy) !important;
+    border-color: var(--e-global-color-primary) !important;
 }
 
 .gfx-chip {
     background: #fff !important;
-    color: var(--navy) !important;
+    color: var(--e-global-color-primary) !important;
 }
 
 .gfx-chip[aria-pressed="true"] {
-    background: var(--navy) !important;
+    background: var(--e-global-color-primary) !important;
     color: var(--white) !important;
-    border-color: var(--navy) !important;
+    border-color: var(--e-global-color-primary) !important;
 }
 
 .gfx-err {
@@ -351,7 +327,7 @@
     align-items: center;
     padding: 12px 0;
     border-bottom: 1px solid #eaeaea;
-    color: var(--navy);
+    color: var(--e-global-color-primary);
     font-size: 14px;
 }
 
@@ -487,7 +463,7 @@
 }
 
 .pac-item-query {
-    color: var(--navy) !important;
+    color: var(--e-global-color-primary) !important;
     font-size: 15px !important;
 }
 
@@ -513,7 +489,7 @@
     font-family: "Font Awesome 6 Free" !important;
     font-weight: 900 !important;
     font-size: 15px !important;
-    color: var(--navy) !important;
+    color: var(--e-global-color-primary) !important;
 }
 
 .pac-logo:after {

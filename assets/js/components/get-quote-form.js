@@ -1,0 +1,218 @@
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.get-quote-form').forEach(form => {
+        const steps = [...form.querySelectorAll('.gqf-step')];
+        const currentLabel = form.querySelector('.gqf-current-step');
+        const progressBar = form.querySelector('.gqf-progress-bar');
+        const backBtn = form.querySelector('.gqf-back');
+        const nextBtn = form.querySelector('.gqf-next');
+        const submitBtn = form.querySelector('.gqf-submit');
+
+        let currentStep = 0;
+        let isSubmitting = false;
+
+        // Create a message area for success and errors.
+        let message = form.querySelector('.gqf-message');
+
+        if (!message) {
+            message = document.createElement('div');
+            message.className = 'gqf-message';
+            message.setAttribute('role', 'status');
+            message.setAttribute('aria-live', 'polite');
+            form.appendChild(message);
+        }
+
+        const isStepValid = step => {
+            const fields = [
+                ...step.querySelectorAll('input, select, textarea')
+            ].filter(field => !field.disabled && field.willValidate);
+
+            if (!fields.every(field => field.checkValidity())) {
+                const invalidField = fields.find(
+                    field => !field.checkValidity()
+                );
+
+                invalidField?.reportValidity();
+                return false;
+            }
+
+            // Explicitly validate required radio groups.
+            const radioNames = new Set(
+                fields
+                    .filter(field => field.type === 'radio' && field.required)
+                    .map(field => field.name)
+            );
+
+            for (const name of radioNames) {
+                if (!fields.some(field =>
+                    field.type === 'radio' &&
+                    field.name === name &&
+                    field.checked
+                )) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        const updateStep = () => {
+            const step = steps[currentStep];
+
+            steps.forEach((item, index) => {
+                item.classList.toggle('is-active', index === currentStep);
+            });
+
+            currentLabel.textContent = currentStep + 1;
+            progressBar.style.width =
+                `${((currentStep + 1) / steps.length) * 100}%`;
+
+            backBtn.textContent = step.dataset.backLabel || 'Back';
+            nextBtn.textContent = step.dataset.nextLabel || 'Next';
+
+            nextBtn.hidden = currentStep === steps.length - 1;
+            submitBtn.hidden = currentStep !== steps.length - 1;
+            backBtn.disabled = isSubmitting;
+            nextBtn.disabled = isSubmitting;
+            submitBtn.disabled = isSubmitting;
+        };
+
+
+        const updateNextButton = () => {
+            const step = steps[currentStep];
+            const fields = [...step.querySelectorAll('input, select, textarea')]
+                .filter(field => !field.disabled && field.willValidate);
+
+            const radios = fields.filter(field => field.type === 'radio' && field.required);
+            const radioNames = [...new Set(radios.map(field => field.name))];
+
+            const radiosValid = radioNames.every(name =>
+                radios.some(field => field.name === name && field.checked)
+            );
+
+            const fieldsValid = fields
+                .filter(field => field.type !== 'radio')
+                .every(field => field.checkValidity());
+
+            nextBtn.disabled = isSubmitting || !fieldsValid || !radiosValid;
+        };
+
+        document.addEventListener('focusin', event => {
+            if (event.target.closest('.get-quote-form')) {
+                console.log('Focused field:', event.target.name || event.target.className);
+            }
+        });
+
+        form.addEventListener('input', event => {
+            if (event.target.matches('input, select, textarea')) {
+                updateNextButton();
+            }
+        });
+
+        form.addEventListener('change', event => {
+            if (event.target.matches('input, select, textarea')) {
+                updateNextButton();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (!isStepValid(steps[currentStep])) {
+                return;
+            }
+
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                message.textContent = '';
+                updateStep();
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (isSubmitting) return;
+
+            if (currentStep === 0) {
+                form.dispatchEvent(new CustomEvent('gqf:cancel', {
+                    bubbles: true,
+                    detail: { form }
+                }));
+                return;
+            }
+
+            currentStep--;
+            message.textContent = '';
+            updateStep();
+        });
+
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            if (isSubmitting || !isStepValid(steps[currentStep])) {
+                return;
+            }
+
+            const ajaxUrl = form.dataset.ajaxUrl;
+
+            if (!ajaxUrl) {
+                message.textContent =
+                    'The form is missing its AJAX URL. Please contact us.';
+                return;
+            }
+
+            const formData = new FormData(form);
+
+            isSubmitting = true;
+            message.textContent = 'Sending your quote request.';
+            message.style.color = '';
+            submitBtn.textContent = 'Sending...';
+            updateStep();
+
+            try {
+                const response = await fetch(ajaxUrl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(
+                        result?.data?.message ||
+                        'Your request could not be sent. Please try again.'
+                    );
+                }
+
+
+                message.textContent =
+                    result.data?.message ||
+                    'Your quote request was sent successfully!';
+
+                message.style.color = 'green';
+
+                form.dispatchEvent(new CustomEvent('gqf:success', {
+                    bubbles: true,
+                    detail: { form, response: result }
+                }));
+
+                setTimeout(() => {
+                    window.location.href = '/thank-you-page-form/';
+                    // window.location.href = '/grannyflatsx/thank-you-page-form';
+                }, 2000);
+
+                return;
+
+            } catch (error) {
+                message.textContent = error.message ||
+                    'Something went wrong. Please try again.';
+                message.style.color = '#b42318';
+
+            } finally {
+                isSubmitting = false;
+                submitBtn.textContent = 'Get My Free Quote';
+                updateStep();
+            }
+        });
+
+        updateStep();
+    });
+});

@@ -1,0 +1,758 @@
+/* =========================================================
+   FLOOR PLAN FILTER
+   ========================================================= */
+
+.bedrooms-fpf-filter {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.bedrooms-fpf-filter *,
+.bedrooms-fpf-results * {
+    box-sizing: border-box;
+}
+
+/* Filter card */
+
+.bedrooms-fpf-filter .bedrooms-fpf-card {
+    width: 100%;
+    padding: 24px 32px;
+    background: #fff;
+    border: 1px solid var(--e-global-color-216baa0);
+    border-radius: 18px;
+    box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.16);
+    margin-bottom: 30px;
+}
+
+/* Filter grid */
+
+.bedrooms-fpf-filter .bedrooms-fpf-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 16px;
+}
+
+/* Field */
+
+.bedrooms-fpf-filter .bedrooms-fpf-select-container {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-field-label {
+    display: block;
+    margin: 0 0 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1f2937;
+}
+
+/* Native select */
+
+.bedrooms-fpf-filter .bedrooms-fpf-native-select {
+    width: 100%;
+    height: 48px;
+    padding: 0 42px 0 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #8b95a4;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23455273' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 12px;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-native-select:focus {
+    outline: none;
+    border-color: var(--e-global-color-primary);
+}
+
+/* Custom triggers */
+
+.bedrooms-fpf-filter .bedrooms-fpf-select-trigger {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 16px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #8b95a4;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-select-trigger:focus,
+.bedrooms-fpf-filter .bedrooms-fpf-select-trigger:hover {
+    outline: none;
+    border: 1px solid #d1d5db;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-trigger-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-trigger-arrow {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* =========================================================
+   LAYOUT POPOVER
+   ========================================================= */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 1000;
+    width: 556px;
+    padding: 28px 24px 24px;
+    display: none;
+    background: #fff;
+    border: 0;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-popover.is-open {
+    display: block;
+}
+
+/* Popover heading */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-popover::before {
+    content: 'Layouts';
+    display: block;
+    margin: 0 0 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--e-global-color-primary);
+}
+
+/* Layout options */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid #dbe2ec;
+    border-radius: 9px;
+}
+
+/* Individual option */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-option {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Hide radio */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Option content */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-choice {
+    width: 100%;
+    height: 80px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 6px;
+    border: 0;
+    border-right: 1px solid #dbe2ec;
+    border-radius: 0;
+    background: #fff;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Remove divider from last item */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-option:last-child .bedrooms-fpf-layout-choice {
+    border-right: 0;
+}
+
+/* Hover */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-choice:hover {
+    background: #f8fafc;
+}
+
+/* Selected option */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-input:checked+.bedrooms-fpf-layout-choice {
+    background: #2d3652;
+    color: #fff;
+}
+
+/* Selected text */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-input:checked+.bedrooms-fpf-layout-choice .bedrooms-fpf-layout-name {
+    color: #fff;
+}
+
+/* Layout icon */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-icon {
+    width: 34px;
+    max-width: 34px;
+    height: 20px !important;
+    object-fit: contain;
+    object-position: center;
+    flex: 0 0 auto;
+    border-radius: 0;
+}
+
+/* Layout name */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-name {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #94a3b8;
+}
+
+/* Any Layout has no icon, so center the text */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-any .bedrooms-fpf-layout-choice {
+    gap: 0;
+}
+
+/* Any Layout selected */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-any .bedrooms-fpf-layout-name {
+    white-space: normal;
+    line-height: 1.25;
+    max-width: 60px;
+}
+
+/* =========================================================
+   LAYOUT POPOVER - MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .bedrooms-fpf-filter .bedrooms-fpf-layout-popover {
+        width: 100%;
+        min-width: 0;
+        padding: 24px 16px 16px;
+        border-radius: 16px;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-layout-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-layout-choice {
+        height: 76px;
+        min-height: 76px;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .bedrooms-fpf-filter .bedrooms-fpf-layout-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+/* =========================================================
+   FEATURES POPOVER
+   ========================================================= */
+
+.bedrooms-fpf-filter .bedrooms-fpf-features-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    min-width: 500px;
+    max-width: 760px;
+    padding: 20px;
+    display: none;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-features-popover.is-open {
+    display: block;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-feature-column {
+    min-width: 0;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-feature-category-title {
+    margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--e-global-color-primary);
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 9px;
+    cursor: pointer;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-checkbox-custom {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    border: 1px solid #cbd5e1;
+    border-radius: 3px;
+    background: #fff;
+    position: relative;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-checkbox-input:checked+.bedrooms-fpf-checkbox-custom {
+    background: var(--e-global-color-primary);
+    border-color: var(--e-global-color-primary);
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-checkbox-input:checked+.bedrooms-fpf-checkbox-custom::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-checkbox-text {
+    font-size: 14px;
+    line-height: 1.35;
+    color: #334155;
+}
+
+/* =========================================================
+   FILTER BUTTONS
+   ========================================================= */
+
+.bedrooms-fpf-filter .bedrooms-fpf-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-view-designs-btn,
+.bedrooms-fpf-filter .bedrooms-fpf-reset-btn {
+    height: 48px;
+    border-radius: 8px;
+    border: 2px solid var(--e-global-color-primary) !important;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-view-designs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 18px;
+    border: 1px solid var(--e-global-color-primary);
+    background: var(--e-global-color-primary);
+    color: #fff;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-view-designs-btn:focus {
+    color: #fff;
+    background-color: var(--e-global-color-primary);
+}
+
+
+.bedrooms-fpf-filter .bedrooms-fpf-view-designs-btn i {
+    transition: transform 0.2s ease;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-view-designs-btn:hover i {
+    transform: translateX(5px);
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-reset-btn {
+    padding: 0 8px;
+    border: 0 !important;
+    background: none !important;
+    color: var(--e-global-color-58bdd18) !important;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-reset-btn:hover {
+    border-color: var(--e-global-color-primary);
+}
+
+/* Selected layout */
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-input:checked+.bedrooms-fpf-layout-choice {
+    background: var(--e-global-color-text) !important;
+}
+
+.bedrooms-fpf-filter .bedrooms-fpf-layout-input:checked+.bedrooms-fpf-layout-choice .bedrooms-fpf-layout-name {
+    color: #fff;
+}
+
+/* Selected icon */
+.bedrooms-fpf-filter .bedrooms-fpf-layout-input:checked+.bedrooms-fpf-layout-choice .bedrooms-fpf-layout-icon {
+    filter: brightness(0) invert(1);
+}
+
+/* =========================================================
+   RESULTS
+   ========================================================= */
+
+.bedrooms-fpf-results {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-card {
+    width: 100%;
+    min-width: 0;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-card[hidden] {
+    display: none !important;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-card-link {
+    display: block;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* =========================================================
+   CARD IMAGE
+   ========================================================= */
+
+.bedrooms-fpf-results .bedrooms-floor-plan-image {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-image img {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 0px
+}
+
+.bedrooms-fpf-results .bedrooms-facade-image,
+.bedrooms-fpf-results .bedrooms-floorplan-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.bedrooms-fpf-results .bedrooms-floor-plan-card-content {
+    padding: 20px;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-title {
+    margin: 0 0 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #1f2937;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #64748b;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-icon {
+    width: 18px;
+    flex: 0 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--e-global-color-primary);
+}
+
+.bedrooms-fpf-results i.fa-solid.fa-arrow-up-long {
+    transform: rotate(45deg);
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--e-global-color-primary);
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-link i {
+    transition: transform 0.2s ease;
+}
+
+.bedrooms-fpf-results .bedrooms-floor-plan-card:hover .bedrooms-floor-plan-link i {
+    transform: translateX(5px);
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .bedrooms-fpf-filter .bedrooms-fpf-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-actions {
+        grid-column: 1 / -1;
+    }
+
+    .bedrooms-fpf-results .bedrooms-floor-plan-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .bedrooms-fpf-filter .bedrooms-fpf-card {
+        padding: 20px;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-actions {
+        grid-column: auto;
+        height: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-view-designs-btn,
+    .bedrooms-fpf-filter .bedrooms-fpf-reset-btn {
+        width: 100%;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-layout-popover {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-features-popover {
+        min-width: 0;
+        width: 100%;
+        max-width: none;
+        padding: 16px;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-features-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .bedrooms-fpf-results .bedrooms-floor-plan-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .bedrooms-fpf-results .bedrooms-floor-plan-image {
+        height: 190px;
+    }
+
+    .bedrooms-fpf-results .bedrooms-floor-plan-card-content {
+        padding: 16px;
+    }
+
+    .bedrooms-fpf-results .bedrooms-floor-plan-title {
+        font-size: 16px;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .bedrooms-fpf-filter .bedrooms-fpf-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .bedrooms-fpf-filter .bedrooms-fpf-features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bedrooms-fpf-results .bedrooms-floor-plan-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bedrooms-fpf-results .bedrooms-floor-plan-image {
+        height: 220px;
+    }
+
+}
+
+/* =========================================================
+   VIEW ALL
+   ========================================================= */
+
+.bedrooms-fpf-view-all-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.bedrooms-fpf-view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 150px;
+    height: 48px;
+    padding: 0 20px;
+    border: 1px solid #455273;
+    border-radius: 8px;
+    background: #455273;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bedrooms-fpf-view-all-btn:hover {
+    background: #36415f;
+    border-color: #36415f;
+}
+
+.bedrooms-fpf-view-all-btn i {
+    transition: transform 0.2s ease;
+}
+
+.bedrooms-fpf-view-all-btn:hover i {
+    transform: translateY(4px);
+}
+
+.bedrooms-floor-plan-card[hidden] {
+    display: none !important;
+}
+
+.bedrooms-fpf-view-all-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 40px;
+}

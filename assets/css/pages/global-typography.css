@@ -1,0 +1,64 @@
+:root {
+    /* Brand Colors */
+    --navy: #243357;
+    --navy-raised: #2E3F66;
+    --navy-hover: #263859;
+    --navy-line: #4A5A7D;
+    --navy-border: #3D4E71;
+    --gold: #C9A44E;
+    --gold-light: #E0BC6B;
+    --gold-dark: #8B6A1F;
+    --gold-ink: #412402;
+    --card: #F4F6FB;
+    --muted: #B3BDD2;
+    --faint: #8794AF;
+    --faint-subtle: #6B7896;
+    --tick: #5DCAA5;
+    --error: #F7C1C1;
+    --white: #FFFFFF;
+
+    /* Layout & Structure */
+    --radius-card: 12px;
+    --radius-ctrl: 8px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--e-global-typography-primary-font-family), sans-serif;
+    font-weight: var(--e-global-typography-a12e548-font-weight);
+    color: #243357 !important;
+}
+
+p,
+span,
+a,
+label,
+input,
+select {
+    font-family: var(--wp--preset--font-family--dm-sans), sans-serif;
+}
+
+
+.mt-1 {
+    margin-top: 8px !important;
+}
+
+.mt-2 {
+    margin-top: 16px !important;
+}
+
+.mt-3 {
+    margin-top: 24px !important;
+}
+
+.mt-4 {
+    margin-top: 32px !important;
+}
+
+.mt-5 {
+    margin-top: 40px !important;
+}

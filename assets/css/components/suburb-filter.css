@@ -157,11 +157,6 @@ select {
     box-sizing: border-box;
 }
 
-.location-locator-select-trigger:hover,
-.location-locator-custom-select.is-open .location-locator-select-trigger {
-    border-color: #455273 !important;
-}
-
 .location-locator-select-trigger:focus {
     outline: none;
     box-shadow: none !important;
