@@ -30,7 +30,6 @@ h5,
 h6 {
     font-family: var(--e-global-typography-primary-font-family), sans-serif;
     font-weight: var(--e-global-typography-a12e548-font-weight);
-    color: #243357 !important;
 }
 
 p,
