@@ -1,5 +1,5 @@
-
 <?php
+
 /**
  * Enqueue child theme assets.
  *
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Load main.js as an ES module.
+ * Load main.js as a native ES module.
  */
 function hello_child_module_script_tag($tag, $handle, $src)
 {
@@ -19,20 +19,22 @@ function hello_child_module_script_tag($tag, $handle, $src)
         return $tag;
     }
 
-    // Native ES modules load their own imported files. Do not let WP Rocket
-    // combine, delay, or rewrite this entry point.
     return '<script type="module" data-nowprocket src="' . esc_url($src) . '" id="hello-child-main-js-js"></script>';
 }
 add_filter('script_loader_tag', 'hello_child_module_script_tag', 10, 3);
 
 /**
- * Whether the current request is Elementor's editor or preview canvas.
+ * Check whether Elementor editor mode is active.
  */
 function hello_child_is_elementor_edit_mode()
 {
-    return did_action('elementor/loaded')
-        && class_exists('\\Elementor\\Plugin')
-        && \Elementor\Plugin::$instance->editor->is_edit_mode();
+    if (!did_action('elementor/loaded') || !class_exists('\Elementor\Plugin')) {
+        return false;
+    }
+
+    $elementor = \Elementor\Plugin::$instance;
+
+    return isset($elementor->editor) && $elementor->editor->is_edit_mode();
 }
 
 /**
@@ -91,7 +93,7 @@ function hello_child_enqueue_assets()
     // Main JavaScript ES module.
     $main_js = $theme_path . '/assets/js/main.js';
 
-    if (! $is_elementor_editor && file_exists($main_js)) {
+    if (!$is_elementor_editor && file_exists($main_js)) {
         wp_enqueue_script(
             'hello-child-main-js',
             $theme_uri . '/assets/js/main.js',
@@ -121,10 +123,10 @@ function hello_child_enqueue_assets()
     }
 
     // Google Maps Places.
-    if (! $is_elementor_editor) {
+    if (!$is_elementor_editor) {
         wp_enqueue_script(
             'google-maps-places',
-            'https://maps.googleapis.com/maps/api/js?key=AIzaSyDOgoIk4iUqfBL2SVmVOWe75MooDpMz-AM&libraries=places',
+            'https://maps.googleapis.com/maps/api/js?key=YOUR_RESTRICTED_API_KEY&libraries=places',
             [],
             null,
             true
