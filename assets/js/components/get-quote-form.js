@@ -97,12 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
             nextBtn.disabled = isSubmitting || !fieldsValid || !radiosValid;
         };
 
-        document.addEventListener('focusin', event => {
-            if (event.target.closest('.get-quote-form')) {
-                console.log('Focused field:', event.target.name || event.target.className);
-            }
-        });
-
         form.addEventListener('input', event => {
             if (event.target.matches('input, select, textarea')) {
                 updateNextButton();
@@ -126,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateStep();
             }
         });
+
 
         backBtn.addEventListener('click', () => {
             if (isSubmitting) return;
@@ -215,4 +210,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateStep();
     });
+
+    document.addEventListener('gqf:cancel', (event) => {
+        const form = event.detail?.form;
+        if (!form) return;
+
+        const offCanvas = form.closest('.e-off-canvas');
+        if (!offCanvas) return;
+
+        const overlay = offCanvas.querySelector('.e-off-canvas__overlay');
+        overlay?.click();
+    });
+
 });
