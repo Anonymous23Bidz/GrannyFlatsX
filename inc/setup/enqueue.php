@@ -122,11 +122,20 @@ function hello_child_enqueue_assets()
         );
     }
 
-    // Google Maps Places.
-    if (!$is_elementor_editor) {
+    $google_maps_api_key = defined('GOOGLE_MAPS_API_KEY')
+        ? GOOGLE_MAPS_API_KEY
+        : getenv('GOOGLE_MAPS_API_KEY');
+
+    if (!$is_elementor_editor && !empty($google_maps_api_key)) {
         wp_enqueue_script(
             'google-maps-places',
-            'https://maps.googleapis.com/maps/api/js?key=YOUR_RESTRICTED_API_KEY&libraries=places',
+            add_query_arg(
+                [
+                    'key'       => $google_maps_api_key,
+                    'libraries' => 'places',
+                ],
+                'https://maps.googleapis.com/maps/api/js'
+            ),
             [],
             null,
             true
