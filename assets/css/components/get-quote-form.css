@@ -72,6 +72,10 @@ textarea:hover {
     width: 100%;
 }
 
+h5.gqf-sub-heading {
+    color: var(--e-global-color-primary) !important;
+}
+
 .get-quote-form .gqf-progress {
     flex: 1;
     min-width: 0;
