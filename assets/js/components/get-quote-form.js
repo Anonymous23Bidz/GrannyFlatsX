@@ -222,4 +222,14 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay?.click();
     });
 
+    document.addEventListener('click', (event) => {
+        const closeBtn = event.target.closest('#close-btn');
+        if (!closeBtn) return;
+
+        const offCanvas = closeBtn.closest('.e-off-canvas');
+        if (!offCanvas) return;
+
+        const overlay = offCanvas.querySelector('.e-off-canvas__overlay');
+        overlay?.click();
+    });
 });
