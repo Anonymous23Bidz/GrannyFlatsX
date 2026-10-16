@@ -59,3 +59,4 @@ require_once get_stylesheet_directory() . '/inc/shortcodes/suburb-filter.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/floorplan-filter.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/bedrooms-ajax-filter.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/get-quote-form.php';
+require_once get_stylesheet_directory() . '/inc/shortcodes/custom-nav.php';

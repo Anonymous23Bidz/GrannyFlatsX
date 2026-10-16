@@ -232,4 +232,83 @@ document.addEventListener('DOMContentLoaded', () => {
         const overlay = offCanvas.querySelector('.e-off-canvas__overlay');
         overlay?.click();
     });
+
+    function initQuoteAddressAutocomplete() {
+        document.querySelectorAll(
+            '.get-quote-form #property-address'
+        ).forEach(function (addressInput) {
+            if (addressInput.dataset.autocompleteReady === 'true') {
+                return;
+            }
+
+            if (!window.google?.maps?.places) {
+                return;
+            }
+
+            const autocomplete = new google.maps.places.Autocomplete(
+                addressInput,
+                {
+                    componentRestrictions: { country: 'au' },
+                    fields: ['formatted_address', 'geometry', 'place_id'],
+                    types: ['address']
+                }
+            );
+
+            addressInput.dataset.autocompleteReady = 'true';
+
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+
+                if (!place?.geometry?.location) return;
+
+                if (place.formatted_address) {
+                    addressInput.value = place.formatted_address;
+                }
+
+                addressInput.dispatchEvent(
+                    new Event('input', { bubbles: true })
+                );
+                addressInput.dispatchEvent(
+                    new Event('change', { bubbles: true })
+                );
+
+                setTimeout(() => {
+                    document.querySelectorAll('.pac-container').forEach(container => {
+                        container.classList.add('gqf-quote-hidden');
+                    });
+
+                    addressInput.blur();
+                }, 100);
+            });
+
+            ['focus', 'input'].forEach(eventName => {
+                addressInput.addEventListener(eventName, () => {
+                    document.querySelectorAll('.pac-container').forEach(container => {
+                        container.classList.remove('gqf-quote-hidden');
+                    });
+                });
+            });
+
+        });
+    }
+
+    initQuoteAddressAutocomplete();
+
+    let quotePlacesAttempts = 0;
+
+    const quotePlacesInterval = setInterval(function () {
+        initQuoteAddressAutocomplete();
+
+        quotePlacesAttempts++;
+
+        if (
+            quotePlacesAttempts >= 100 ||
+            document.querySelector(
+                '.get-quote-form #property-address[data-autocomplete-ready="true"]'
+            )
+        ) {
+            clearInterval(quotePlacesInterval);
+        }
+    }, 100);
+
 });

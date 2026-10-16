@@ -117,6 +117,12 @@ h5.gqf-sub-heading {
     margin-top: 24px;
 }
 
+
+.pac-container.gqf-quote-hidden {
+    display: none !important;
+}
+
+
 .get-quote-form .gqf-input {
     color: var(--e-global-color-primary);
     width: 100%;
