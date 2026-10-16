@@ -68,7 +68,7 @@
 .gxf-top-trigger::before {
     content: "";
     position: absolute;
-    bottom: 3px;
+    bottom: 2px;
     left: 0;
     z-index: 1;
     width: 0;
