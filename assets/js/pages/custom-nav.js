@@ -131,3 +131,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setMenuState(false);
 });
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', event => {
+        const customButton = event.target.closest('.form-btn.outline-primary');
+
+        if (!customButton) return;
+
+        event.preventDefault();
+
+        const nativeButton = [...document.querySelectorAll('a.elementor-button')]
+            .find(button => {
+                const href = button.getAttribute('href') || '';
+                return href.includes('elementor-action') &&
+                    href.includes('off_canvas');
+            });
+
+        if (!nativeButton) {
+            console.error('No Elementor off-canvas action URL found.');
+            return;
+        }
+
+        nativeButton.click();
+    });
+});

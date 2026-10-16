@@ -320,6 +320,11 @@
         margin-top: 16px;
     }
 
+    .gxf-top-link.form-btn.outline-primary:hover {
+        color: var(--e-global-color-primary);
+    }
+
+
     body.gxf-submenu-open {
         overflow: hidden !important;
     }
