@@ -295,7 +295,7 @@
     .gxf-top-link.form-btn.primary-btn {
         background-color: var(--e-global-color-text);
         font-family: "DM Sans", Sans-serif;
-        font-size: 0.875rem;
+        font-size: 15rem;
         font-weight: 600;
         color: #fff !important;
         text-align: center;
@@ -309,7 +309,7 @@
 
     .gxf-top-link.form-btn.outline-primary {
         font-family: "DM Sans", Sans-serif;
-        font-size: 0.875rem;
+        font-size: 15rem;
         font-weight: 600;
         text-align: center;
         border-style: solid;
