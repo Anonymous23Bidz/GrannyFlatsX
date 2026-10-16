@@ -399,7 +399,7 @@
 
     .gxf-mega-nav.mobile-open .gxf-top-menu {
         max-height: calc(100dvh - 120px);
-        padding: 16px 24px 75px;
+        padding: 16px 24px 40px;
         opacity: 1;
         visibility: visible;
         border-radius: 24px 24px 0 0;
@@ -477,7 +477,7 @@
     .gxf-mobile-parent-link,
     .gxf-mobile-child-link {
         display: block;
-        padding: 8px 0;
+        padding: 7px 0;
         color: #445477 !important;
         font-size: 16px;
         font-weight: 600;
