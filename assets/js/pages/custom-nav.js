@@ -7,43 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuTrigger.dataset.menuInitialized = 'true';
 
-    let scrollPosition = 0;
-
-    const lockBodyScroll = () => {
-        if (document.body.classList.contains('gxf-submenu-open')) return;
-
-        scrollPosition = window.scrollY;
-        document.body.classList.add('gxf-submenu-open');
-        document.body.style.position = 'fixed';
-        document.body.style.top = `- ${scrollPosition} px`;
-        document.body.style.width = '100%';
-    };
-
-    const unlockBodyScroll = () => {
-        document.body.classList.remove('gxf-submenu-open');
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-
-        window.scrollTo(0, scrollPosition);
-    };
-
-    const updateScrollLock = () => {
-        const isMobile = window.matchMedia('(max-width: 767px)').matches;
-        const menuOpen = nav.classList.contains('mobile-open');
-
-        if (isMobile && menuOpen) {
-            lockBodyScroll();
-        } else {
-            unlockBodyScroll();
-        }
-    };
-
-    const setMenuState = (isOpen) => {
+    const setMenuState = isOpen => {
         nav.classList.toggle('mobile-open', isOpen);
 
         menuTrigger.style.display = isOpen ? 'none' : '';
-
         menuTrigger.classList.toggle('menu-icon-hidden', isOpen);
 
         if (closeTrigger) {
@@ -61,25 +28,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.classList.remove('is-open');
             });
         }
-
-        updateScrollLock();
     };
 
-    const toggleMenu = (event) => {
+    const toggleMenu = event => {
         event.preventDefault();
-
-        const isOpen = !nav.classList.contains('mobile-open');
-        setMenuState(isOpen);
+        setMenuState(!nav.classList.contains('mobile-open'));
     };
 
     const closeMenu = () => {
-        setMenuState(false);
+        if (nav.classList.contains('mobile-open')) {
+            setMenuState(false);
+        }
     };
 
     menuTrigger.addEventListener('click', toggleMenu);
 
     menuTrigger.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (
+            (event.key === 'Enter' || event.key === ' ') &&
+            menuTrigger.tagName !== 'BUTTON'
+        ) {
             toggleMenu(event);
         }
     });
@@ -88,7 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         closeTrigger.addEventListener('click', toggleMenu);
 
         closeTrigger.addEventListener('keydown', event => {
-            if (event.key === 'Enter' || event.key === ' ') {
+            if (
+                (event.key === 'Enter' || event.key === ' ') &&
+                closeTrigger.tagName !== 'BUTTON'
+            ) {
                 toggleMenu(event);
             }
         });
@@ -111,10 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     nav.querySelectorAll('.gxf-top-trigger').forEach(trigger => {
-        trigger.addEventListener('click', () => {
+        trigger.addEventListener('click', event => {
             const item = trigger.closest('.gxf-top-item');
 
             if (!item) return;
+
+            if (trigger.getAttribute('href') === '#') {
+                event.preventDefault();
+            }
 
             nav.querySelectorAll('.gxf-top-item.is-open').forEach(openItem => {
                 if (openItem !== item) {
@@ -123,39 +98,34 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             item.classList.toggle('is-open');
-            updateScrollLock();
         });
     });
 
-    window.addEventListener('resize', updateScrollLock);
-
     setMenuState(false);
 });
-
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const offCanvasId = 'dd6551a';
 
     document.addEventListener('click', event => {
         const customButton = event.target.closest('.form-btn.outline-primary');
+
         if (!customButton) return;
 
         event.preventDefault();
 
-        const nativeButton = [...document.querySelectorAll('a.elementor-button')]
-            .find(button => {
-                const href = button.getAttribute('href') || '';
+        const nativeButton = [...document.querySelectorAll('a.elementor-button')].find(button => {
+            const href = button.getAttribute('href') || '';
 
-                try {
-                    const decoded = decodeURIComponent(href);
+            try {
+                const decoded = decodeURIComponent(href);
 
-                    return decoded.includes('off_canvas:open') &&
-                        decoded.includes(offCanvasId);
-                } catch {
-                    return false;
-                }
-            });
+                return decoded.includes('off_canvas:open') &&
+                    decoded.includes(offCanvasId);
+            } catch {
+                return false;
+            }
+        });
 
         if (!nativeButton) {
             console.error('Matching Elementor trigger not found.');
