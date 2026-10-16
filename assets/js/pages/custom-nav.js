@@ -103,35 +103,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setMenuState(false);
 });
-
-document.addEventListener('DOMContentLoaded', () => {
-    const offCanvasId = 'dd6551a';
-
-    document.addEventListener('click', event => {
-        const customButton = event.target.closest('.form-btn.outline-primary');
-
-        if (!customButton) return;
-
-        event.preventDefault();
-
-        const nativeButton = [...document.querySelectorAll('a.elementor-button')].find(button => {
-            const href = button.getAttribute('href') || '';
-
-            try {
-                const decoded = decodeURIComponent(href);
-
-                return decoded.includes('off_canvas:open') &&
-                    decoded.includes(offCanvasId);
-            } catch {
-                return false;
-            }
-        });
-
-        if (!nativeButton) {
-            console.error('Matching Elementor trigger not found.');
-            return;
-        }
-
-        nativeButton.click();
-    });
-});
