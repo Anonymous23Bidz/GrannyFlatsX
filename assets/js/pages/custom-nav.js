@@ -103,3 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setMenuState(false);
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.innerWidth <= 767) return;
+
+    document.querySelectorAll(
+        '.gxf-top-menu .gxf-top-link.form-btn.primary-btn, .gxf-top-menu .gxf-top-link.form-btn.outline-primary'
+    ).forEach(function (link) {
+        const listItem = link.closest('li.gxf-top-item');
+
+        if (listItem) {
+            listItem.style.display = 'none';
+        }
+    });
+});
