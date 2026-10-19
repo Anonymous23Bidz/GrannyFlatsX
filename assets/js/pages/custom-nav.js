@@ -1,122 +1,113 @@
 
-document.addEventListener('DOMContentLoaded', () => {
-    const menuTrigger = document.querySelector('#open-menu');
-    const closeTrigger = document.querySelector('#close-menu');
-    const nav = document.querySelector('.gxf-mega-nav');
+document.addEventListener('DOMContentLoaded', initGxfMenus);
 
-    if (!menuTrigger || !nav || nav.dataset.menuInitialized) return;
+function initGxfMenus() {
+    const desktopHover = window.matchMedia('(hover: hover) and (min-width: 1025px)');
 
-    nav.dataset.menuInitialized = 'true';
+    document.querySelectorAll('.gxf-mega-nav').forEach(nav => {
+        if (nav.dataset.menuInitialized === 'true') return;
+        nav.dataset.menuInitialized = 'true';
 
-    const setMenuState = (isOpen) => {
-        nav.classList.toggle('mobile-open', isOpen);
+        const header = nav.closest('.e-con') || nav.parentElement;
+        const menuTrigger = header.querySelector('#open-menu');
+        const closeTrigger = header.querySelector('#close-menu');
+        const items = nav.querySelectorAll('.gxf-top-item.has-mega');
 
-        menuTrigger.classList.toggle('menu-icon-hidden', isOpen);
-        menuTrigger.setAttribute('aria-expanded', String(isOpen));
-        menuTrigger.setAttribute(
-            'aria-label',
-            isOpen ? 'Close navigation menu' : 'Open navigation menu'
-        );
-
-        if (closeTrigger) {
-            closeTrigger.classList.toggle('menu-icon-visible', isOpen);
-        }
-
-        if (!isOpen) {
-            nav.querySelectorAll('.gxf-top-item.is-open').forEach(item => {
-                item.classList.remove('is-open');
-            });
-        }
-    };
-
-    const openMenu = (event) => {
-        event.preventDefault();
-        setMenuState(true);
-    };
-
-    const closeMenu = (event) => {
-        if (event) event.preventDefault();
-        setMenuState(false);
-    };
-
-    menuTrigger.addEventListener('click', openMenu);
-
-    if (closeTrigger) {
-        closeTrigger.addEventListener('click', closeMenu);
-    }
-
-    document.addEventListener('click', (event) => {
-        if (
-            !nav.contains(event.target) &&
-            !menuTrigger.contains(event.target) &&
-            !(closeTrigger && closeTrigger.contains(event.target))
-        ) {
-            closeMenu();
-        }
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            closeMenu();
-        }
-    });
-
-
-    nav.querySelectorAll('.gxf-top-trigger').forEach(trigger => {
-        const item = trigger.closest('.gxf-top-item');
-
-        if (!item) return;
-
-        const openSubmenu = () => {
-            nav.querySelectorAll('.gxf-top-item.is-open').forEach(openItem => {
-                if (openItem !== item) {
-                    openItem.classList.remove('is-open');
+        function closeSubmenus(except = null) {
+            items.forEach(item => {
+                if (item !== except) {
+                    item.classList.remove('is-open');
+                    item.querySelector('.gxf-top-trigger')
+                        ?.setAttribute('aria-expanded', 'false');
                 }
             });
+        }
 
-            item.classList.add('is-open');
-        };
+        function setMenuState(isOpen) {
+            nav.classList.toggle('mobile-open', isOpen);
 
-        const closeSubmenu = () => {
-            item.classList.remove('is-open');
-        };
-
-        // Desktop: open on hover.
-        trigger.addEventListener('mouseenter', () => {
-            if (window.matchMedia('(min-width: 768px)').matches) {
-                openSubmenu();
+            if (menuTrigger) {
+                menuTrigger.classList.toggle('menu-icon-hidden', isOpen);
+                menuTrigger.setAttribute('aria-expanded', String(isOpen));
+                menuTrigger.setAttribute(
+                    'aria-label',
+                    isOpen ? 'Close navigation menu' : 'Open navigation menu'
+                );
             }
-        });
 
-        // Keep the submenu open while hovering over its parent item.
-        item.addEventListener('mouseleave', () => {
-            if (window.matchMedia('(min-width: 768px)').matches) {
-                closeSubmenu();
-            }
-        });
+            closeTrigger?.classList.toggle('menu-icon-visible', isOpen);
 
-        // Mobile: open and close on click.
-        trigger.addEventListener('click', event => {
-            if (trigger.getAttribute('href') === '#') {
+            if (!isOpen) closeSubmenus();
+        }
+
+        items.forEach(item => {
+            const trigger = item.querySelector('.gxf-top-trigger');
+            if (!trigger) return;
+
+            item.addEventListener('mouseenter', () => {
+                if (!desktopHover.matches) return;
+                closeSubmenus(item);
+                item.classList.add('is-open');
+                trigger.setAttribute('aria-expanded', 'true');
+            });
+
+            item.addEventListener('mouseleave', () => {
+                if (!desktopHover.matches) return;
+                item.classList.remove('is-open');
+                trigger.setAttribute('aria-expanded', 'false');
+            });
+
+            trigger.addEventListener('click', event => {
+                if (desktopHover.matches) return;
+
                 event.preventDefault();
-            }
 
-            if (window.matchMedia('(max-width: 767px)').matches) {
                 const isOpen = item.classList.contains('is-open');
-
-                nav.querySelectorAll('.gxf-top-item.is-open').forEach(openItem => {
-                    openItem.classList.remove('is-open');
-                });
+                closeSubmenus();
 
                 if (!isOpen) {
                     item.classList.add('is-open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                } else {
+                    trigger.setAttribute('aria-expanded', 'false');
                 }
+            });
+
+            trigger.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    trigger.click();
+                }
+            });
+        });
+
+        menuTrigger?.addEventListener('click', event => {
+            event.preventDefault();
+            setMenuState(true);
+        });
+
+        closeTrigger?.addEventListener('click', event => {
+            event.preventDefault();
+            setMenuState(false);
+        });
+
+        document.addEventListener('click', event => {
+            if (
+                !nav.contains(event.target) &&
+                !menuTrigger?.contains(event.target) &&
+                !closeTrigger?.contains(event.target)
+            ) {
+                setMenuState(false);
             }
         });
-    });
 
-    setMenuState(false);
-});
+        nav.addEventListener('keydown', event => {
+            if (event.key === 'Escape') setMenuState(false);
+        });
+
+        setMenuState(false);
+    });
+}
 
 function toggleAppointmentButton() {
     document.querySelectorAll('.gxf-top-menu').forEach(menu => {
@@ -124,10 +115,9 @@ function toggleAppointmentButton() {
             '.gxf-top-link.form-btn.primary-btn, .gxf-top-link.form-btn.outline-primary'
         ).forEach(link => {
             const listItem = link.closest('li.gxf-top-item');
-
-            if (!listItem) return;
-
-            listItem.style.display = window.innerWidth > 767 ? 'none' : '';
+            if (listItem) {
+                listItem.style.display = window.innerWidth > 767 ? 'none' : '';
+            }
         });
     });
 }
