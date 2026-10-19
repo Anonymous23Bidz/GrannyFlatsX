@@ -8,13 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextBtn = form.querySelector('.gqf-next');
         const submitBtn = form.querySelector('.gqf-submit');
 
-        if (!steps.length || !currentLabel || !progressBar || !backBtn || !nextBtn || !submitBtn) {
-            return;
-        }
-
         let currentStep = 0;
         let isSubmitting = false;
 
+        // Create a message area for success and errors.
         let message = form.querySelector('.gqf-message');
 
         if (!message) {
@@ -31,11 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
             ].filter(field => !field.disabled && field.willValidate);
 
             if (!fields.every(field => field.checkValidity())) {
-                const invalidField = fields.find(field => !field.checkValidity());
+                const invalidField = fields.find(
+                    field => !field.checkValidity()
+                );
+
                 invalidField?.reportValidity();
                 return false;
             }
 
+            // Explicitly validate required radio groups.
             const radioNames = new Set(
                 fields
                     .filter(field => field.type === 'radio' && field.required)
@@ -71,41 +72,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
             nextBtn.hidden = currentStep === steps.length - 1;
             submitBtn.hidden = currentStep !== steps.length - 1;
-
             backBtn.disabled = isSubmitting;
             nextBtn.disabled = isSubmitting;
             submitBtn.disabled = isSubmitting;
-
-            updateNextButton();
         };
+
 
         const updateNextButton = () => {
             const step = steps[currentStep];
+            const fields = [...step.querySelectorAll('input, select, textarea')]
+                .filter(field => !field.disabled && field.willValidate);
 
-            const fields = [
-                ...step.querySelectorAll('input, select, textarea')
-            ].filter(field => !field.disabled && field.willValidate);
-
-            const radios = fields.filter(
-                field => field.type === 'radio' && field.required
-            );
-
-            const radioNames = [...new Set(
-                radios.map(field => field.name)
-            )];
+            const radios = fields.filter(field => field.type === 'radio' && field.required);
+            const radioNames = [...new Set(radios.map(field => field.name))];
 
             const radiosValid = radioNames.every(name =>
-                radios.some(field =>
-                    field.name === name && field.checked
-                )
+                radios.some(field => field.name === name && field.checked)
             );
 
             const fieldsValid = fields
                 .filter(field => field.type !== 'radio')
                 .every(field => field.checkValidity());
 
-            nextBtn.disabled =
-                isSubmitting || !fieldsValid || !radiosValid;
+            nextBtn.disabled = isSubmitting || !fieldsValid || !radiosValid;
         };
 
         form.addEventListener('input', event => {
@@ -120,9 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        nextBtn.addEventListener('click', event => {
-            event.preventDefault();
-
+        nextBtn.addEventListener('click', () => {
             if (!isStepValid(steps[currentStep])) {
                 return;
             }
@@ -134,9 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        backBtn.addEventListener('click', event => {
-            event.preventDefault();
 
+        backBtn.addEventListener('click', () => {
             if (isSubmitting) return;
 
             if (currentStep === 0) {
@@ -144,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     bubbles: true,
                     detail: { form }
                 }));
-
                 return;
             }
 
@@ -174,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
             message.textContent = 'Sending your quote request.';
             message.style.color = '';
             submitBtn.textContent = 'Sending...';
-
             updateStep();
 
             try {
@@ -193,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     );
                 }
 
+
                 message.textContent =
                     result.data?.message ||
                     'Your quote request was sent successfully!';
@@ -206,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 setTimeout(() => {
                     window.location.href = '/thank-you-page-form/';
+                    // window.location.href = '/grannyflatsx/thank-you-page-form';
                 }, 2000);
 
                 return;
@@ -213,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 message.textContent = error.message ||
                     'Something went wrong. Please try again.';
-
                 message.style.color = '#b42318';
 
             } finally {
@@ -226,68 +211,32 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStep();
     });
 
-    // Close the Elementor off-canvas from the first Back button.
-    document.addEventListener('gqf:cancel', event => {
+    document.addEventListener('gqf:cancel', (event) => {
         const form = event.detail?.form;
         if (!form) return;
 
         const offCanvas = form.closest('.e-off-canvas');
         if (!offCanvas) return;
 
-        closeQuoteOffCanvas(offCanvas);
+        const overlay = offCanvas.querySelector('.e-off-canvas__overlay');
+        overlay?.click();
     });
 
-    // Close the Elementor off-canvas from the close button.
-    document.addEventListener('click', event => {
+    document.addEventListener('click', (event) => {
         const closeBtn = event.target.closest('#close-btn');
         if (!closeBtn) return;
 
         const offCanvas = closeBtn.closest('.e-off-canvas');
         if (!offCanvas) return;
 
-        event.preventDefault();
-
-        closeQuoteOffCanvas(offCanvas);
+        const overlay = offCanvas.querySelector('.e-off-canvas__overlay');
+        overlay?.click();
     });
 
-    function closeQuoteOffCanvas(offCanvas) {
-        const overlay = offCanvas.querySelector('.e-off-canvas__overlay');
-
-        if (overlay) {
-            overlay.click();
-        }
-
-        // Restore scrolling only after Elementor processes the close.
-        setTimeout(() => {
-            const anotherCanvasOpen = [
-                ...document.querySelectorAll('.e-off-canvas')
-            ].some(canvas => {
-                return canvas !== offCanvas &&
-                    canvas.getClientRects().length > 0 &&
-                    canvas.getAttribute('aria-hidden') !== 'true';
-            });
-
-            if (anotherCanvasOpen) return;
-
-            const body = document.body;
-            const html = document.documentElement;
-
-            body.style.removeProperty('overflow');
-            body.style.removeProperty('overflow-y');
-            body.style.removeProperty('position');
-            body.style.removeProperty('top');
-            body.style.removeProperty('width');
-
-            html.style.removeProperty('overflow');
-            html.style.removeProperty('overflow-y');
-        }, 350);
-    }
-
-    // Google Places address autocomplete.
     function initQuoteAddressAutocomplete() {
         document.querySelectorAll(
             '.get-quote-form #property-address'
-        ).forEach(addressInput => {
+        ).forEach(function (addressInput) {
             if (addressInput.dataset.autocompleteReady === 'true') {
                 return;
             }
@@ -307,7 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             addressInput.dataset.autocompleteReady = 'true';
 
-            autocomplete.addListener('place_changed', () => {
+
+            autocomplete.addListener('place_changed', function () {
                 const place = autocomplete.getPlace();
 
                 if (!place?.geometry?.location) return;
@@ -319,17 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 addressInput.dispatchEvent(
                     new Event('input', { bubbles: true })
                 );
-
                 addressInput.dispatchEvent(
                     new Event('change', { bubbles: true })
                 );
 
                 setTimeout(() => {
-                    document.querySelectorAll('.pac-container').forEach(
-                        container => {
-                            container.classList.add('gqf-quote-hidden');
-                        }
-                    );
+                    document.querySelectorAll('.pac-container').forEach(container => {
+                        container.classList.add('gqf-quote-hidden');
+                    });
 
                     addressInput.blur();
                 }, 100);
@@ -337,13 +284,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ['focus', 'input'].forEach(eventName => {
                 addressInput.addEventListener(eventName, () => {
-                    document.querySelectorAll('.pac-container').forEach(
-                        container => {
-                            container.classList.remove('gqf-quote-hidden');
-                        }
-                    );
+                    document.querySelectorAll('.pac-container').forEach(container => {
+                        container.classList.remove('gqf-quote-hidden');
+                    });
                 });
             });
+
         });
     }
 
@@ -351,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let quotePlacesAttempts = 0;
 
-    const quotePlacesInterval = setInterval(() => {
+    const quotePlacesInterval = setInterval(function () {
         initQuoteAddressAutocomplete();
 
         quotePlacesAttempts++;
@@ -365,4 +311,5 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(quotePlacesInterval);
         }
     }, 100);
+
 });

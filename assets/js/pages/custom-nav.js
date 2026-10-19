@@ -1,88 +1,65 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const menuTrigger = document.querySelector('#sub-menu');
+function initGxfMenu() {
+    const menuTrigger = document.querySelector('#open-menu');
     const closeTrigger = document.querySelector('#close-menu');
     const nav = document.querySelector('.gxf-mega-nav');
 
-    if (!menuTrigger || !nav || menuTrigger.dataset.menuInitialized) return;
+    if (!menuTrigger || !nav || nav.dataset.menuInitialized === 'true') {
+        return;
+    }
 
-    menuTrigger.dataset.menuInitialized = 'true';
+    nav.dataset.menuInitialized = 'true';
 
-    const setMenuState = isOpen => {
+    const setMenuState = (isOpen) => {
         nav.classList.toggle('mobile-open', isOpen);
+        document.body.classList.toggle('gxf-submenu-open', isOpen);
 
         menuTrigger.style.display = isOpen ? 'none' : '';
-        menuTrigger.classList.toggle('menu-icon-hidden', isOpen);
+        menuTrigger.setAttribute('aria-expanded', String(isOpen));
+        menuTrigger.setAttribute('aria-label', 'Open navigation menu');
 
         if (closeTrigger) {
-            closeTrigger.classList.toggle('menu-icon-visible', isOpen);
+            closeTrigger.style.display = isOpen ? '' : 'none';
+            closeTrigger.setAttribute('aria-label', 'Close navigation menu');
         }
 
-        menuTrigger.setAttribute('aria-expanded', String(isOpen));
-        menuTrigger.setAttribute(
-            'aria-label',
-            isOpen ? 'Close navigation menu' : 'Open navigation menu'
-        );
-
         if (!isOpen) {
-            nav.querySelectorAll('.gxf-top-item.is-open').forEach(item => {
+            nav.querySelectorAll('.gxf-top-item.is-open').forEach((item) => {
                 item.classList.remove('is-open');
             });
         }
     };
 
-    const toggleMenu = event => {
+    menuTrigger.addEventListener('click', (event) => {
         event.preventDefault();
-        setMenuState(!nav.classList.contains('mobile-open'));
-    };
-
-    const closeMenu = () => {
-        if (nav.classList.contains('mobile-open')) {
-            setMenuState(false);
-        }
-    };
-
-    menuTrigger.addEventListener('click', toggleMenu);
-
-    menuTrigger.addEventListener('keydown', event => {
-        if (
-            (event.key === 'Enter' || event.key === ' ') &&
-            menuTrigger.tagName !== 'BUTTON'
-        ) {
-            toggleMenu(event);
-        }
+        setMenuState(true);
     });
 
     if (closeTrigger) {
-        closeTrigger.addEventListener('click', toggleMenu);
-
-        closeTrigger.addEventListener('keydown', event => {
-            if (
-                (event.key === 'Enter' || event.key === ' ') &&
-                closeTrigger.tagName !== 'BUTTON'
-            ) {
-                toggleMenu(event);
-            }
+        closeTrigger.addEventListener('click', (event) => {
+            event.preventDefault();
+            setMenuState(false);
         });
     }
 
-    document.addEventListener('click', event => {
+    document.addEventListener('click', (event) => {
         if (
+            nav.classList.contains('mobile-open') &&
             !nav.contains(event.target) &&
             !menuTrigger.contains(event.target) &&
             !(closeTrigger && closeTrigger.contains(event.target))
         ) {
-            closeMenu();
+            setMenuState(false);
         }
     });
 
-    document.addEventListener('keydown', event => {
+    document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            closeMenu();
+            setMenuState(false);
         }
     });
 
-    nav.querySelectorAll('.gxf-top-trigger').forEach(trigger => {
-        trigger.addEventListener('click', event => {
+    nav.querySelectorAll('.gxf-top-trigger').forEach((trigger) => {
+        trigger.addEventListener('click', (event) => {
             const item = trigger.closest('.gxf-top-item');
 
             if (!item) return;
@@ -91,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
             }
 
-            nav.querySelectorAll('.gxf-top-item.is-open').forEach(openItem => {
+            nav.querySelectorAll('.gxf-top-item.is-open').forEach((openItem) => {
                 if (openItem !== item) {
                     openItem.classList.remove('is-open');
                 }
@@ -102,18 +79,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     setMenuState(false);
-});
+}
 
-document.addEventListener('DOMContentLoaded', function () {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGxfMenu);
+} else {
+    initGxfMenu();
+}
+
+function hideDesktopQuoteButtons() {
     if (window.innerWidth <= 767) return;
 
     document.querySelectorAll(
         '.gxf-top-menu .gxf-top-link.form-btn.primary-btn, .gxf-top-menu .gxf-top-link.form-btn.outline-primary'
-    ).forEach(function (link) {
+    ).forEach((link) => {
         const listItem = link.closest('li.gxf-top-item');
 
         if (listItem) {
             listItem.style.display = 'none';
         }
     });
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hideDesktopQuoteButtons);
+} else {
+    hideDesktopQuoteButtons();
+}

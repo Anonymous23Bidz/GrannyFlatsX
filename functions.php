@@ -19,6 +19,7 @@ require_once get_stylesheet_directory() . '/inc/setup/theme-setup.php';
  * Enqueue styles and scripts
  */
 require_once get_stylesheet_directory() . '/inc/setup/enqueue.php';
+require_once get_stylesheet_directory() . '/inc/setup/theme-setup.php';
 
 /**
  * Hooks
