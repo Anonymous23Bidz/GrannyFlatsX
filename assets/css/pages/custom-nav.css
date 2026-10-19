@@ -298,6 +298,7 @@
 
     #close-menu.menu-icon-visible {
         display: flex !important;
+        justify-content: center;
     }
 
     #open-menu {
