@@ -61,23 +61,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
     nav.querySelectorAll('.gxf-top-trigger').forEach(trigger => {
-        trigger.addEventListener('click', (event) => {
-            const item = trigger.closest('.gxf-top-item');
+        const item = trigger.closest('.gxf-top-item');
 
-            if (!item) return;
+        if (!item) return;
 
-            if (trigger.getAttribute('href') === '#') {
-                event.preventDefault();
-            }
-
+        const openSubmenu = () => {
             nav.querySelectorAll('.gxf-top-item.is-open').forEach(openItem => {
                 if (openItem !== item) {
                     openItem.classList.remove('is-open');
                 }
             });
 
-            item.classList.toggle('is-open');
+            item.classList.add('is-open');
+        };
+
+        const closeSubmenu = () => {
+            item.classList.remove('is-open');
+        };
+
+        // Desktop: open on hover.
+        trigger.addEventListener('mouseenter', () => {
+            if (window.matchMedia('(min-width: 768px)').matches) {
+                openSubmenu();
+            }
+        });
+
+        // Keep the submenu open while hovering over its parent item.
+        item.addEventListener('mouseleave', () => {
+            if (window.matchMedia('(min-width: 768px)').matches) {
+                closeSubmenu();
+            }
+        });
+
+        // Mobile: open and close on click.
+        trigger.addEventListener('click', event => {
+            if (trigger.getAttribute('href') === '#') {
+                event.preventDefault();
+            }
+
+            if (window.matchMedia('(max-width: 767px)').matches) {
+                const isOpen = item.classList.contains('is-open');
+
+                nav.querySelectorAll('.gxf-top-item.is-open').forEach(openItem => {
+                    openItem.classList.remove('is-open');
+                });
+
+                if (!isOpen) {
+                    item.classList.add('is-open');
+                }
+            }
         });
     });
 

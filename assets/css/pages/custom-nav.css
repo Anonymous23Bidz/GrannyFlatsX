@@ -65,7 +65,7 @@
     position: relative;
 }
 
-.gxf-top-trigger::before {
+/* .gxf-top-trigger::before {
     content: "";
     position: absolute;
     bottom: 2px;
@@ -75,7 +75,7 @@
     height: 2px;
     background: #cca43a;
     transition: width .2s ease-out;
-}
+} */
 
 .gxf-top-trigger:hover::before,
 .gxf-top-item.is-open>.gxf-top-trigger::before {
@@ -124,7 +124,7 @@
 
 .gxf-mega-panel {
     position: absolute;
-    top: 46px;
+    top: 40px;
     left: -6px;
     z-index: 9999;
     display: none;
@@ -278,7 +278,7 @@
 @media (max-width: 1200px) {
 
     .gxf-top-arrow {
-        display: none;
+        display: none !important;
     }
 
     #open-menu {
