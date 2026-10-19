@@ -1,64 +1,67 @@
-function initGxfMenu() {
+
+document.addEventListener('DOMContentLoaded', () => {
     const menuTrigger = document.querySelector('#open-menu');
     const closeTrigger = document.querySelector('#close-menu');
     const nav = document.querySelector('.gxf-mega-nav');
 
-    if (!menuTrigger || !nav || nav.dataset.menuInitialized === 'true') {
-        return;
-    }
+    if (!menuTrigger || !nav || nav.dataset.menuInitialized) return;
 
     nav.dataset.menuInitialized = 'true';
 
     const setMenuState = (isOpen) => {
         nav.classList.toggle('mobile-open', isOpen);
-        document.body.classList.toggle('gxf-submenu-open', isOpen);
 
-        menuTrigger.style.display = isOpen ? 'none' : '';
+        menuTrigger.classList.toggle('menu-icon-hidden', isOpen);
         menuTrigger.setAttribute('aria-expanded', String(isOpen));
-        menuTrigger.setAttribute('aria-label', 'Open navigation menu');
+        menuTrigger.setAttribute(
+            'aria-label',
+            isOpen ? 'Close navigation menu' : 'Open navigation menu'
+        );
 
         if (closeTrigger) {
-            closeTrigger.style.display = isOpen ? '' : 'none';
-            closeTrigger.setAttribute('aria-label', 'Close navigation menu');
+            closeTrigger.classList.toggle('menu-icon-visible', isOpen);
         }
 
         if (!isOpen) {
-            nav.querySelectorAll('.gxf-top-item.is-open').forEach((item) => {
+            nav.querySelectorAll('.gxf-top-item.is-open').forEach(item => {
                 item.classList.remove('is-open');
             });
         }
     };
 
-    menuTrigger.addEventListener('click', (event) => {
+    const openMenu = (event) => {
         event.preventDefault();
         setMenuState(true);
-    });
+    };
+
+    const closeMenu = (event) => {
+        if (event) event.preventDefault();
+        setMenuState(false);
+    };
+
+    menuTrigger.addEventListener('click', openMenu);
 
     if (closeTrigger) {
-        closeTrigger.addEventListener('click', (event) => {
-            event.preventDefault();
-            setMenuState(false);
-        });
+        closeTrigger.addEventListener('click', closeMenu);
     }
 
     document.addEventListener('click', (event) => {
         if (
-            nav.classList.contains('mobile-open') &&
             !nav.contains(event.target) &&
             !menuTrigger.contains(event.target) &&
             !(closeTrigger && closeTrigger.contains(event.target))
         ) {
-            setMenuState(false);
+            closeMenu();
         }
     });
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            setMenuState(false);
+            closeMenu();
         }
     });
 
-    nav.querySelectorAll('.gxf-top-trigger').forEach((trigger) => {
+    nav.querySelectorAll('.gxf-top-trigger').forEach(trigger => {
         trigger.addEventListener('click', (event) => {
             const item = trigger.closest('.gxf-top-item');
 
@@ -68,7 +71,7 @@ function initGxfMenu() {
                 event.preventDefault();
             }
 
-            nav.querySelectorAll('.gxf-top-item.is-open').forEach((openItem) => {
+            nav.querySelectorAll('.gxf-top-item.is-open').forEach(openItem => {
                 if (openItem !== item) {
                     openItem.classList.remove('is-open');
                 }
@@ -79,30 +82,21 @@ function initGxfMenu() {
     });
 
     setMenuState(false);
-}
+});
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGxfMenu);
-} else {
-    initGxfMenu();
-}
+function toggleAppointmentButton() {
+    document.querySelectorAll('.gxf-top-menu').forEach(menu => {
+        menu.querySelectorAll(
+            '.gxf-top-link.form-btn.primary-btn, .gxf-top-link.form-btn.outline-primary'
+        ).forEach(link => {
+            const listItem = link.closest('li.gxf-top-item');
 
-function hideDesktopQuoteButtons() {
-    if (window.innerWidth <= 767) return;
+            if (!listItem) return;
 
-    document.querySelectorAll(
-        '.gxf-top-menu .gxf-top-link.form-btn.primary-btn, .gxf-top-menu .gxf-top-link.form-btn.outline-primary'
-    ).forEach((link) => {
-        const listItem = link.closest('li.gxf-top-item');
-
-        if (listItem) {
-            listItem.style.display = 'none';
-        }
+            listItem.style.display = window.innerWidth > 767 ? 'none' : '';
+        });
     });
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', hideDesktopQuoteButtons);
-} else {
-    hideDesktopQuoteButtons();
-}
+document.addEventListener('DOMContentLoaded', toggleAppointmentButton);
+window.addEventListener('resize', toggleAppointmentButton);

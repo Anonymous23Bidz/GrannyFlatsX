@@ -276,6 +276,58 @@
 }
 
 @media (max-width: 768px) {
+
+    #open-menu {
+        position: absolute;
+        cursor: pointer;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #open-menu.menu-icon-hidden {
+        display: none !important;
+    }
+
+    #close-menu {
+        display: none;
+        cursor: pointer;
+    }
+
+    #close-menu.menu-icon-visible {
+        display: flex !important;
+    }
+
+    #open-menu {
+        cursor: pointer;
+        opacity: 1;
+        visibility: visible;
+        transform: rotate(0deg);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+
+    #open-menu.menu-icon-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: rotate(35deg);
+    }
+
+    #close-menu {
+        display: flex;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: rotate(-35deg);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+
+    #close-menu.menu-icon-visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: rotate(0deg);
+    }
+
     .sub-header {
         background-color: var(--e-global-color-primary);
     }
@@ -341,7 +393,7 @@
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
         box-sizing: border-box;
-        z-index: 9999;
+        z-index: 99;
     }
 
     .gxf-mega-nav .gxf-top-menu {
@@ -363,7 +415,7 @@
     .gxf-mega-nav .gxf-top-menu {
         display: flex;
         position: fixed;
-        top: 130px;
+        top: 163px;
         left: 0;
         right: 0;
         width: 100%;
