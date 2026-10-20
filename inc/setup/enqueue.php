@@ -122,8 +122,9 @@ function hello_child_enqueue_assets()
         );
     }
 
-
-    $google_maps_api_key = 'AIzaSyDJv5pvQD3QKeT279FkWzCjE4_NEqPvoaE';
+    $google_maps_api_key = defined('GOOGLE_MAPS_API_KEY')
+        ? GOOGLE_MAPS_API_KEY
+        : getenv('GOOGLE_MAPS_API_KEY');
 
     if (!$is_elementor_editor && !empty($google_maps_api_key)) {
         wp_enqueue_script(
@@ -146,7 +147,11 @@ function hello_child_enqueue_assets()
                 return $tag;
             }
 
-            return str_replace('<script ', '<script async ', $tag);
+            return str_replace(
+                '<script ',
+                '<script async ',
+                $tag
+            );
         }, 10, 2);
     }
 }
