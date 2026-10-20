@@ -441,43 +441,32 @@
     .gxf-mega-nav .gxf-top-menu {
         display: flex;
         position: fixed;
-        top: 140px;
+        top: 160px;
         left: 0;
         right: 0;
-        width: 100%;
+        width: 96%;
         min-width: 0;
-        max-width: 100%;
-
+        max-width: 1230px;
         max-height: 0;
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior-y: contain;
         -webkit-overflow-scrolling: touch;
-
         flex-direction: column;
         align-items: stretch;
         gap: 0;
-
-        margin: 0;
+        margin: 0 auto;
         padding: 0 28px;
         list-style: none;
-
         background: #e7e8eb !important;
         color: #445477;
         box-shadow: 0 12px 24px rgb(0 0 0 / 10%);
         box-sizing: border-box;
-
         opacity: 0;
         visibility: hidden;
         transform: translateY(-12px);
         transform-origin: top;
-
-        transition:
-            max-height 0.45s ease,
-            opacity 0.3s ease,
-            transform 0.3s ease,
-            padding 0.3s ease,
-            visibility 0s linear 0.45s;
+        transition: max-height 0.45s ease, opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease, visibility 0s linear 0.45s;
     }
 
     .gxf-mega-nav.mobile-open .gxf-top-menu {
@@ -635,5 +624,11 @@
 @media (prefers-reduced-motion: reduce) {
     .gxf-mega-nav .gxf-top-menu {
         transition: none !important;
+    }
+}
+
+@media (max-width: 728px) {
+    .gxf-mega-nav .gxf-top-menu {
+        top: 180px;
     }
 }
