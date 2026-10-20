@@ -59,7 +59,7 @@ function get_quote_form_shortcode()
                         ];
 
                         foreach ($bedroom_options as $value => $label):
-                            $input_id = $value;
+                            $input_id = $id . '-' . $value;
                         ?>
 
                             <div class="gqf-option">
@@ -111,7 +111,7 @@ function get_quote_form_shortcode()
                         ];
 
                         foreach ($price_range as $value => $label):
-                            $input_id = $value;
+                            $input_id = $id . '-' . $value;
                         ?>
 
                             <div class="gqf-option">
@@ -155,7 +155,7 @@ function get_quote_form_shortcode()
                         <i class="fas fa-map-marker-alt input-icon"></i>
                         <input
                             type="text"
-                            id="property-address"
+                            id="<?php echo esc_attr($id . '-property-address'); ?>"
                             name="property_address"
                             placeholder="Start typing your address..."
                             autocomplete="off"
@@ -175,7 +175,7 @@ function get_quote_form_shortcode()
                         ];
 
                         foreach ($date_range as $value => $label):
-                            $input_id = $value;
+                            $input_id = $id . '-' . $value;
                         ?>
 
                             <div class="gqf-option">
@@ -226,7 +226,7 @@ function get_quote_form_shortcode()
                         ];
 
                         foreach ($suggestion as $value => $label):
-                            $input_id = $value;
+                            $input_id = $id . '-' . $value;
                         ?>
 
                             <div class="gqf-option">
