@@ -233,29 +233,30 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay?.click();
     });
 
+
+
     function initQuoteAddressAutocomplete() {
         document.querySelectorAll(
-            '.get-quote-form #property-address'
+            '.get-quote-form input[name="property_address"]'
         ).forEach(function (addressInput) {
-            if (addressInput.dataset.autocompleteReady === 'true') {
-                return;
-            }
-
-            if (!window.google?.maps?.places) {
-                return;
-            }
+            if (addressInput.dataset.autocompleteReady === 'true') return;
+            if (!window.google?.maps?.places) return;
 
             const autocomplete = new google.maps.places.Autocomplete(
                 addressInput,
                 {
                     componentRestrictions: { country: 'au' },
+                    bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(-34.15, 150.50),
+                        new google.maps.LatLng(-33.50, 151.35)
+                    ),
+                    strictBounds: true,
                     fields: ['formatted_address', 'geometry', 'place_id'],
                     types: ['address']
                 }
             );
 
             addressInput.dataset.autocompleteReady = 'true';
-
 
             autocomplete.addListener('place_changed', function () {
                 const place = autocomplete.getPlace();
@@ -266,50 +267,49 @@ document.addEventListener('DOMContentLoaded', () => {
                     addressInput.value = place.formatted_address;
                 }
 
-                addressInput.dispatchEvent(
-                    new Event('input', { bubbles: true })
-                );
-                addressInput.dispatchEvent(
-                    new Event('change', { bubbles: true })
-                );
+                addressInput.dispatchEvent(new Event('input', { bubbles: true }));
+                addressInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-                setTimeout(() => {
-                    document.querySelectorAll('.pac-container').forEach(container => {
-                        container.classList.add('gqf-quote-hidden');
-                    });
-
+                setTimeout(function () {
                     addressInput.blur();
                 }, 100);
             });
-
-            ['focus', 'input'].forEach(eventName => {
-                addressInput.addEventListener(eventName, () => {
-                    document.querySelectorAll('.pac-container').forEach(container => {
-                        container.classList.remove('gqf-quote-hidden');
-                    });
-                });
-            });
-
         });
     }
 
-    initQuoteAddressAutocomplete();
-
-    let quotePlacesAttempts = 0;
-
-    const quotePlacesInterval = setInterval(function () {
+    function startQuoteAddressAutocomplete() {
         initQuoteAddressAutocomplete();
 
-        quotePlacesAttempts++;
+        let quotePlacesAttempts = 0;
 
+        const quotePlacesInterval = setInterval(function () {
+            initQuoteAddressAutocomplete();
+            quotePlacesAttempts++;
+
+            const inputs = document.querySelectorAll(
+                '.get-quote-form input[name="property_address"]'
+            );
+
+            const allInitialized = inputs.length > 0 &&
+                [...inputs].every(
+                    input => input.dataset.autocompleteReady === 'true'
+                );
+
+            if (allInitialized || quotePlacesAttempts >= 100) {
+                clearInterval(quotePlacesInterval);
+            }
+        }, 100);
+    }
+
+    startQuoteAddressAutocomplete();
+
+    document.addEventListener('focusin', function (event) {
         if (
-            quotePlacesAttempts >= 100 ||
-            document.querySelector(
-                '.get-quote-form #property-address[data-autocomplete-ready="true"]'
+            event.target.matches(
+                '.get-quote-form input[name="property_address"]'
             )
         ) {
-            clearInterval(quotePlacesInterval);
+            initQuoteAddressAutocomplete();
         }
-    }, 100);
-
+    });
 });
