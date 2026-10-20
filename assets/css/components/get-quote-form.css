@@ -38,7 +38,7 @@ textarea:hover {
 }
 
 .pac-container {
-    z-index: 2147483647 !important;
+    z-index: 9999999999 !important;
 }
 
 .elementor-widget-off-canvas .e-off-canvas {
