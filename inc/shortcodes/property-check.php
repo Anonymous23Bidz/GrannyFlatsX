@@ -108,8 +108,7 @@ function property_check_form_shortcode()
                             <button type="button" id="retryBtn">Try again</button>
                         </div>
 
-
-                        <div class="gfx-row" id="retryRow" style="display:none;">
+                        <div class="gfx-row" id="retryContent" style="display:none;">
                             <button type="button" class="gfx-btn gfx-btn-ghost" id="backToStart">
                                 Start Over
                             </button>
@@ -376,6 +375,7 @@ function property_check_send_report()
     }
 
     $to = 'lead.nextgengrannyflats@gmail.com';
+    // $to = 'christopher.bj.hidalgo@gmail.com';
     $subject = 'New Property Check Report - ' . $property_address;
 
     // Build email
@@ -421,6 +421,7 @@ function property_check_send_report()
         'Reply-To: ' . $name . ' <' . $email . '>',
     ];
 
+
     $sent = wp_mail(
         $to,
         $subject,
@@ -430,18 +431,68 @@ function property_check_send_report()
     );
 
     if (!$sent) {
-        error_log(
-            'Property Check: wp_mail() failed for ' . $email
-        );
+        error_log('Property Check: Lead email failed for ' . $email);
         wp_send_json_error([
-            'message' =>
-            'The report could not be sent. Please try again or contact us directly.'
+            'message' => 'The report could not be sent. Please try again or contact us directly.'
         ]);
     }
 
+    // Separate customer welcome email
+    $customer_subject = 'Thank You for Your Enquiry - Granny Flats X';
+
+    $customer_message = '
+    <!DOCTYPE html>
+    <html>
+    <body style="margin:0;padding:24px;font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#333;">
+    <div style="max-width:700px;margin:auto;">
+    <p>Hi ' . esc_html($name) . ',</p>
+    <p>Thank you for reaching out to Granny Flats X.</p>
+    <p>I’ll be your dedicated consultant for your enquiry. I’ll give you a call shortly to learn about your project and your property. Before we speak, I’d like to introduce who we are and why homeowners across NSW choose us.</p>
+    <h3 style="color:#26324b;">Why choose Granny Flats X?</h3>
+    <ul>
+    <li><strong>Decades of experience.</strong> We’re a trusted, established granny flat builder with a proven track record.</li>
+    <li><strong>Finished on time.</strong> We commit to a completion date and deliver on it.</li>
+    <li><strong>Everything handled, start to finish.</strong> From CDC or DA approvals to the occupation certificate, we manage the whole process.</li>
+    <li><strong>Top-tier materials, quality builds.</strong> Luxury tiles throughout, high-end taps and mixers, premium finishes, and extended warranties.</li>
+    <li><strong>In-house architects.</strong> We personalise your design and layout to suit your needs and style.</li>
+    <li><strong>A dedicated Customer Relationship Manager.</strong> Your single point of contact throughout the build.</li>
+    <li><strong>No hidden costs.</strong> The price you lock in is the price you build for.</li>
+    </ul>
+    <p>We put our inclusions in writing up front and walk you through them. If something isn’t included, we’ll tell you before you commit, not after.</p>
+    <h3 style="color:#26324b;">Want to go further? Our Signature Package</h3>
+    <p>Our optional Signature Package bundles $28,900 worth of popular upgrades for $8,000, saving $20,900 compared with adding them individually.</p>
+    <p>It includes 2.6m ceilings, a covered patio (1 to 4 m² where possible), a separate laundry cupboard with tub, a bathroom tiled floor to ceiling, a Daikin 3.5kW air conditioner, window blinds to every window, a Chromagen 205L heat pump hot water system, and more. Every upgrade is also available individually on our Standard package.</p>
+    <h3 style="color:#26324b;">To help you get started</h3>
+    <p><strong>2026 Inclusions Guide:</strong> Review our standard inclusions and optional upgrades.</p>
+    <p><strong>Client Handbook:</strong> Learn about our process, approvals, timelines, and what to expect from start to finish.</p>
+    <p><a href="https://grannyflatsx.com.au/wp-content/uploads/2026/07/GFX-Handbook-2026-Final1.pdf" style="color:#b58b25;">Read the Granny Flats X Client Handbook</a></p>
+    <p>If you have any questions, simply reply to this email or call us on <a href="tel:0291917415">(02) 9191 7415</a> or <a href="tel:1300950764">1300 950 764</a>.</p>
+    <p>I look forward to speaking with you soon.</p>
+    <p><strong>Mark I.</strong><br>Business Development Associate (Sales &amp; Customer Service)<br>(02) 9191 7415 | 1300 950 764</p>
+    <p style="color:#b58b25;font-weight:bold;">Price Beat Guarantee | Highest Quality | No Hidden Costs | Fastest Completion Time</p>
+    <p>(02) 9191 7415 | <a href="https://www.grannyflatsx.com.au">www.GrannyFlatsX.com.au</a></p>
+    <p style="font-size:12px;color:#777;">Granny Flats X is the legal business name of Bluewood Homes NSW Pty. Ltd.<br>ABN: 54 647 631 043 | Builder Licence #: 366254C</p>
+    </div>
+    </body>
+    </html>';
+
+    $customer_headers = [
+        'Content-Type: text/html; charset=UTF-8',
+    ];
+
+    $customer_sent = wp_mail(
+        $email,
+        $customer_subject,
+        $customer_message,
+        $customer_headers
+    );
+
+    if (!$customer_sent) {
+        error_log('Property Check: Customer welcome email failed for ' . $email);
+    }
+
     wp_send_json_success([
-        'message' =>
-        'Your property report has been sent successfully.'
+        'message' => 'Your property report has been sent successfully.'
     ]);
 }
 
