@@ -27,6 +27,28 @@ textarea:hover {
     font-weight: 600;
 }
 
+.e-off-canvas {
+    overflow: visible;
+}
+
+.e-off-canvas .pac-container {
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+}
+
+.pac-container {
+    z-index: 2147483647 !important;
+}
+
+.elementor-widget-off-canvas .e-off-canvas {
+    z-index: 9999 !important;
+}
+
+.e-off-canvas__content {
+    z-index: 9 !important;
+}
+
 .btn-outline {
     background: #fff !important;
     color: var(--e-global-color-primary) !important;

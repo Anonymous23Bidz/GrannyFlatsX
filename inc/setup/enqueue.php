@@ -133,6 +133,7 @@ function hello_child_enqueue_assets()
                 [
                     'key'       => $google_maps_api_key,
                     'libraries' => 'places',
+                    'loading'   => 'async',
                 ],
                 'https://maps.googleapis.com/maps/api/js'
             ),
@@ -140,6 +141,18 @@ function hello_child_enqueue_assets()
             null,
             true
         );
+
+        add_filter('script_loader_tag', function ($tag, $handle) {
+            if ($handle !== 'google-maps-places') {
+                return $tag;
+            }
+
+            return str_replace(
+                '<script ',
+                '<script async ',
+                $tag
+            );
+        }, 10, 2);
     }
 }
 add_action('wp_enqueue_scripts', 'hello_child_enqueue_assets');
