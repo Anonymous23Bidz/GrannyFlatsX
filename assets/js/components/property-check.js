@@ -279,6 +279,10 @@ if (!window.propertyCheckFormScriptLoaded) {
             if (jsonOutput) jsonOutput.style.display = 'none';
             if (status) status.innerHTML = '';
 
+            resultsTimer = setTimeout(function () {
+                showResults();
+            }, 2000);
+
             var planningBase = 'https://mapprod3.environment.nsw.gov.au/arcgis/rest/services/ePlanning/Planning_Portal_Principal_Planning/MapServer';
             var hazardBase = 'https://mapprod3.environment.nsw.gov.au/arcgis/rest/services/ePlanning/Planning_Portal_Hazard/MapServer';
             var parcelBase = 'https://portal.spatial.nsw.gov.au/server/rest/services/NSW_Land_Parcel_Property_Theme_multiCRS/FeatureServer';
