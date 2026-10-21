@@ -80,59 +80,81 @@ function initFloorPlanFilter() {
         const layout = value(getChecked(wrapper, 'layout'));
         const floorArea = value($(wrapper, 'select[name="floor_area"]'));
         const bestFor = value($(wrapper, 'select[name="best_for"]'));
-        const livingArea = value($(wrapper, 'select[name="living_area"]'));
+        const grannyFlatsArea = value($(wrapper, 'select[name="granny_flats_detail"]'));
         const features = $$(wrapper, '.fpf-checkbox-input:checked').map(el => el.value);
 
-        const width = parseFloat(value($(wrapper, '.fpf-space-width')));
-        const depth = parseFloat(value($(wrapper, '.fpf-space-depth')));
-        const hasSpace = Number.isFinite(width) && Number.isFinite(depth) && width > 0 && depth > 0;
+        const availableWidth = parseFloat(value($(wrapper, '.fpf-space-width')));
+        const availableLength = parseFloat(value($(wrapper, '.fpf-space-length')));
+
+        const hasSpace =
+            Number.isFinite(availableWidth) &&
+            Number.isFinite(availableLength) &&
+            availableWidth > 0 &&
+            availableLength > 0;
 
         cards.forEach(card => {
             const matches = [
-                !bedroom || ['', 'all'].includes(bedroom.value) || split(card.dataset.bedrooms).includes(bedroom.value),
-                !bedroomSize || (card.dataset.bedroomSize || '') === bedroomSize,
-                !bathroom || split(card.dataset.bathrooms).includes(bathroom),
-                !layout || layout === 'all' || split(card.dataset.layout).includes(layout),
-                !floorArea || (() => {
-                    const area = Number(card.dataset.livingArea);
+                !bedroom || ['', 'all'].includes(bedroom.value) ||
+                split(card.dataset.bedrooms).includes(bedroom.value),
 
-                    if (!Number.isFinite(area) || area <= 0) return false;
+                !bedroomSize || (card.dataset.bedroomSize || '') === bedroomSize,
+
+                !bathroom || split(card.dataset.bathrooms).includes(bathroom),
+
+                !layout || layout === 'all' ||
+                split(card.dataset.layout).includes(layout),
+
+                !floorArea || (() => {
+                    const area = Number(card.dataset.calculatedArea);
 
                     switch (floorArea) {
-                        case 'under-45':
-                            return area < 45;
-
-                        case '45-55':
-                            return area >= 45 && area < 55;
-
-                        case '55-60':
-                            return area >= 55 && area <= 60;
-
-                        case 'over-60':
-                            return area > 60;
-
-                        default:
-                            return true;
+                        case 'under-45': return area > 0 && area < 45;
+                        case '45-55': return area >= 45 && area < 55;
+                        case '55-60': return area >= 55 && area <= 60;
+                        case 'over-60': return area > 60;
+                        default: return true;
                     }
                 })(),
+
                 !bestFor || split(card.dataset.bestFor).includes(bestFor),
-                features.every(feature => split(card.dataset.features).includes(feature)),
-                !livingArea || (livingArea === 'small'
-                    ? Number(card.dataset.livingArea) < 20
-                    : livingArea === 'large'
-                        ? Number(card.dataset.livingArea) > 20
-                        : true)
+
+                features.every(feature =>
+                    split(card.dataset.features).includes(feature)
+                ),
+
+                !grannyFlatsArea || (() => {
+                    const area = parseFloat(card.dataset.calculatedArea);
+
+                    if (!Number.isFinite(area) || area <= 0) return false;
+                    if (grannyFlatsArea === 'small') return area < 40;
+                    if (grannyFlatsArea === 'large') return area >= 40;
+
+                    return true;
+                })()
             ].every(Boolean);
 
-            const length = parseFloat(card.dataset.planLengthMm);
             const planWidth = parseFloat(card.dataset.planWidthMm);
+            const planLength = parseFloat(card.dataset.planLengthMm);
 
-            const fitsSpace = !hasSpace || (
-                Number.isFinite(length) && Number.isFinite(planWidth) &&
-                length > 0 && planWidth > 0 &&
-                ((length <= width && planWidth <= depth) ||
-                    (length <= depth && planWidth <= width))
-            );
+            let fitsSpace = true;
+
+            if (hasSpace) {
+                fitsSpace =
+                    Number.isFinite(planWidth) &&
+                    Number.isFinite(planLength) &&
+                    planWidth > 0 &&
+                    planLength > 0 &&
+                    (
+                        (
+                            planWidth <= availableWidth &&
+                            planLength <= availableLength
+                        ) ||
+                        (
+                            planWidth <= availableLength &&
+                            planLength <= availableWidth
+                        )
+                    );
+            }
 
             card.style.display = matches && fitsSpace ? '' : 'none';
         });
@@ -158,8 +180,8 @@ function initFloorPlanFilter() {
 
                 case 'size_desc':
                     return (
-                        (parseFloat(b.dataset.livingArea) || 0) -
-                        (parseFloat(a.dataset.livingArea) || 0)
+                        (parseFloat(b.dataset.calculatedArea) || 0) -
+                        (parseFloat(a.dataset.calculatedArea) || 0)
                     );
 
                 default:
@@ -237,7 +259,7 @@ function initFloorPlanFilter() {
                 () => resetRadio('layout'));
         }
 
-        ['floor_area', 'best_for', 'living_area'].forEach(name => {
+        ['floor_area', 'best_for', 'granny_flats_detail'].forEach(name => {
             const select = $(wrapper, `select[name="${name}"]`);
             if (!select?.value) return;
 
@@ -330,7 +352,7 @@ function initFloorPlanFilter() {
             checkbox.addEventListener('change', () => refresh(wrapper));
         });
 
-        ['floor_area', 'best_for', 'living_area'].forEach(name => {
+        ['floor_area', 'best_for', 'granny_flats_detail'].forEach(name => {
             $(wrapper, `select[name="${name}"]`)?.addEventListener('change', () => refresh(wrapper));
         });
 

@@ -11,14 +11,12 @@ add_shortcode('get_acf', function ($atts) {
         return '';
     }
 
-    // Split dot-separated string into keys
     $keys = explode('.', $atts['field']);
 
     // Fetch top-level field from ACF
     $top_key = array_shift($keys);
     $data    = get_field($top_key, $atts['post_id']);
 
-    // Traverse deeply through nested arrays
     foreach ($keys as $key) {
 
         if (is_array($data) && isset($data[$key])) {
@@ -33,24 +31,84 @@ add_shortcode('get_acf', function ($atts) {
         }
     }
 
-    // Return arrays/objects as JSON
     if (is_array($data) || is_object($data)) {
         return esc_html(wp_json_encode($data));
     }
 
-    // Empty value
     if ($data === null || $data === '') {
         return '';
     }
 
-    /*
-     * If the value contains HTML from a WYSIWYG field,
-     * allow safe HTML so paragraphs, line breaks, lists, etc. work.
-     */
     if (is_string($data) && $data !== strip_tags($data)) {
         return wp_kses_post($data);
     }
 
     // Normal text fields
     return esc_html($data);
+});
+
+
+add_shortcode('acf_calculate', function ($atts) {
+    $atts = shortcode_atts([
+        'width'     => '',
+        'length'    => '',
+        'operation' => 'multiply',
+        'divisor'   => '1',
+        'decimals'  => '2',
+        'suffix'    => '',
+        'post_id'   => get_the_ID(),
+    ], $atts, 'acf_calculate');
+
+    if (!$atts['width'] || !$atts['length']) {
+        return '';
+    }
+
+    $get_value = function ($path) use ($atts) {
+        $keys = explode('.', $path);
+        $value = get_field(array_shift($keys), $atts['post_id']);
+
+        foreach ($keys as $key) {
+            if (!is_array($value) || !array_key_exists($key, $value)) {
+                return null;
+            }
+
+            $value = $value[$key];
+        }
+
+        return is_numeric($value) ? (float) $value : null;
+    };
+
+    $a = $get_value($atts['width']);
+    $b = $get_value($atts['length']);
+    $divisor = is_numeric($atts['divisor']) ? (float) $atts['divisor'] : 1;
+
+    if ($a === null || $b === null || $divisor == 0) {
+        return '';
+    }
+
+    switch ($atts['operation']) {
+        case 'add':
+            $result = $a + $b;
+            break;
+        case 'subtract':
+            $result = $a - $b;
+            break;
+        case 'divide':
+            if ($b == 0) {
+                return '';
+            }
+            $result = $a / $b;
+            break;
+        case 'multiply':
+        default:
+            $result = $a * $b;
+            break;
+    }
+
+    $result /= $divisor;
+
+    return esc_html(number_format(
+        $result,
+        max(0, min(6, (int) $atts['decimals']))
+    ) . $atts['suffix']);
 });

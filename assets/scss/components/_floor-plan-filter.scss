@@ -379,12 +379,13 @@
 }
 
 .fpf-wrapper .fpf-grid-top {
-    grid-template-columns: repeat(4, 1fr);
+    // grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 2fr 1fr 1fr;
     margin-bottom: 20px;
 }
 
 .fpf-field.fpf-features-field {
-    min-width: 578px;
+    min-width: 540px;
 }
 
 .fpf-wrapper .fpf-grid-bottom {
