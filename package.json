@@ -4,7 +4,8 @@
     "build:css": "sass --no-source-map --style=compressed assets/scss/main.scss assets/css/main.css",
     "build:js": "esbuild assets/js/main.js --bundle --format=esm --splitting --outdir=assets/dist --minify --target=es2018",
     "build": "npm run build:css && npm run build:js",
-    "watch:css": "sass --watch --no-source-map assets/scss/main.scss:assets/css/main.css"
+    "watch:css": "sass --watch --no-source-map assets/scss/main.scss:assets/css/main.css",
+    "watch:js": "esbuild assets/js/main.js --bundle --format=esm --splitting --outdir=assets/dist --minify --target=es2018 --watch"
   },
   "devDependencies": {
     "esbuild": "^0.25.0",

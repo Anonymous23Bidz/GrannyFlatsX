@@ -255,7 +255,23 @@ if (!window.propertyCheckFormScriptLoaded) {
             var jsonOutput = document.getElementById('jsonOutput');
             var status = document.getElementById('propertyCheckStatus');
 
+            var resultsTimer;
+            var hasShownResults = false;
+
+            function showResults() {
+                if (hasShownResults) return;
+
+                hasShownResults = true;
+
+                if (resultsTimer) {
+                    clearTimeout(resultsTimer);
+                }
+
+                showStep(3);
+            }
+
             if (retryRow) retryRow.style.display = 'none';
+
             if (output) {
                 output.textContent = '';
                 output.classList.remove('show');
@@ -435,17 +451,23 @@ if (!window.propertyCheckFormScriptLoaded) {
                     jsonOutput.style.display = 'block';
                 }
 
-                setTimeout(function () { showStep(3); }, 500);
+                showResults();
 
             } catch (error) {
                 console.error('Property check failed:', error);
+
+                if (!hasShownResults && resultsTimer) {
+                    clearTimeout(resultsTimer);
+                }
 
                 if (output) {
                     output.textContent = error.message || 'Something went wrong.';
                     output.classList.add('show');
                 }
 
-                if (retryRow) retryRow.style.display = 'flex';
+                if (retryRow) {
+                    retryRow.style.display = 'flex';
+                }
             }
         }
 
