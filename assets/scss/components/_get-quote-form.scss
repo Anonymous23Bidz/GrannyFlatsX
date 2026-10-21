@@ -41,6 +41,10 @@ textarea:hover {
     z-index: 9999999999 !important;
 }
 
+.pac-container.d-none {
+    display: none !important;
+}
+
 .elementor-widget-off-canvas .e-off-canvas {
     z-index: 9999 !important;
 }

@@ -1,6 +1,6 @@
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.get-quote-form').forEach(form => {
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.get-quote-form').forEach(function (form) {
         const steps = [...form.querySelectorAll('.gqf-step')];
         const currentLabel = form.querySelector('.gqf-current-step');
         const progressBar = form.querySelector('.gqf-progress-bar');
@@ -8,10 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextBtn = form.querySelector('.gqf-next');
         const submitBtn = form.querySelector('.gqf-submit');
 
+        if (!steps.length || !currentLabel || !progressBar || !backBtn || !nextBtn || !submitBtn) {
+            return;
+        }
+
         let currentStep = 0;
         let isSubmitting = false;
 
-        // Create a message area for success and errors.
         let message = form.querySelector('.gqf-message');
 
         if (!message) {
@@ -22,33 +25,40 @@ document.addEventListener('DOMContentLoaded', () => {
             form.appendChild(message);
         }
 
-        const isStepValid = step => {
+        const isStepValid = function (step) {
             const fields = [
                 ...step.querySelectorAll('input, select, textarea')
-            ].filter(field => !field.disabled && field.willValidate);
+            ].filter(function (field) {
+                return !field.disabled && field.willValidate;
+            });
 
-            if (!fields.every(field => field.checkValidity())) {
-                const invalidField = fields.find(
-                    field => !field.checkValidity()
-                );
+            if (!fields.every(function (field) {
+                return field.checkValidity();
+            })) {
+                const invalidField = fields.find(function (field) {
+                    return !field.checkValidity();
+                });
 
                 invalidField?.reportValidity();
                 return false;
             }
 
-            // Explicitly validate required radio groups.
             const radioNames = new Set(
                 fields
-                    .filter(field => field.type === 'radio' && field.required)
-                    .map(field => field.name)
+                    .filter(function (field) {
+                        return field.type === 'radio' && field.required;
+                    })
+                    .map(function (field) {
+                        return field.name;
+                    })
             );
 
             for (const name of radioNames) {
-                if (!fields.some(field =>
-                    field.type === 'radio' &&
-                    field.name === name &&
-                    field.checked
-                )) {
+                if (!fields.some(function (field) {
+                    return field.type === 'radio' &&
+                        field.name === name &&
+                        field.checked;
+                })) {
                     return false;
                 }
             }
@@ -56,10 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         };
 
-        const updateStep = () => {
+        const updateStep = function () {
             const step = steps[currentStep];
 
-            steps.forEach((item, index) => {
+            steps.forEach(function (item, index) {
                 item.classList.toggle('is-active', index === currentStep);
             });
 
@@ -72,44 +82,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
             nextBtn.hidden = currentStep === steps.length - 1;
             submitBtn.hidden = currentStep !== steps.length - 1;
+
             backBtn.disabled = isSubmitting;
             nextBtn.disabled = isSubmitting;
             submitBtn.disabled = isSubmitting;
+
+            updateNextButton();
         };
 
-
-        const updateNextButton = () => {
+        const updateNextButton = function () {
             const step = steps[currentStep];
-            const fields = [...step.querySelectorAll('input, select, textarea')]
-                .filter(field => !field.disabled && field.willValidate);
 
-            const radios = fields.filter(field => field.type === 'radio' && field.required);
-            const radioNames = [...new Set(radios.map(field => field.name))];
+            const fields = [
+                ...step.querySelectorAll('input, select, textarea')
+            ].filter(function (field) {
+                return !field.disabled && field.willValidate;
+            });
 
-            const radiosValid = radioNames.every(name =>
-                radios.some(field => field.name === name && field.checked)
-            );
+            const radios = fields.filter(function (field) {
+                return field.type === 'radio' && field.required;
+            });
+
+            const radioNames = [
+                ...new Set(radios.map(function (field) {
+                    return field.name;
+                }))
+            ];
+
+            const radiosValid = radioNames.every(function (name) {
+                return radios.some(function (field) {
+                    return field.name === name && field.checked;
+                });
+            });
 
             const fieldsValid = fields
-                .filter(field => field.type !== 'radio')
-                .every(field => field.checkValidity());
+                .filter(function (field) {
+                    return field.type !== 'radio';
+                })
+                .every(function (field) {
+                    return field.checkValidity();
+                });
 
-            nextBtn.disabled = isSubmitting || !fieldsValid || !radiosValid;
+            nextBtn.disabled =
+                isSubmitting || !fieldsValid || !radiosValid;
         };
 
-        form.addEventListener('input', event => {
+        form.addEventListener('input', function (event) {
             if (event.target.matches('input, select, textarea')) {
                 updateNextButton();
             }
         });
 
-        form.addEventListener('change', event => {
+        form.addEventListener('change', function (event) {
             if (event.target.matches('input, select, textarea')) {
                 updateNextButton();
             }
         });
 
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', function () {
             if (!isStepValid(steps[currentStep])) {
                 return;
             }
@@ -121,14 +151,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-
-        backBtn.addEventListener('click', () => {
+        backBtn.addEventListener('click', function () {
             if (isSubmitting) return;
 
             if (currentStep === 0) {
                 form.dispatchEvent(new CustomEvent('gqf:cancel', {
                     bubbles: true,
-                    detail: { form }
+                    detail: { form: form }
                 }));
                 return;
             }
@@ -138,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStep();
         });
 
-        form.addEventListener('submit', async event => {
+        form.addEventListener('submit', async function (event) {
             event.preventDefault();
 
             if (isSubmitting || !isStepValid(steps[currentStep])) {
@@ -177,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     );
                 }
 
-
                 message.textContent =
                     result.data?.message ||
                     'Your quote request was sent successfully!';
@@ -186,12 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 form.dispatchEvent(new CustomEvent('gqf:success', {
                     bubbles: true,
-                    detail: { form, response: result }
+                    detail: { form: form, response: result }
                 }));
 
-                setTimeout(() => {
+                setTimeout(function () {
                     window.location.href = '/thank-you-page-form/';
-                    // window.location.href = '/grannyflatsx/thank-you-page-form';
                 }, 2000);
 
                 return;
@@ -211,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStep();
     });
 
-    document.addEventListener('gqf:cancel', (event) => {
+    document.addEventListener('gqf:cancel', function (event) {
         const form = event.detail?.form;
         if (!form) return;
 
@@ -222,8 +249,12 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay?.click();
     });
 
-    document.addEventListener('click', (event) => {
-        const closeBtn = event.target.closest('#close-btn');
+    document.addEventListener('click', function (event) {
+        const target = event.target;
+
+        if (!(target instanceof Element)) return;
+
+        const closeBtn = target.closest('#close-btn');
         if (!closeBtn) return;
 
         const offCanvas = closeBtn.closest('.e-off-canvas');
@@ -233,14 +264,31 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay?.click();
     });
 
+    /* Google Places autocomplete */
 
+    let quoteAddressSelected = false;
+    let quotePlacesObserver = null;
+    let quotePlacesInterval = null;
+
+    function hideQuotePlacesDropdown() {
+        document.querySelectorAll('.pac-container').forEach(function (container) {
+            container.classList.add('d-none');
+        });
+    }
+
+    function showQuotePlacesDropdown() {
+        document.querySelectorAll('.pac-container.d-none').forEach(function (container) {
+            container.classList.remove('d-none');
+        });
+    }
 
     function initQuoteAddressAutocomplete() {
+        if (!window.google?.maps?.places) return;
+
         document.querySelectorAll(
             '.get-quote-form input[name="property_address"]'
         ).forEach(function (addressInput) {
-            if (addressInput.dataset.autocompleteReady === 'true') return;
-            if (!window.google?.maps?.places) return;
+            if (addressInput.autocompleteInstance) return;
 
             const autocomplete = new google.maps.places.Autocomplete(
                 addressInput,
@@ -256,7 +304,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             );
 
+            addressInput.autocompleteInstance = autocomplete;
             addressInput.dataset.autocompleteReady = 'true';
+
+            addressInput.addEventListener('input', function () {
+                if (addressInput.dataset.settingSelectedAddress === 'true') {
+                    return;
+                }
+
+                quoteAddressSelected = false;
+                showQuotePlacesDropdown();
+            });
 
             autocomplete.addListener('place_changed', function () {
                 const place = autocomplete.getPlace();
@@ -264,15 +322,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!place?.geometry?.location) return;
 
                 if (place.formatted_address) {
+                    addressInput.dataset.settingSelectedAddress = 'true';
                     addressInput.value = place.formatted_address;
+
+                    addressInput.dispatchEvent(
+                        new Event('input', { bubbles: true })
+                    );
+
+                    addressInput.dispatchEvent(
+                        new Event('change', { bubbles: true })
+                    );
+
+                    delete addressInput.dataset.settingSelectedAddress;
                 }
 
-                addressInput.dispatchEvent(new Event('input', { bubbles: true }));
-                addressInput.dispatchEvent(new Event('change', { bubbles: true }));
+                quoteAddressSelected = true;
 
-                setTimeout(function () {
-                    addressInput.blur();
-                }, 100);
+                addressInput.blur();
+                hideQuotePlacesDropdown();
+
+                requestAnimationFrame(hideQuotePlacesDropdown);
+                setTimeout(hideQuotePlacesDropdown, 100);
+                setTimeout(hideQuotePlacesDropdown, 300);
             });
         });
     }
@@ -280,25 +351,43 @@ document.addEventListener('DOMContentLoaded', () => {
     function startQuoteAddressAutocomplete() {
         initQuoteAddressAutocomplete();
 
-        let quotePlacesAttempts = 0;
+        let attempts = 0;
 
-        const quotePlacesInterval = setInterval(function () {
+        if (quotePlacesInterval) {
+            clearInterval(quotePlacesInterval);
+        }
+
+        quotePlacesInterval = setInterval(function () {
             initQuoteAddressAutocomplete();
-            quotePlacesAttempts++;
+            attempts++;
 
             const inputs = document.querySelectorAll(
                 '.get-quote-form input[name="property_address"]'
             );
 
             const allInitialized = inputs.length > 0 &&
-                [...inputs].every(
-                    input => input.dataset.autocompleteReady === 'true'
-                );
+                [...inputs].every(function (input) {
+                    return input.dataset.autocompleteReady === 'true';
+                });
 
-            if (allInitialized || quotePlacesAttempts >= 100) {
+            if (allInitialized || attempts >= 100) {
                 clearInterval(quotePlacesInterval);
+                quotePlacesInterval = null;
             }
         }, 100);
+
+        if (!quotePlacesObserver) {
+            quotePlacesObserver = new MutationObserver(function () {
+                if (quoteAddressSelected) {
+                    hideQuotePlacesDropdown();
+                }
+            });
+
+            quotePlacesObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
     }
 
     startQuoteAddressAutocomplete();
