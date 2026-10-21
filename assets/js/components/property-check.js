@@ -281,7 +281,7 @@ if (!window.propertyCheckFormScriptLoaded) {
 
             resultsTimer = setTimeout(function () {
                 showResults();
-            }, 2000);
+            }, 4000);
 
             var planningBase = 'https://mapprod3.environment.nsw.gov.au/arcgis/rest/services/ePlanning/Planning_Portal_Principal_Planning/MapServer';
             var hazardBase = 'https://mapprod3.environment.nsw.gov.au/arcgis/rest/services/ePlanning/Planning_Portal_Hazard/MapServer';
