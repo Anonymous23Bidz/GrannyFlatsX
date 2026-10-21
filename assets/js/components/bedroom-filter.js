@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initBedroomFilter() {
     const filters = document.querySelectorAll('.bedrooms-fpf-filter');
     const results = document.querySelectorAll('.bedrooms-fpf-results[data-filter-group="floor-plans"]');
     const allCards = [...results].flatMap(wrapper => [...wrapper.querySelectorAll('.bedrooms-floor-plan-card')]);
@@ -106,4 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBedroomFilter, { once: true });
+} else {
+    initBedroomFilter();
+}

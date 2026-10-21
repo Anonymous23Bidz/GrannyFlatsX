@@ -1,4 +1,6 @@
 
+import { loadGoogleMapsPlaces } from '../utils/google-maps-places.js';
+
 if (!window.propertyCheckFormScriptLoaded) {
     window.propertyCheckFormScriptLoaded = true;
 
@@ -175,20 +177,14 @@ if (!window.propertyCheckFormScriptLoaded) {
         if (suburbInput) {
             initGoogleAutocomplete();
 
-            if (!(typeof google !== 'undefined' && google.maps && google.maps.places)) {
-                var attempts = 0;
-                var googleCheck = setInterval(function () {
-                    attempts++;
+            suburbInput.addEventListener('focus', function () {
+                loadGoogleMapsPlaces()
+                    .then(initGoogleAutocomplete)
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            }, { once: true });
 
-                    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-                        clearInterval(googleCheck);
-                        initGoogleAutocomplete();
-                    } else if (attempts >= 100) {
-                        clearInterval(googleCheck);
-                        console.error('Google Maps Places API did not load.');
-                    }
-                }, 100);
-            }
         }
 
         if (goButton) {

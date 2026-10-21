@@ -90,13 +90,19 @@ function hello_child_enqueue_assets()
         );
     }
 
-    // Main JavaScript ES module.
-    $main_js = $theme_path . '/assets/js/main.js';
+    // Use the bundled/minified module after `npm run build`; source remains a
+    // development fallback so local work does not break before the first build.
+    $built_main_js = $theme_path . '/assets/dist/main.js';
+    $source_main_js = $theme_path . '/assets/js/main.js';
+    $main_js = file_exists($built_main_js) ? $built_main_js : $source_main_js;
+    $main_js_uri = file_exists($built_main_js)
+        ? $theme_uri . '/assets/dist/main.js'
+        : $theme_uri . '/assets/js/main.js';
 
     if (!$is_elementor_editor && file_exists($main_js)) {
         wp_enqueue_script(
             'hello-child-main-js',
-            $theme_uri . '/assets/js/main.js',
+            $main_js_uri,
             [],
             filemtime($main_js),
             true
@@ -127,32 +133,24 @@ function hello_child_enqueue_assets()
         : getenv('GOOGLE_MAPS_API_KEY');
 
     if (!$is_elementor_editor && !empty($google_maps_api_key)) {
-        wp_enqueue_script(
-            'google-maps-places',
-            add_query_arg(
-                [
-                    'key'       => $google_maps_api_key,
-                    'libraries' => 'places',
-                    'loading'   => 'async',
-                ],
-                'https://maps.googleapis.com/maps/api/js'
-            ),
-            [],
-            null,
-            true
+        // Do not download Google Maps on every page. The address-field script
+        // loads this URL only after a visitor focuses an address input.
+        $google_maps_url = add_query_arg(
+            [
+                'key'       => $google_maps_api_key,
+                'libraries' => 'places',
+                'loading'   => 'async',
+            ],
+            'https://maps.googleapis.com/maps/api/js'
         );
 
-        add_filter('script_loader_tag', function ($tag, $handle) {
-            if ($handle !== 'google-maps-places') {
-                return $tag;
-            }
-
-            return str_replace(
-                '<script ',
-                '<script async ',
-                $tag
-            );
-        }, 10, 2);
+        wp_localize_script(
+            'hello-child-main-js',
+            'helloChildMaps',
+            [
+                'url' => $google_maps_url,
+            ]
+        );
     }
 }
 add_action('wp_enqueue_scripts', 'hello_child_enqueue_assets');

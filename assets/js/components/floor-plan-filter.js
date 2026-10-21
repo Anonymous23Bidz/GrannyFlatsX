@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initFloorPlanFilter() {
     const wrappers = [...document.querySelectorAll('.fpf-wrapper')];
     const $ = (el, selector) => el.querySelector(selector);
     const $$ = (el, selector) => [...el.querySelectorAll(selector)];
@@ -373,4 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (container) container.hidden = true;
         });
     });
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFloorPlanFilter, { once: true });
+} else {
+    initFloorPlanFilter();
+}

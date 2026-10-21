@@ -1,5 +1,7 @@
 
-document.addEventListener('DOMContentLoaded', function () {
+import { loadGoogleMapsPlaces } from '../utils/google-maps-places.js';
+
+function initGetQuoteForm() {
     document.querySelectorAll('.get-quote-form').forEach(function (form) {
         const steps = [...form.querySelectorAll('.gqf-step')];
         const currentLabel = form.querySelector('.gqf-current-step');
@@ -390,15 +392,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    startQuoteAddressAutocomplete();
-
     document.addEventListener('focusin', function (event) {
         if (
             event.target.matches(
                 '.get-quote-form input[name="property_address"]'
             )
         ) {
-            initQuoteAddressAutocomplete();
+            loadGoogleMapsPlaces()
+                .then(startQuoteAddressAutocomplete)
+                .catch(function (error) {
+                    console.error(error);
+                });
         }
     });
-});
+
+    // If this module was loaded because the address field received focus,
+    // start Places immediately rather than making the visitor focus it again.
+    if (
+        document.activeElement?.matches(
+            '.get-quote-form input[name="property_address"]'
+        )
+    ) {
+        loadGoogleMapsPlaces()
+            .then(startQuoteAddressAutocomplete)
+            .catch(function (error) {
+                console.error(error);
+            });
+    }
+}
+
+// Dynamic imports are not guaranteed to finish before DOMContentLoaded.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGetQuoteForm, { once: true });
+} else {
+    initGetQuoteForm();
+}

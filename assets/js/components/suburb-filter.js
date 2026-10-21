@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+function initSuburbFilter() {
 
     document.querySelectorAll('.custom-location-locator').forEach(function (container) {
 
@@ -262,4 +262,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSuburbFilter, { once: true });
+} else {
+    initSuburbFilter();
+}

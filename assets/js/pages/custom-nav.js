@@ -1,6 +1,4 @@
 
-document.addEventListener('DOMContentLoaded', initGxfMenus);
-
 function initGxfMenus() {
     const desktopHover = window.matchMedia('(hover: hover) and (min-width: 1025px)');
 
@@ -122,5 +120,12 @@ function toggleAppointmentButton() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', toggleAppointmentButton);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGxfMenus, { once: true });
+    document.addEventListener('DOMContentLoaded', toggleAppointmentButton, { once: true });
+} else {
+    initGxfMenus();
+    toggleAppointmentButton();
+}
+
 window.addEventListener('resize', toggleAppointmentButton);
