@@ -8,19 +8,19 @@
 // input[type=time]:focus,
 // input[type=url]:focus,
 // select:focus,
-// input[type=date]:hover,
-// input[type=email]:hover,
-// input[type=number]:hover,
-// input[type=password]:hover,
-// input[type=search]:hover,
-// input[type=tel]:hover,
-// input[type=text]:hover,
-// input[type=time]:hover,
-// input[type=url]:hover,
-// select:hover,
-// textarea:hover {
-//     border: 1px solid #dce1eb !important;
-// }
+input[type=date]:hover,
+input[type=email]:hover,
+input[type=number]:hover,
+input[type=password]:hover,
+input[type=search]:hover,
+input[type=tel]:hover,
+input[type=text]:hover,
+input[type=time]:hover,
+input[type=url]:hover,
+select:hover,
+textarea:hover {
+    border: 1px solid #dce1eb !important;
+}
 
 .get-quote-form p {
     color: var(--e-global-color-text) !important;
