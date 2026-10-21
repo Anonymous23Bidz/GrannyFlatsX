@@ -1,3 +1,4 @@
 .DS_Store
 *.ctcbackup.css
 .env
+node_modules/
