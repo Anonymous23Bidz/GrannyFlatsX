@@ -1,13 +1,13 @@
-// input[type=date]:focus,
-// input[type=email]:focus,
-// input[type=number]:focus,
-// input[type=password]:focus,
-// input[type=search]:focus,
-// input[type=tel]:focus,
-// input[type=text]:focus,
-// input[type=time]:focus,
-// input[type=url]:focus,
-// select:focus,
+input[type=date]:focus,
+input[type=email]:focus,
+input[type=number]:focus,
+input[type=password]:focus,
+input[type=search]:focus,
+input[type=tel]:focus,
+input[type=text]:focus,
+input[type=time]:focus,
+input[type=url]:focus,
+select:focus,
 input[type=date]:hover,
 input[type=email]:hover,
 input[type=number]:hover,
@@ -19,7 +19,7 @@ input[type=time]:hover,
 input[type=url]:hover,
 select:hover,
 textarea:hover {
-    border: 1px solid #dce1eb !important;
+    border: 1px solid #c2c8d1 !important;
 }
 
 .get-quote-form p {
@@ -54,15 +54,16 @@ textarea:hover {
 }
 
 .btn-outline {
-    background: #fff !important;
+    background: #ffffff0a !important;
     color: var(--e-global-color-primary) !important;
     border: 2px solid var(--e-global-color-primary) !important;
     transition: all 0.3s ease;
-}
 
-.btn-outline:hover {
-    background: var(--e-global-color-primary) !important;
-    color: #fff !important;
+    &:hover {
+        background: var(--e-global-color-primary) !important;
+        color: #fff !important;
+    }
+
 }
 
 .btn-primary {
@@ -70,12 +71,13 @@ textarea:hover {
     color: #fff !important;
     border: 2px solid var(--e-global-color-primary) !important;
     transition: all 0.3s ease;
-}
 
-.btn-primary:hover {
-    opacity: 1 !important;
-    background: var(--e-global-color-primary) !important;
-    color: #fff !important;
+    &:hover {
+        opacity: 1 !important;
+        background: var(--e-global-color-primary) !important;
+        color: #fff !important;
+    }
+
 }
 
 .get-quote-form .gqf-navigation .btn-outline {
@@ -158,8 +160,7 @@ h5.gqf-sub-heading {
     padding: 0 14px;
     font: 400 15px DM Sans, sans-serif;
     background-color: var(--e-global-color-ef42499);
-    border-style: solid;
-    border-color: #02010100;
+    border: 1px solid #c2c8d100 !important;
     border-radius: 12px 12px;
 }
 
@@ -239,4 +240,8 @@ h5.gqf-sub-heading {
     display: flex;
     justify-content: center;
     margin-top: 24px;
+}
+
+.elementor-location-popup {
+    overflow-y: hidden !important;
 }

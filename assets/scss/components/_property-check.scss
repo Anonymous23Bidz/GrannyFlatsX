@@ -196,8 +196,7 @@
     border: none;
     font: 400 15px DM Sans, sans-serif;
     background-color: var(--e-global-color-ef42499);
-    border-style: solid;
-    border-color: #02010100;
+    border: 1px solid #c2c8d100 !important;
     border-radius: 12px 12px;
     outline: none;
 }
