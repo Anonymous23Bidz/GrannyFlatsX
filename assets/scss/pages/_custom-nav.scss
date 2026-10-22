@@ -431,14 +431,14 @@
 
     .gxf-mega-nav .gxf-top-menu {
         position: fixed !important;
-        top: 80px !important;
+        top: 120px !important;
         left: 2% !important;
         right: 2% !important;
         bottom: 12px !important;
-        width: 96% !important;
+        width: 92% !important;
         max-width: 1230px;
         min-width: 0 !important;
-        height: auto !important;
+        height: max-content !important;
         max-height: none !important;
         overflow-x: hidden !important;
         overflow-y: auto !important;
@@ -459,6 +459,10 @@
         transform: translateY(-12px);
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
         z-index: 99999 !important;
+
+        @media (max-width: 728px) {
+            top: 120px;
+        }
     }
 
     .gxf-mega-nav.mobile-open .gxf-top-menu {
@@ -476,10 +480,6 @@
             &:last-child {
                 padding-bottom: 16px;
             }
-        }
-
-        @media (max-width: 728px) {
-            top: 160px;
         }
     }
 
