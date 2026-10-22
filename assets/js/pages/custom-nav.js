@@ -114,7 +114,7 @@ function toggleAppointmentButton() {
         ).forEach(link => {
             const listItem = link.closest('li.gxf-top-item');
             if (listItem) {
-                listItem.style.display = window.innerWidth > 767 ? 'none' : '';
+                listItem.style.display = window.innerWidth > 1200 ? 'none' : '';
             }
         });
     });
