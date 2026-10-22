@@ -163,22 +163,3 @@ body strong,
 .read-more-btn:hover {
     opacity: 1;
 }
-
-.taxonomy-value-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-
-    .taxonomy-value-tab {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 16px;
-        border-radius: 25px 25px;
-        background: #455173;
-        color: #fff;
-        text-decoration: none;
-        font-size: 13px;
-        line-height: 1.4;
-    }
-}

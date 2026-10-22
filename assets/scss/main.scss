@@ -2,6 +2,7 @@
 // is written to ../css/main.css and is the only CSS file WordPress serves.
 @use "pages/global-typography";
 @use "pages/single-location";
+@use "pages/single-design";
 @use "pages/custom-nav";
 
 @use "components/accordion";

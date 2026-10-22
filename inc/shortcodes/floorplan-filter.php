@@ -805,8 +805,6 @@ function custom_floorplan_filter_shortcode($atts)
 
                 <!-- Space Available -->
 
-                <!-- Space Available -->
-
                 <div class="fpf-field">
 
                     <label class="fpf-label">
@@ -934,64 +932,64 @@ function custom_floorplan_filter_shortcode($atts)
                     data-features="<?php echo esc_attr(implode(',', $floorplan['features'])); ?>"
                     data-calculated-area="<?php echo esc_attr($floorplan['calculated_area']); ?>"
                     data-plan-length-mm="<?php echo esc_attr($floorplan['plan_length_mm']); ?>"
-                    data-plan-width-mm="<?php echo esc_attr($floorplan['plan_width_mm']); ?>"
+                    data-plan-width-mm="<?php echo esc_attr($floorplan['plan_width_mm']); ?>">
 
                     <a
-                    href="<?php echo esc_url($floorplan['url']); ?>"
-                    class="floor-plan-card-link">
+                        href="<?php echo esc_url($floorplan['url']); ?>"
+                        class="floor-plan-card-link">
 
-                    <div class="floor-plan-image">
+                        <div class="floor-plan-image">
 
-                        <span class="fpf-image-spinner" aria-hidden="true"></span>
+                            <span class="fpf-image-spinner" aria-hidden="true"></span>
 
-                        <?php if (!empty($floorplan['floorplan_image'])) : ?>
-                            <img
-                                class="fpf-image fpf-floorplan-image"
-                                src="<?php echo esc_url($floorplan['floorplan_image']['url']); ?>"
-                                alt="<?php echo esc_attr($floorplan['title']); ?>">
-                        <?php endif; ?>
-                        <?php if ($floorplan['design_thumbnail']) : ?>
-
-                            <?php
-
-                            $design_thumbnail = $floorplan['design_thumbnail'];
-
-                            if (is_array($design_thumbnail)) {
-                                $design_thumbnail_url = $design_thumbnail['url'];
-                            } else {
-                                $design_thumbnail_url = $design_thumbnail;
-                            }
-
-                            ?>
-
-                            <img
-                                class="fpf-image fpf-facade-image"
-                                src="<?php echo esc_url($design_thumbnail_url); ?>"
-                                alt="<?php echo esc_attr($floorplan['title']); ?> Facade">
-
-                        <?php endif; ?>
-
-                    </div>
-
-                    <div class="floor-plan-card-content">
-
-                        <h3 class="floor-plan-title">
-                            <?php echo esc_html($floorplan['title']); ?>
-                        </h3>
-                        <div class="floor-plan-detail-wrapper">
-                            <?php if (!empty($floorplan['bedrooms'])) : ?>
-                                <p class="floor-plan-details">
-                                    <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/bed-icon.svg'); ?>" alt="Bedroom Icon">
-                                    <?php echo esc_html(implode(', ', $floorplan['bedrooms'])); ?> Bed
-                                </p>
+                            <?php if (!empty($floorplan['floorplan_image'])) : ?>
+                                <img
+                                    class="fpf-image fpf-floorplan-image"
+                                    src="<?php echo esc_url($floorplan['floorplan_image']['url']); ?>"
+                                    alt="<?php echo esc_attr($floorplan['title']); ?>">
                             <?php endif; ?>
-                            <?php if (!empty($floorplan['bathrooms'])) : ?>
-                                <p class="floor-plan-details">
-                                    <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/bath-icon.svg'); ?>" alt="Bathroom Icon">
-                                    <?php echo esc_html(implode(', ', $floorplan['bathrooms'])); ?> Bath
-                                </p>
+                            <?php if ($floorplan['design_thumbnail']) : ?>
+
+                                <?php
+
+                                $design_thumbnail = $floorplan['design_thumbnail'];
+
+                                if (is_array($design_thumbnail)) {
+                                    $design_thumbnail_url = $design_thumbnail['url'];
+                                } else {
+                                    $design_thumbnail_url = $design_thumbnail;
+                                }
+
+                                ?>
+
+                                <img
+                                    class="fpf-image fpf-facade-image"
+                                    src="<?php echo esc_url($design_thumbnail_url); ?>"
+                                    alt="<?php echo esc_attr($floorplan['title']); ?> Facade">
+
                             <?php endif; ?>
-                            <!-- <?php if ($floorplan['calculated_area'] !== '') : ?>
+
+                        </div>
+
+                        <div class="floor-plan-card-content">
+
+                            <h3 class="floor-plan-title">
+                                <?php echo esc_html($floorplan['title']); ?>
+                            </h3>
+                            <div class="floor-plan-detail-wrapper">
+                                <?php if (!empty($floorplan['bedrooms'])) : ?>
+                                    <p class="floor-plan-details">
+                                        <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/bed-icon.svg'); ?>" alt="Bedroom Icon">
+                                        <?php echo esc_html(implode(', ', $floorplan['bedrooms'])); ?> Bed
+                                    </p>
+                                <?php endif; ?>
+                                <?php if (!empty($floorplan['bathrooms'])) : ?>
+                                    <p class="floor-plan-details">
+                                        <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/bath-icon.svg'); ?>" alt="Bathroom Icon">
+                                        <?php echo esc_html(implode(', ', $floorplan['bathrooms'])); ?> Bath
+                                    </p>
+                                <?php endif; ?>
+                                <!-- <?php if ($floorplan['calculated_area'] !== '') : ?>
                                 <p class="floor-plan-details">
                                     <img class="icons" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/images/ruler-icon.svg'); ?>" alt="Ruler Icon">
                                     <?php if ($floorplan['plan_length_mm'] > 0 && $floorplan['plan_width_mm'] > 0) : ?>
@@ -1001,12 +999,12 @@ function custom_floorplan_filter_shortcode($atts)
                                     <?php endif; ?>
                                 </p>
                             <?php endif; ?> -->
-                        </div>
-                        <span class="floor-plan-link">
-                            View floor plan <i class="fa-solid fa-arrow-right"></i>
-                        </span>
+                            </div>
+                            <span class="floor-plan-link">
+                                View floor plan <i class="fa-solid fa-arrow-right"></i>
+                            </span>
 
-                    </div>
+                        </div>
 
                     </a>
 
