@@ -681,7 +681,7 @@ body strong,
 }
 @media (max-width: 1200px) and (max-width: 728px) {
   .gxf-mega-nav .gxf-top-menu {
-    top: 120px;
+    top: 0px;
   }
 }
 @media (max-width: 1200px) {
