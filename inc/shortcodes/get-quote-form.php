@@ -342,7 +342,6 @@ function get_quote_form_shortcode()
 add_shortcode('get_quote_form', 'get_quote_form_shortcode');
 
 
-
 function get_quote_send_email()
 {
     $nonce = isset($_POST['get_quote_nonce'])
@@ -384,7 +383,6 @@ function get_quote_send_email()
         }
     }
 
-    // Helper to read a collected field safely.
     $get_value = static function ($key) use ($data) {
         if (!isset($data[$key])) {
             return '';
@@ -395,7 +393,6 @@ function get_quote_send_email()
             : (string) $data[$key];
     };
 
-    // Required contact details.
     $name  = $get_value('full_name');
     $phone = $get_value('mobile');
     $email = sanitize_email($get_value('email'));
@@ -406,13 +403,12 @@ function get_quote_send_email()
         ], 400);
     }
 
-    // Check required project answers.
     $required_fields = [
-        'bedrooms'        => 'bedroom selection',
-        'price'           => 'budget',
+        'bedrooms'         => 'bedroom selection',
+        'price'            => 'budget',
         'property_address' => 'property address',
-        'start_timeline'  => 'start timeline',
-        'site_details'    => 'site details',
+        'start_timeline'   => 'start timeline',
+        'site_details'     => 'site details',
     ];
 
     foreach ($required_fields as $key => $label) {
@@ -423,8 +419,8 @@ function get_quote_send_email()
         }
     }
 
-    // Optional attachment.
-    $attachments  = [];
+    // Handle optional attachment.
+    $attachments   = [];
     $uploaded_path = '';
 
     if (
@@ -489,7 +485,7 @@ function get_quote_send_email()
         $attachments[] = $uploaded_path;
     }
 
-
+    // Human-readable field labels.
     $labels = [
         'form_name'        => 'Form',
         'bedrooms'         => 'Bedrooms',
@@ -500,7 +496,6 @@ function get_quote_send_email()
         'full_name'        => 'Full Name',
         'mobile'           => 'Mobile',
         'email'            => 'Email',
-        'file'             => 'Attachment',
     ];
 
     $value_labels = [
@@ -530,30 +525,34 @@ function get_quote_send_email()
         ],
     ];
 
+    // Build the lead notification email.
+    $message  = "NEW GET A QUOTE ENQUIRY\n\n";
+    $message .= "CUSTOMER DETAILS\n";
+    $message .= "Full Name: " . $name . "\n";
+    $message .= "Mobile: " . $phone . "\n";
+    $message .= "Email: " . $email . "\n\n";
+    $message .= "PROJECT DETAILS\n";
 
-    foreach ($data as $key => $value) {
-        $label = $labels[$key] ?? ucwords(str_replace('_', ' ', $key));
-
-        if (isset($value_labels[$key])) {
-            $value = is_array($value) ? $value : [$value];
-
-            $value = array_map(
-                static fn($item) => $value_labels[$key][$item] ?? $item,
-                $value
-            );
-
-            $value = implode(', ', $value);
-        } elseif (is_array($value)) {
-            $value = implode(', ', $value);
+    foreach ($labels as $key => $label) {
+        if (in_array($key, ['full_name', 'mobile', 'email'], true)) {
+            continue;
         }
 
-        $message .= $label . ': ';
-        $message .= $value !== '' ? $value : 'Not provided';
-        $message .= "\n";
+        $value = $get_value($key);
+
+        if (isset($value_labels[$key])) {
+            $value = $value_labels[$key][$value] ?? $value;
+        }
+
+        $message .= $label . ': ' . ($value !== '' ? $value : 'Not provided') . "\n";
     }
 
-    $to = 'lead.nextgengrannyflats@gmail.com';
-    // $to = 'christopher.bj.hidalgo@gmail.com';
+    $message .= "\nATTACHMENT\n";
+    $message .= $uploaded_path
+        ? sanitize_file_name(basename($uploaded_path))
+        : 'No attachment provided';
+
+    $to      = 'lead.nextgengrannyflats@gmail.com';
     $subject = 'New Get a Quote Enquiry - ' . $name;
 
     $headers = [
@@ -561,6 +560,7 @@ function get_quote_send_email()
         'Reply-To: ' . $name . ' <' . $email . '>',
     ];
 
+    // Send the lead notification.
     $sent = wp_mail(
         $to,
         $subject,
@@ -569,16 +569,112 @@ function get_quote_send_email()
         $attachments
     );
 
+    // The uploaded file is no longer needed after the lead email attempt.
     if ($uploaded_path && file_exists($uploaded_path)) {
         wp_delete_file($uploaded_path);
     }
 
     if (!$sent) {
-        error_log('Get a Quote: wp_mail() failed for ' . $email);
+        error_log('Get a Quote: Lead email failed for ' . $email);
 
         wp_send_json_error([
             'message' => 'Your enquiry could not be sent. Please try again.'
         ], 500);
+    }
+
+    // Send a separate HTML confirmation email to the customer.
+    $customer_subject = 'Thank You for Your Enquiry - Granny Flats X';
+
+    $customer_message = '
+    <!DOCTYPE html>
+    <html>
+    <body style="margin:0;padding:24px;font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#333;">
+        <div style="max-width:700px;margin:auto;">
+            <p>Hi ' . esc_html($name) . ',</p>
+
+            <p>Thank you for reaching out to Granny Flats X!</p>
+
+            <p>We have received your granny flat quote request, and our team will be in touch to discuss your project and property.</p>
+
+            <h3 style="color:#26324b;">Your Enquiry Summary</h3>
+
+            <table style="width:100%;border-collapse:collapse;">
+                <tr>
+                    <td style="padding:8px;border-bottom:1px solid #eee;"><strong>Bedrooms</strong></td>
+                    <td style="padding:8px;border-bottom:1px solid #eee;">' . esc_html($value_labels['bedrooms'][$get_value('bedrooms')] ?? $get_value('bedrooms')) . '</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px;border-bottom:1px solid #eee;"><strong>Budget</strong></td>
+                    <td style="padding:8px;border-bottom:1px solid #eee;">' . esc_html($value_labels['price'][$get_value('price')] ?? $get_value('price')) . '</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px;border-bottom:1px solid #eee;"><strong>Property Address</strong></td>
+                    <td style="padding:8px;border-bottom:1px solid #eee;">' . esc_html($get_value('property_address')) . '</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px;border-bottom:1px solid #eee;"><strong>Start Timeline</strong></td>
+                    <td style="padding:8px;border-bottom:1px solid #eee;">' . esc_html($value_labels['start_timeline'][$get_value('start_timeline')] ?? $get_value('start_timeline')) . '</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px;border-bottom:1px solid #eee;"><strong>Site Details</strong></td>
+                    <td style="padding:8px;border-bottom:1px solid #eee;">' . esc_html($value_labels['site_details'][$get_value('site_details')] ?? $get_value('site_details')) . '</td>
+                </tr>
+            </table>
+
+            <h3 style="color:#26324b;">Why Choose Granny Flats X?</h3>
+
+            <ul>
+                <li><strong>Decades of experience.</strong> We are an established granny flat builder with a proven track record.</li>
+                <li><strong>Everything handled.</strong> We manage the process from approvals through to completion.</li>
+                <li><strong>Quality finishes.</strong> Choose from quality materials, fittings and optional upgrades.</li>
+                <li><strong>Customised designs.</strong> We personalise your design and layout to suit your property and lifestyle.</li>
+                <li><strong>No hidden costs.</strong> We explain the inclusions and costs before you commit.</li>
+            </ul>
+
+            <p>We look forward to helping you explore the options for your granny flat.</p>
+
+            <p><strong>Want to learn more?</strong></p>
+
+            <p><a href="https://grannyflatsx.com.au/wp-content/uploads/2026/07/GFX-Handbook-2026-Final1.pdf" style="color:#b58b25;">Read the Granny Flats X Client Handbook</a></p>
+
+            <p>If you have any questions, simply reply to this email or call us on
+            <a href="tel:0291917415">(02) 9191 7415</a> or
+            <a href="tel:1300950764">1300 950 764</a>.</p>
+
+            <p>Thank you again for considering Granny Flats X. We look forward to speaking with you soon.</p>
+
+            <p>
+                Kind regards,<br>
+                <strong>Mark I.</strong><br>
+                Business Development Associate<br>
+                (02) 9191 7415 | 1300 950 764
+            </p>
+
+            <p style="color:#b58b25;font-weight:bold;">Price Beat Guarantee | Highest Quality | No Hidden Costs</p>
+
+            <p><a href="https://www.grannyflatsx.com.au">www.GrannyFlatsX.com.au</a></p>
+
+            <p style="font-size:12px;color:#777;">
+                Granny Flats X is the legal business name of Bluewood Homes NSW Pty. Ltd.<br>
+                ABN: 54 647 631 043 | Builder Licence #: 366254C
+            </p>
+        </div>
+    </body>
+    </html>';
+
+    $customer_headers = [
+        'Content-Type: text/html; charset=UTF-8',
+    ];
+
+    $customer_sent = wp_mail(
+        $email,
+        $customer_subject,
+        $customer_message,
+        $customer_headers
+    );
+
+    if (!$customer_sent) {
+        error_log('Get a Quote: Customer confirmation email failed for ' . $email);
     }
 
     wp_send_json_success([
