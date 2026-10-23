@@ -112,3 +112,21 @@ add_shortcode('acf_calculate', function ($atts) {
         max(0, min(6, (int) $atts['decimals']))
     ) . $atts['suffix']);
 });
+
+
+add_shortcode('render_kuula_iframe', function () {
+    $url = get_field('kuula_link');
+
+    if (! $url) {
+        return '';
+    }
+
+    if (strpos($url, '<iframe') !== false) {
+        return $url;
+    }
+
+    return sprintf(
+        '<iframe width="100%%" height="640" frameborder="0" allow="xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen scrolling="no" src="%s"></iframe>',
+        esc_url($url)
+    );
+});
