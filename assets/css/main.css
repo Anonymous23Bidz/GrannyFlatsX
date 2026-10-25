@@ -1347,10 +1347,6 @@ button.faq-question .faq-question__icon {
   margin-bottom: 20px;
 }
 
-.fpf-field.fpf-features-field {
-  min-width: 540px;
-}
-
 .fpf-wrapper .fpf-grid-bottom {
   grid-template-columns: 2fr 1fr 1fr;
 }
@@ -1359,6 +1355,13 @@ button.faq-question .faq-question__icon {
 .fpf-wrapper .fpf-field {
   display: flex;
   flex-direction: column;
+}
+.fpf-wrapper .fpf-field .fpf-mm-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 4px;
 }
 
 .fpf-wrapper .fpf-label {
@@ -1422,7 +1425,8 @@ button.faq-question .faq-question__icon {
 }
 
 .fpf-wrapper .fpf-dim-input {
-  width: 100px;
+  width: 37%;
+  min-width: 100px;
   height: 48px;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -1430,6 +1434,11 @@ button.faq-question .faq-question__icon {
   font-size: 14px;
   color: #475569;
   outline: none;
+}
+@media (min-width: 768px) {
+  .fpf-wrapper .fpf-dim-input {
+    width: 45%;
+  }
 }
 
 .fpf-wrapper .fpf-dim-input::placeholder {
@@ -1598,7 +1607,7 @@ button.faq-question .faq-question__icon {
 .fpf-wrapper .fpf-subbar-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0px;
   flex-wrap: wrap;
 }
 
@@ -1714,7 +1723,7 @@ button.faq-question .faq-question__icon {
 .fpf-wrapper .fpf-popover-col {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0px;
 }
 
 .fpf-wrapper .fpf-feature-category-title {
@@ -1785,7 +1794,7 @@ button.faq-question .faq-question__icon {
 @media (max-width: 992px) {
   .fpf-wrapper .fpf-grid-top,
   .fpf-wrapper .fpf-grid-bottom {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
   .fpf-wrapper .fpf-field.fpf-features-field {
     min-width: 0;
@@ -1821,6 +1830,9 @@ button.faq-question .faq-question__icon {
   .fpf-wrapper .fpf-field {
     width: 100%;
     min-width: 0;
+  }
+  .fpf-wrapper .fpf-field .fpf-mm-wrapper {
+    text-align: center;
   }
   .fpf-wrapper .fpf-field.fpf-features-field {
     min-width: 0;
@@ -1871,7 +1883,7 @@ button.faq-question .faq-question__icon {
   }
   /* Layout options */
   .fpf-wrapper .fpf-layout-popover {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
   /* Features */
   .fpf-wrapper .fpf-checkbox-label {
@@ -1895,121 +1907,86 @@ button.faq-question .faq-question__icon {
     flex: 0 0 auto;
     margin-left: 2px;
   }
-  /* Subbar */
   .fpf-wrapper .fpf-subbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
-    margin-bottom: 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: 100%;
   }
   .fpf-wrapper .fpf-subbar-left {
-    width: 100%;
-    align-items: stretch;
-    gap: 10px;
+    display: flex;
+    flex: 1 1 50%;
+    width: auto;
+    min-width: 0;
+    align-items: center;
   }
   .fpf-wrapper .fpf-toggle-switch {
+    display: flex;
+    flex: 1;
     width: 100%;
+    min-width: 0;
   }
   .fpf-wrapper .fpf-toggle-btn {
+    display: flex;
     flex: 1;
-    text-align: center;
-    padding: 9px 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 6px;
+    height: 40px;
+    white-space: nowrap;
+    font-size: 12px;
   }
   .fpf-wrapper .fpf-tags-list {
-    width: 100%;
+    display: none;
   }
   .fpf-wrapper .fpf-subbar-right {
-    width: 100%;
+    display: flex;
+    flex: 1 1 50%;
+    width: auto;
+    min-width: 0;
     max-width: none;
-  }
-  .fpf-wrapper .fpf-sort-label {
-    flex: 0 0 auto;
-  }
-  .fpf-wrapper .fpf-sort-container {
-    flex: 1;
-    min-width: 0;
-  }
-  /* Floor plan cards */
-  .fpf-wrapper .floor-plan-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .fpf-wrapper .floor-plan-card {
-    width: 100%;
-    min-width: 0;
-  }
-  #floor-plan-results .floor-plan-image {
-    height: 100% !important;
-    border-radius: 0;
-  }
-  /* Images */
-  .fpf-wrapper .floor-plan-image {
-    width: 100%;
-    height: 220px;
-  }
-  .fpf-wrapper .floor-plan-image img {
-    max-width: 100%;
-  }
-  .fpf-wrapper .floor-plan-card.is-floorplan-view .floor-plan-image img {
-    width: 160px;
-    height: 215px !important;
-    object-fit: contain;
-  }
-  .fpf-wrapper .floor-plan-card.is-facade-view .floor-plan-image img {
-    width: 100%;
-    height: 220px !important;
-    object-fit: cover;
-  }
-}
-/* SMALL MOBILE */
-@media (max-width: 480px) {
-  .fpf-wrapper .fpf-card {
-    padding: 16px 12px;
-  }
-  .fpf-wrapper .fpf-label {
-    font-size: 14px;
-  }
-  .fpf-wrapper .fpf-select-trigger,
-  .fpf-wrapper .fpf-native-select {
-    height: 46px;
-    font-size: 14px;
-  }
-  .fpf-wrapper .fpf-popover,
-  .fpf-wrapper .fpf-layout-popover,
-  .fpf-wrapper .fpf-popover.fpf-features-popover {
-    padding: 16px;
-    border-radius: 14px;
-  }
-  .fpf-wrapper .fpf-layout-popover {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-  .fpf-wrapper .fpf-pill-btn {
-    font-size: 12px;
-    padding: 9px 4px;
-  }
-  .fpf-wrapper .fpf-subbar-right {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
+    align-items: center;
     gap: 6px;
   }
   .fpf-wrapper .fpf-sort-label {
-    width: 100%;
+    flex: 0 0 auto;
+    width: auto;
+    font-size: 12px;
+    white-space: nowrap;
   }
   .fpf-wrapper .fpf-sort-container {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+  .fpf-wrapper .fpf-sort-container .fpf-native-select {
     width: 100%;
+    height: 40px;
+    padding: 0 28px 0 8px;
+    font-size: 12px;
   }
-  .fpf-wrapper .floor-plan-image {
-    height: 200px;
+}
+@media (max-width: 480px) {
+  .fpf-wrapper .fpf-subbar {
+    gap: 8px;
   }
-  .fpf-wrapper .floor-plan-card.is-floorplan-view .floor-plan-image img {
-    width: 145px;
-    height: 195px !important;
+  .fpf-wrapper .fpf-subbar-left,
+  .fpf-wrapper .fpf-subbar-right {
+    flex: 1 1 0;
+    min-width: 0;
   }
-  .fpf-wrapper .floor-plan-card.is-facade-view .floor-plan-image img {
-    width: 100%;
-    height: 200px !important;
+  .fpf-wrapper .fpf-sort-label {
+    font-size: 11px;
+  }
+  .fpf-wrapper .fpf-toggle-btn {
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+  .fpf-wrapper .fpf-sort-container .fpf-native-select {
+    font-size: 11px;
   }
 }
 /* VERY SMALL PHONES */
