@@ -515,6 +515,10 @@
 
 .fpf-wrapper .fpf-select-container.is-open .fpf-popover {
     display: grid;
+
+    @media (max-width: 767px) {
+        padding: 8px;
+    }
 }
 
 .fpf-wrapper .fpf-popover-section {
@@ -542,24 +546,12 @@
     background: #ffffff;
 
     @media (max-width: 767px) {
-        display: grid;
-        grid-template-columns: 1fr;
-
-        .fpf-radio-label {
-            border-bottom: 1px solid #e5eaf0;
-            min-width: 0;
-        }
-
         .fpf-pill-btn {
             min-height: 44px;
-            padding: 18px 16px;
-            font-size: 15px;
+            padding: 10px 6px;
+            font-size: 16p12pxx;
         }
 
-        .fpf-layout-icon {
-            width: 60px !important;
-            height: 60px !important;
-        }
     }
 }
 
@@ -781,21 +773,21 @@
     z-index: 1000;
 }
 
-/* Category Sections */
 .fpf-wrapper .fpf-popover-col {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0px;
 
     @media (max-width: 767px) {
-        gap: 8px;
+        gap: 5px;
     }
 }
 
 .fpf-wrapper .fpf-feature-category-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: #838eab;
+    /* Muted slate header */
     margin-bottom: 4px;
 }
 
@@ -805,7 +797,7 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 14px;
     color: #434d6d;
     font-weight: 500;
     user-select: none;
@@ -940,8 +932,6 @@
     }
 
     .fpf-wrapper .fpf-popover {
-        padding: 24px 0px;
-        border-radius: 0px;
         grid-template-columns: 1fr;
     }
 
@@ -961,17 +951,19 @@
         flex-wrap: wrap;
     }
 
-    /* Layout options */
-    .fpf-wrapper .fpf-layout-popover {
-        padding: 24px 0px;
-        border-radius: 0px;
-        grid-template-columns: repeat(1, minmax(0, 1fr));
+    .fpf-wrapper .fpf-radio-label {
+        min-width: 0;
     }
 
-    .fpf-wrapper .fpf-popover-title {
-        font-size: 16px;
-        margin-bottom: 16px;
-        text-align: center;
+    .fpf-wrapper .fpf-pill-btn {
+        min-height: 44px;
+        padding: 10px 6px;
+        font-size: 13px;
+    }
+
+    /* Layout options */
+    .fpf-wrapper .fpf-layout-popover {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
     }
 
     /* Features */

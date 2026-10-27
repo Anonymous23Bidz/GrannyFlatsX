@@ -1479,6 +1479,11 @@ button.faq-question .faq-question__icon {
 .fpf-wrapper .fpf-select-container.is-open .fpf-popover {
   display: grid;
 }
+@media (max-width: 767px) {
+  .fpf-wrapper .fpf-select-container.is-open .fpf-popover {
+    padding: 8px;
+  }
+}
 
 .fpf-wrapper .fpf-popover-section {
   margin-bottom: 20px;
@@ -1505,22 +1510,10 @@ button.faq-question .faq-question__icon {
   background: #ffffff;
 }
 @media (max-width: 767px) {
-  .fpf-wrapper .fpf-pill-group {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .fpf-wrapper .fpf-pill-group .fpf-radio-label {
-    border-bottom: 1px solid #e5eaf0;
-    min-width: 0;
-  }
   .fpf-wrapper .fpf-pill-group .fpf-pill-btn {
     min-height: 44px;
-    padding: 18px 16px;
-    font-size: 15px;
-  }
-  .fpf-wrapper .fpf-pill-group .fpf-layout-icon {
-    width: 60px !important;
-    height: 60px !important;
+    padding: 10px 6px;
+    font-size: 16p12pxx;
   }
 }
 
@@ -1738,22 +1731,22 @@ button.faq-question .faq-question__icon {
   z-index: 1000;
 }
 
-/* Category Sections */
 .fpf-wrapper .fpf-popover-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0px;
 }
 @media (max-width: 767px) {
   .fpf-wrapper .fpf-popover-col {
-    gap: 8px;
+    gap: 5px;
   }
 }
 
 .fpf-wrapper .fpf-feature-category-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: #838eab;
+  /* Muted slate header */
   margin-bottom: 4px;
 }
 
@@ -1763,7 +1756,7 @@ button.faq-question .faq-question__icon {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   color: #434d6d;
   font-weight: 500;
   user-select: none;
@@ -1881,8 +1874,6 @@ button.faq-question .faq-question__icon {
     border-radius: 16px;
   }
   .fpf-wrapper .fpf-popover {
-    padding: 24px 0px;
-    border-radius: 0px;
     grid-template-columns: 1fr;
   }
   .fpf-wrapper .fpf-popover.fpf-features-popover {
@@ -1898,16 +1889,17 @@ button.faq-question .faq-question__icon {
     width: 100%;
     flex-wrap: wrap;
   }
+  .fpf-wrapper .fpf-radio-label {
+    min-width: 0;
+  }
+  .fpf-wrapper .fpf-pill-btn {
+    min-height: 44px;
+    padding: 10px 6px;
+    font-size: 13px;
+  }
   /* Layout options */
   .fpf-wrapper .fpf-layout-popover {
-    padding: 24px 0px;
-    border-radius: 0px;
     grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-  .fpf-wrapper .fpf-popover-title {
-    font-size: 16px;
-    margin-bottom: 16px;
-    text-align: center;
   }
   /* Features */
   .fpf-wrapper .fpf-checkbox-label {
