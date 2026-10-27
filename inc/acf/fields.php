@@ -117,12 +117,26 @@ add_shortcode('acf_calculate', function ($atts) {
 add_shortcode('render_kuula_iframe', function () {
     $url = get_field('kuula_link');
 
-    if (! $url) {
+    if (empty($url) || !is_string($url)) {
         return '';
     }
 
-    if (strpos($url, '<iframe') !== false) {
-        return $url;
+    $url = trim($url);
+
+    if (!wp_http_validate_url($url)) {
+        return '';
+    }
+
+    $host = wp_parse_url($url, PHP_URL_HOST);
+
+    if (!in_array(strtolower($host ?? ''), ['kuula.co', 'www.kuula.co'], true)) {
+        return '';
+    }
+
+    $path = wp_parse_url($url, PHP_URL_PATH);
+
+    if (!is_string($path) || !preg_match('#^/share/(?:collection/)?[a-zA-Z0-9]+/?$#', $path)) {
+        return '';
     }
 
     return sprintf(
