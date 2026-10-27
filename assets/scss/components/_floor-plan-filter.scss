@@ -540,6 +540,27 @@
     border-radius: 10px;
     overflow: hidden;
     background: #ffffff;
+
+    @media (max-width: 767px) {
+        display: grid;
+        grid-template-columns: 1fr;
+
+        .fpf-radio-label {
+            border-bottom: 1px solid #e5eaf0;
+            min-width: 0;
+        }
+
+        .fpf-pill-btn {
+            min-height: 44px;
+            padding: 18px 16px;
+            font-size: 15px;
+        }
+
+        .fpf-layout-icon {
+            width: 60px !important;
+            height: 60px !important;
+        }
+    }
 }
 
 /* Radio Option Wrapper */
@@ -764,14 +785,17 @@
 .fpf-wrapper .fpf-popover-col {
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 4px;
+
+    @media (max-width: 767px) {
+        gap: 8px;
+    }
 }
 
 .fpf-wrapper .fpf-feature-category-title {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     color: #838eab;
-    /* Muted slate header */
     margin-bottom: 4px;
 }
 
@@ -781,7 +805,7 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
     color: #434d6d;
     font-weight: 500;
     user-select: none;
@@ -916,6 +940,8 @@
     }
 
     .fpf-wrapper .fpf-popover {
+        padding: 24px 0px;
+        border-radius: 0px;
         grid-template-columns: 1fr;
     }
 
@@ -935,19 +961,17 @@
         flex-wrap: wrap;
     }
 
-    .fpf-wrapper .fpf-radio-label {
-        min-width: 0;
-    }
-
-    .fpf-wrapper .fpf-pill-btn {
-        min-height: 44px;
-        padding: 10px 6px;
-        font-size: 13px;
-    }
-
     /* Layout options */
     .fpf-wrapper .fpf-layout-popover {
+        padding: 24px 0px;
+        border-radius: 0px;
         grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .fpf-wrapper .fpf-popover-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+        text-align: center;
     }
 
     /* Features */
