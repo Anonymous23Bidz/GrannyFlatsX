@@ -61,3 +61,4 @@ require_once get_stylesheet_directory() . '/inc/shortcodes/floorplan-filter.php'
 require_once get_stylesheet_directory() . '/inc/shortcodes/bedrooms-ajax-filter.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/get-quote-form.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/custom-nav.php';
+require_once get_stylesheet_directory() . '/inc/shortcodes/project-gallery-slider.php';

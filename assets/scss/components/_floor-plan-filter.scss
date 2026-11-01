@@ -776,7 +776,7 @@
 .fpf-wrapper .fpf-popover-col {
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 5px;
 
     @media (max-width: 767px) {
         gap: 5px;

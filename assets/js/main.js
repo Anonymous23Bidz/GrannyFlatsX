@@ -24,6 +24,9 @@ if (document.querySelector('#property-check-form')) {
     import('./components/property-check.js');
 }
 
+if (document.querySelector('.gxf-project-gallery')) {
+    import('./components/project-gallery-slider.js');
+}
 // The quote form lives in the global off-canvas header, so it exists on every
 // page. Load its chunk only when a visitor starts interacting with the form.
 let quoteFormModule;
