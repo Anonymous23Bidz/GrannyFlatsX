@@ -144,3 +144,18 @@ add_shortcode('render_kuula_iframe', function () {
         esc_url($url)
     );
 });
+
+function gxf_project_heading_shortcode()
+{
+    $post_title = get_the_title();
+    $client_name = get_field('client_name');
+
+    $output = esc_html($post_title);
+
+    if (!empty($client_name)) {
+        $output .= ' (' . esc_html($client_name) . ')';
+    }
+
+    return $output;
+}
+add_shortcode('project_heading', 'gxf_project_heading_shortcode');
