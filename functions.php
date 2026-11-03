@@ -42,6 +42,7 @@ require_once get_stylesheet_directory() . '/inc/acf/fields.php';
  * Elementor integrations
  */
 require_once get_stylesheet_directory() . '/inc/integrations/elementor.php';
+require_once get_stylesheet_directory() . '/inc/integrations/odoo-events.php';
 require_once get_stylesheet_directory() . '/inc/integrations/event-taxonomy-permalinks.php';
 
 /**
