@@ -52,9 +52,12 @@ add_filter('term_link', 'gxf_event_type_term_link', 10, 3);
 
 
 // Generate dynamic single event URLs.
-function gxf_event_type_post_link($permalink, $post)
+function gxf_event_type_post_link($permalink, $post, $leavename = false)
 {
-    if ($post->post_type !== 'event') {
+    // Only alter URLs that use the custom taxonomy placeholder. Checking the
+    // permalink (rather than assuming a particular CPT slug) also works when
+    // the post type is registered by a plugin such as CPT UI.
+    if (strpos($permalink, '%event_type%') === false) {
         return $permalink;
     }
 
@@ -66,14 +69,12 @@ function gxf_event_type_post_link($permalink, $post)
 
     $term = reset($terms);
 
-    return home_url(
-        user_trailingslashit(
-            $term->slug . '/' . $post->post_name,
-            'single'
-        )
-    );
+    // Preserve the post type's registered URL structure and replace only the
+    // custom placeholder. This prevents Apache receiving a literal
+    // /%event_type%/ path when another permalink filter runs first.
+    return str_replace('%event_type%', $term->slug, $permalink);
 }
-add_filter('post_type_link', 'gxf_event_type_post_link', 10, 2);
+add_filter('post_type_link', 'gxf_event_type_post_link', 99, 3);
 
 
 // Flush rewrite rules when event types change.
