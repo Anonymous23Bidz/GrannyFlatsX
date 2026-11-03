@@ -154,10 +154,10 @@ function gxf_receive_odoo_event($request)
         );
     }
 
-    // Save location.
+    // Save address.
     update_field(
-        'event_location',
-        sanitize_text_field($data['location'] ?? ''),
+        'event_address',
+        sanitize_text_field($data['address'] ?? ''),
         $post_id
     );
 
