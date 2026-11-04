@@ -1,4 +1,3 @@
-
 <?php
 
 if (!defined('ABSPATH')) {
@@ -227,3 +226,45 @@ function gxf_receive_odoo_event($request)
         'status'        => get_post_status($post_id),
     ], 200);
 }
+
+add_action('elementor/query/upcoming_events', function ($query) {
+
+    $now = current_time('Y-m-d H:i:s');
+
+    $query->set('post_type', 'event');
+    $query->set('post_status', 'publish');
+
+    $query->set('meta_query', [
+        [
+            'key'     => 'event_end_time',
+            'value'   => $now,
+            'compare' => '>=',
+            'type'    => 'DATETIME',
+        ]
+    ]);
+
+    $query->set('meta_key', 'event_start_time');
+    $query->set('orderby', 'meta_value');
+    $query->set('order', 'ASC');
+});
+
+add_action('elementor/query/recent_events', function ($query) {
+
+    $now = current_time('Y-m-d H:i:s');
+
+    $query->set('post_type', 'event');
+    $query->set('post_status', 'publish');
+
+    $query->set('meta_query', [
+        [
+            'key'     => 'event_end_time',
+            'value'   => $now,
+            'compare' => '<',
+            'type'    => 'DATETIME',
+        ]
+    ]);
+
+    $query->set('meta_key', 'event_end_time');
+    $query->set('orderby', 'meta_value');
+    $query->set('order', 'DESC');
+});
