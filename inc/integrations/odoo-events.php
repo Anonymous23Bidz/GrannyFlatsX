@@ -161,6 +161,36 @@ function gxf_receive_odoo_event($request)
         $post_id
     );
 
+    // Save or update featured image.
+    if (!empty($data['featured_image'])) {
+
+        require_once ABSPATH . 'wp-admin/includes/media.php';
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/image.php';
+
+        $image_url = esc_url_raw($data['featured_image']);
+
+        $image_id = attachment_url_to_postid($image_url);
+
+        if (!$image_id) {
+            $image_id = media_sideload_image(
+                $image_url,
+                $post_id,
+                get_the_title($post_id),
+                'id'
+            );
+        }
+
+        if (!is_wp_error($image_id) && $image_id) {
+            set_post_thumbnail($post_id, $image_id);
+        } else {
+            error_log(
+                'GXF ODOO: Featured image upload failed: ' .
+                    (is_wp_error($image_id) ? $image_id->get_error_message() : 'Unknown error')
+            );
+        }
+    }
+
     // Save description.
     update_field(
         'event_description',
