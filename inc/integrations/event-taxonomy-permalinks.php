@@ -5,11 +5,10 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Register dynamic event taxonomy rewrite rules.
+ * Register dynamic single event permalink rules.
  */
 function gxf_event_type_rewrite_rules()
 {
-
     if (!post_type_exists('event') || !taxonomy_exists('event_type')) {
         return;
     }
@@ -24,20 +23,11 @@ function gxf_event_type_rewrite_rules()
     }
 
     foreach ($terms as $term) {
+        $term_slug = preg_quote($term->slug, '#');
 
-        $slug = preg_quote($term->slug, '/');
-
-        // Single event: /open-home/event-name/
         add_rewrite_rule(
-            '^' . $slug . '/([^/]+)/?$',
-            'index.php?post_type=event&name=$matches[1]&event_type=' . $term->slug,
-            'top'
-        );
-
-        // Taxonomy archive: /open-home/
-        add_rewrite_rule(
-            '^' . $slug . '/?$',
-            'index.php?event_type=' . $term->slug,
+            '^' . $term_slug . '/([^/]+)/?$',
+            'index.php?post_type=event&name=$matches[1]',
             'top'
         );
     }
@@ -45,44 +35,27 @@ function gxf_event_type_rewrite_rules()
 add_action('init', 'gxf_event_type_rewrite_rules', 20);
 
 
-
-function gxf_event_type_term_link($url, $term, $taxonomy)
-{
-
-    if ($taxonomy !== 'event_type') {
-        return $url;
-    }
-
-    return home_url('/' . $term->slug . '/');
-}
-add_filter('term_link', 'gxf_event_type_term_link', 10, 3);
-
-
 /**
- * Generate dynamic single event URLs.
+ * Generate event URLs using their taxonomy slug.
  */
-function gxf_event_type_post_link($permalink, $post, $leavename = false)
+function gxf_event_type_post_link($post_link, $post)
 {
-
     if ($post->post_type !== 'event') {
-        return $permalink;
-    }
-
-    if (strpos($permalink, '%event_type%') === false) {
-        return $permalink;
+        return $post_link;
     }
 
     $terms = get_the_terms($post->ID, 'event_type');
 
-    if (empty($terms) || is_wp_error($terms)) {
-        return $permalink;
+    if (!empty($terms) && !is_wp_error($terms)) {
+        return home_url(
+            '/' . $terms[0]->slug . '/' . $post->post_name . '/'
+        );
     }
 
-    $term = reset($terms);
-
-    return str_replace('%event_type%', $term->slug, $permalink);
+    return $post_link;
 }
-add_filter('post_type_link', 'gxf_event_type_post_link', 99, 3);
+add_filter('post_type_link', 'gxf_event_type_post_link', 99, 2);
+
 
 
 function gxf_flush_event_type_rewrite_rules()

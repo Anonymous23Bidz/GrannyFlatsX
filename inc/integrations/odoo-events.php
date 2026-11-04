@@ -1,16 +1,13 @@
+
 <?php
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Register Odoo Events REST API endpoint.
- */
+
 function gxf_register_odoo_event_endpoint()
 {
-    error_log('GXF ODOO REST ROUTE REGISTERING');
-
     register_rest_route('gxf/v1', '/odoo-event', [
         'methods'             => WP_REST_Server::CREATABLE,
         'callback'            => 'gxf_receive_odoo_event',
@@ -20,9 +17,7 @@ function gxf_register_odoo_event_endpoint()
 add_action('rest_api_init', 'gxf_register_odoo_event_endpoint');
 
 
-/**
- * Verify Odoo webhook authentication.
- */
+
 function gxf_verify_odoo_request($request)
 {
     $token = $request->get_header('x-gxf-token');
@@ -43,9 +38,6 @@ function gxf_verify_odoo_request($request)
 }
 
 
-/**
- * Receive Odoo event and create/update WordPress event.
- */
 
 function gxf_receive_odoo_event($request)
 {
@@ -89,13 +81,14 @@ function gxf_receive_odoo_event($request)
 
     // Create or update WordPress event.
     $post_data = [
-        'post_type'    => 'event',
-        'post_title'   => sanitize_text_field($data['name']),
-        'post_status'  => 'publish',
+        'post_type'   => 'event',
+        'post_title'  => sanitize_text_field($data['name']),
+        'post_status' => 'publish',
     ];
 
     if (!empty($existing)) {
         $post_data['ID'] = $existing[0];
+
         $post_id = wp_update_post($post_data, true);
         $action = 'updated';
     } else {
@@ -107,12 +100,14 @@ function gxf_receive_odoo_event($request)
         return $post_id;
     }
 
-    // Format Odoo dates.
+    // Parse Odoo date/time using WordPress timezone.
+    $timezone = wp_timezone();
+
     $start = !empty($data['date_begin'])
         ? date_create_from_format(
             '!Y-m-d H:i:s',
             $data['date_begin'],
-            wp_timezone()
+            $timezone
         )
         : false;
 
@@ -120,36 +115,27 @@ function gxf_receive_odoo_event($request)
         ? date_create_from_format(
             '!Y-m-d H:i:s',
             $data['date_end'],
-            wp_timezone()
+            $timezone
         )
         : false;
 
-    // Save Odoo ID for duplicate checking.
     update_post_meta($post_id, '_odoo_event_id', $odoo_id);
 
-    // Save Odoo ID to ACF.
     update_field('odoo_event_id', $odoo_id, $post_id);
 
-    // ACF Date Picker expects Ymd storage format.
+
     if ($start) {
         update_field(
-            'event_date',
-            $start->format('Ymd'),
-            $post_id
-        );
-
-        update_field(
             'event_start_time',
-            $start->format('H:i:s'),
+            $start->format('Y-m-d H:i:s'),
             $post_id
         );
     }
 
-    // ACF Time Picker.
     if ($end) {
         update_field(
             'event_end_time',
-            $end->format('H:i:s'),
+            $end->format('Y-m-d H:i:s'),
             $post_id
         );
     }
@@ -170,24 +156,31 @@ function gxf_receive_odoo_event($request)
 
         $image_url = esc_url_raw($data['featured_image']);
 
-        $image_id = attachment_url_to_postid($image_url);
+        if (wp_http_validate_url($image_url)) {
 
-        if (!$image_id) {
-            $image_id = media_sideload_image(
-                $image_url,
-                $post_id,
-                get_the_title($post_id),
-                'id'
-            );
-        }
+            $image_id = attachment_url_to_postid($image_url);
 
-        if (!is_wp_error($image_id) && $image_id) {
-            set_post_thumbnail($post_id, $image_id);
+            if (!$image_id) {
+                $image_id = media_sideload_image(
+                    $image_url,
+                    $post_id,
+                    get_the_title($post_id),
+                    'id'
+                );
+            }
+
+            if (!is_wp_error($image_id) && $image_id) {
+                set_post_thumbnail($post_id, $image_id);
+            } else {
+                error_log(
+                    'GXF ODOO: Featured image upload failed: ' .
+                        (is_wp_error($image_id)
+                            ? $image_id->get_error_message()
+                            : 'Unknown error')
+                );
+            }
         } else {
-            error_log(
-                'GXF ODOO: Featured image upload failed: ' .
-                    (is_wp_error($image_id) ? $image_id->get_error_message() : 'Unknown error')
-            );
+            error_log('GXF ODOO: Invalid featured image URL.');
         }
     }
 
