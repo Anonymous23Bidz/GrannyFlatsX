@@ -238,7 +238,7 @@ body strong,
   line-height: 1.4;
 }
 
-.no-recent-events .recent-event {
+body.no-recent-events .recent-event {
   display: none !important;
 }
 
