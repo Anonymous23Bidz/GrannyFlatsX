@@ -67,7 +67,7 @@ function initGuestRegistrationForm() {
 
                 setTimeout(function () {
                     window.location.href = '/thank-you-page-form/';
-                }, 5000);
+                }, 3000);
 
             } catch (error) {
                 message.textContent = error.message ||

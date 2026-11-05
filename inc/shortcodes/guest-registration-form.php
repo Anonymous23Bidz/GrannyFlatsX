@@ -146,8 +146,8 @@ function gxf_guest_registration_send()
         ]);
     }
 
-    // $to = 'lead.nextgengrannyflats@gmail.com';
-    $to = 'christopher.bj.hidalgo@gmail.com';
+    $to = 'lead.nextgengrannyflats@gmail.com';
+
     $subject = 'Guest Registration For ' . $source_page_title . ' - ' . $name;
 
     $message = "Guest Registration For " . $source_page_title . "\n\n";
@@ -158,8 +158,8 @@ function gxf_guest_registration_send()
     $message .= "Phone Number: " . $phone . "\n";
     $message .= "Number of Guests: " . $guests . "\n";
 
-    $message .= "\Registration Source\n";
-    $message .= "Page Title: " . $source_page_title . "\n";
+    $message .= "\nRegistration Source\n";
+    $message .= "Event Title: " . $source_page_title . "\n";
     $message .= "Page URL: " . $source_page_url . "\n";
 
     $headers = [
