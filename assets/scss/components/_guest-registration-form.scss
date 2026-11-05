@@ -1,0 +1,143 @@
+.gxf-guest-form {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--e-global-color-primary, #26324b);
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .gxf-guest-field {
+        width: 100%;
+        margin-bottom: 23px;
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #858b98;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+        display: block;
+        width: 100%;
+        height: 48px;
+        padding: 0 18px;
+        border: 1.5px solid #d9d9d9 !important;
+        border-radius: 12px !important;
+        outline: none;
+        background-color: #fff !important;
+        color: #26324b;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        box-shadow: none !important;
+        transition: border-color .2s ease;
+    }
+
+    input::placeholder {
+        color: #aeb3bf !important;
+        opacity: 1;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: #aab1c0 !important;
+    }
+
+    .gxf-guest-select-wrap {
+        position: relative;
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 19px;
+            width: 11px;
+            height: 11px;
+            border-right: 2px solid #858b98;
+            border-bottom: 2px solid #858b98;
+            transform: translateY(-70%) rotate(45deg);
+            pointer-events: none;
+        }
+    }
+
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 48px;
+        cursor: pointer;
+    }
+
+    .gxf-guest-submit {
+        display: block;
+        width: 100%;
+        min-height: 54px;
+        margin-top: 8px;
+        padding: 14px 20px;
+        border: none !important;
+        border-radius: 10px !important;
+        background: var(--e-global-color-primary, #26324b) !important;
+        color: #fff !important;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity .2s ease;
+
+        &:hover {
+            opacity: .9;
+        }
+
+        &:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+    }
+
+    .gxf-guest-message {
+        display: none;
+        margin: 0 0 15px;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+        line-height: 1.5;
+
+        &.success {
+            display: block;
+            background: #edf8f0;
+            color: #26723c;
+        }
+
+        &.error {
+            display: block;
+            background: #fff0f0;
+            color: #c62828;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .gxf-guest-field {
+            margin-bottom: 20px;
+        }
+
+        .gxf-guest-field label {
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            height: 60px;
+            font-size: 17px;
+        }
+    }
+}

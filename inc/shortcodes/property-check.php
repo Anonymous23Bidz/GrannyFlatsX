@@ -376,7 +376,7 @@ function property_check_send_report()
 
     $to = 'lead.nextgengrannyflats@gmail.com';
     // $to = 'christopher.bj.hidalgo@gmail.com';
-    $subject = 'New Property Check Report - ' . $property_address;
+    $subject = 'Property Check Report - ' . $property_address;
 
     // Build email
     $message = '';

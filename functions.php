@@ -64,3 +64,4 @@ require_once get_stylesheet_directory() . '/inc/shortcodes/bedrooms-ajax-filter.
 require_once get_stylesheet_directory() . '/inc/shortcodes/get-quote-form.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/custom-nav.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/project-gallery-slider.php';
+require_once get_stylesheet_directory() . '/inc/shortcodes/guest-registration-form.php';

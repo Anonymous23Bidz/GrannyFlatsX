@@ -553,7 +553,7 @@ function get_quote_send_email()
         : 'No attachment provided';
 
     $to      = 'lead.nextgengrannyflats@gmail.com';
-    $subject = 'New Get a Quote Enquiry - ' . $name;
+    $subject = 'Get a Quote Enquiry - ' . $name;
 
     $headers = [
         'Content-Type: text/plain; charset=UTF-8',
