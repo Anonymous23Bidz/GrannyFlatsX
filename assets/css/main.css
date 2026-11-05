@@ -238,6 +238,10 @@ body strong,
   line-height: 1.4;
 }
 
+.no-recent-events .recent-event {
+  display: none !important;
+}
+
 .gxf-mega-nav {
   --gxf-text: var(--e-global-color-primary);
   --gxf-panel: #eceef4;

@@ -268,3 +268,31 @@ add_action('elementor/query/recent_events', function ($query) {
     $query->set('orderby', 'meta_value');
     $query->set('order', 'DESC');
 });
+
+add_filter('body_class', function ($classes) {
+
+    $now = current_time('Y-m-d H:i:s');
+
+    $recent_events = new WP_Query([
+        'post_type'      => 'event',
+        'post_status'    => 'publish',
+        'posts_per_page' => 1,
+        'meta_query'     => [
+            [
+                'key'     => 'event_end_time',
+                'value'   => $now,
+                'compare' => '<',
+                'type'    => 'DATETIME',
+            ],
+        ],
+        'fields' => 'ids',
+    ]);
+
+    if (!$recent_events->posts) {
+        $classes[] = 'no-recent-events';
+    }
+
+    wp_reset_postdata();
+
+    return $classes;
+});
