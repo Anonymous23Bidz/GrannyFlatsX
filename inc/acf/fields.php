@@ -159,3 +159,51 @@ function gxf_project_heading_shortcode()
     return $output;
 }
 add_shortcode('project_heading', 'gxf_project_heading_shortcode');
+
+
+add_shortcode('acf_datetime', function ($atts) {
+
+    $atts = shortcode_atts([
+        'field'   => '',
+        'format'  => 'F j, Y',
+        'post_id' => get_the_ID(),
+    ], $atts, 'acf_datetime');
+
+    if (empty($atts['field'])) {
+        return '';
+    }
+
+    $value = get_field($atts['field'], $atts['post_id'], false);
+
+    if (empty($value)) {
+        return '';
+    }
+
+    $date = false;
+
+    $formats = [
+        '!Y-m-d H:i:s',
+        '!Y-m-d H:i',
+        '!Ymd',
+        '!Y-m-d',
+    ];
+
+    foreach ($formats as $format) {
+        $date = DateTime::createFromFormat($format, $value, wp_timezone());
+
+        if ($date !== false) {
+            break;
+        }
+    }
+
+    // Fallback for values such as Nov 11 at 9:00 AM.
+    if (!$date) {
+        try {
+            $date = new DateTime($value, wp_timezone());
+        } catch (Exception $e) {
+            return '';
+        }
+    }
+
+    return esc_html($date->format($atts['format']));
+});
