@@ -1,8 +1,10 @@
-
 import { loadGoogleMapsPlaces } from '../utils/google-maps-places.js';
 
 function initGetQuoteForm() {
     document.querySelectorAll('.get-quote-form').forEach(function (form) {
+        if (form.dataset.initialized === 'true') return;
+        form.dataset.initialized = 'true';
+
         const steps = [...form.querySelectorAll('.gqf-step')];
         const currentLabel = form.querySelector('.gqf-current-step');
         const progressBar = form.querySelector('.gqf-progress-bar');
@@ -26,6 +28,68 @@ function initGetQuoteForm() {
             message.setAttribute('aria-live', 'polite');
             form.appendChild(message);
         }
+
+        // Lead priority scoring.
+
+        const priorityPoints = {
+            start_timeline: {
+                range_1: 36,
+                range_2: 27,
+                range_3: 14,
+                range_4: 0
+            },
+            price: {
+                option_1: 14,
+                option_2: 18,
+                option_3: 23,
+                option_4: 27
+            },
+            bedrooms: {
+                not_sure: 0,
+                '1_bedroom': 7,
+                '2_bedroom': 11,
+                '3_bedroom': 14
+            },
+            site_details: {
+                suggestion_1: 0,
+                suggestion_2: 13,
+                suggestion_3: 9,
+                suggestion_4: 4
+            }
+        };
+
+        function calculatePriority() {
+            let score = 0;
+
+            Object.entries(priorityPoints).forEach(([field, options]) => {
+                const selected = form.querySelector(
+                    `[name="${field}"]:checked`
+                );
+
+                if (selected) {
+                    score += options[selected.value] || 0;
+                }
+            });
+
+            const imageInput = form.querySelector('input[type="file"]');
+
+            if (imageInput && imageInput.files.length > 0) {
+                score += 10;
+            }
+
+            const priority = score >= 75
+                ? 'Very High'
+                : score >= 50
+                    ? 'High'
+                    : 'Medium';
+
+            const priorityInput = form.querySelector('[name="priority"]');
+            const scoreInput = form.querySelector('[name="priority_score"]');
+
+            if (priorityInput) priorityInput.value = priority;
+            if (scoreInput) scoreInput.value = score;
+        }
+
 
         const isStepValid = function (step) {
             const fields = [
@@ -137,6 +201,7 @@ function initGetQuoteForm() {
 
         form.addEventListener('change', function (event) {
             if (event.target.matches('input, select, textarea')) {
+                calculatePriority();
                 updateNextButton();
             }
         });
@@ -183,6 +248,9 @@ function initGetQuoteForm() {
                     'The form is missing its AJAX URL. Please contact us.';
                 return;
             }
+
+            // Recalculate immediately before creating FormData.
+            calculatePriority();
 
             const formData = new FormData(form);
 
@@ -236,6 +304,9 @@ function initGetQuoteForm() {
                 updateStep();
             }
         });
+
+        // Initialize hidden priority fields.
+        calculatePriority();
 
         updateStep();
     });
@@ -406,8 +477,6 @@ function initGetQuoteForm() {
         }
     });
 
-    // If this module was loaded because the address field received focus,
-    // start Places immediately rather than making the visitor focus it again.
     if (
         document.activeElement?.matches(
             '.get-quote-form input[name="property_address"]'
@@ -426,4 +495,4 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGetQuoteForm, { once: true });
 } else {
     initGetQuoteForm();
-}
+} 

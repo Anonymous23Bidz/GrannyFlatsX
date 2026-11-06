@@ -21,6 +21,8 @@ function get_quote_form_shortcode()
         <input type="hidden" name="action" value="get_quote_send">
         <?php wp_nonce_field('get_quote_form', 'get_quote_nonce'); ?>
         <input type="hidden" name="form_name" value="Get a Quote">
+        <input type="hidden" name="priority" value="Medium">
+        <input type="hidden" name="priority_score" value="0">
 
         <!-- Progress -->
         <div class="progress-wrapper">
@@ -383,7 +385,7 @@ function get_quote_send_email()
         }
     }
 
-    $get_value = static function ($key) use ($data) {
+    $get_value = static function ($key) use (&$data) {
         if (!isset($data[$key])) {
             return '';
         }
@@ -418,6 +420,62 @@ function get_quote_send_email()
             ], 400);
         }
     }
+
+    $priority_score = 0;
+
+    $priority_points = [
+        'start_timeline' => [
+            'range_1' => 36,
+            'range_2' => 27,
+            'range_3' => 14,
+            'range_4' => 0
+        ],
+        'price' => [
+            'option_1' => 14,
+            'option_2' => 18,
+            'option_3' => 23,
+            'option_4' => 27
+        ],
+        'bedrooms' => [
+            'not_sure' => 0,
+            '1_bedroom' => 7,
+            '2_bedroom' => 11,
+            '3_bedroom' => 14
+        ],
+        'site_details' => [
+            'suggestion_1' => 0,
+            'suggestion_2' => 13,
+            'suggestion_3' => 9,
+            'suggestion_4' => 4
+        ]
+    ];
+
+    foreach ($priority_points as $field => $options) {
+        $answer = $get_value($field);
+        $priority_score += $options[$answer] ?? 0;
+    }
+
+    foreach ($_FILES as $uploaded_file) {
+        if (
+            isset($uploaded_file['error'], $uploaded_file['tmp_name']) &&
+            $uploaded_file['error'] === UPLOAD_ERR_OK &&
+            is_uploaded_file($uploaded_file['tmp_name'])
+        ) {
+            $priority_score += 10;
+            break;
+        }
+    }
+
+    if ($priority_score >= 75) {
+        $priority = 'Very High';
+    } elseif ($priority_score >= 50) {
+        $priority = 'High';
+    } else {
+        $priority = 'Medium';
+    }
+
+    $data['priority'] = $priority;
+    $data['priority_score'] = $priority_score;
 
     // Handle optional attachment.
     $attachments   = [];
@@ -485,9 +543,10 @@ function get_quote_send_email()
         $attachments[] = $uploaded_path;
     }
 
-    // Human-readable field labels.
     $labels = [
         'form_name'        => 'Form',
+        'priority'         => 'Lead Priority',
+        // 'priority_score'   => 'Priority Score',
         'bedrooms'         => 'Bedrooms',
         'price'            => 'Budget Range',
         'property_address' => 'Property Address',
@@ -525,12 +584,12 @@ function get_quote_send_email()
         ],
     ];
 
-    // Build the lead notification email.
-    $message  = "NEW GET A QUOTE ENQUIRY\n\n";
+    $message  = "GET A QUOTE ENQUIRY\n\n";
     $message .= "CUSTOMER DETAILS\n";
     $message .= "Full Name: " . $name . "\n";
-    $message .= "Mobile: " . $phone . "\n";
-    $message .= "Email: " . $email . "\n\n";
+    $message .= "Email Id: " . $email . "\n";
+    $message .= "Phone Number: " . $phone . "\n";
+    $message .= "Priority: " . strtoupper($priority) . "\n\n";
     $message .= "PROJECT DETAILS\n";
 
     foreach ($labels as $key => $label) {
