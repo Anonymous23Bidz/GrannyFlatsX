@@ -22,6 +22,9 @@ function property_check_form_shortcode()
         <input type="hidden" name="state_heritage" id="property-state-heritage">
         <input type="hidden" name="epi_heritage" id="property-epi-heritage">
 
+        <input type="hidden" id="property-priority" name="priority" value="Medium" readonly>
+        <input type="hidden" id="property-priority-score" name="priority_score" value="0" readonly>
+
         <div class="gfx-wrap">
             <div class="gfx-grid">
                 <section class="gfx-panel-form">
@@ -223,7 +226,6 @@ add_shortcode(
     'property_check_form_shortcode'
 );
 
-
 /**
  * Send Property Check Report
  */
@@ -231,7 +233,20 @@ function property_check_send_report()
 {
 
     $attachments = [];
+    $has_valid_upload = false;
 
+    // Verify nonce before processing uploads.
+    if (
+        !isset($_POST['property_check_nonce']) ||
+        !wp_verify_nonce(
+            $_POST['property_check_nonce'],
+            'property_check_form'
+        )
+    ) {
+        wp_send_json_error([
+            'message' => 'Security check failed. Please refresh the page and try again.'
+        ]);
+    }
     if (
         isset($_FILES['property_file']) &&
         !empty($_FILES['property_file']['name']) &&
@@ -284,17 +299,7 @@ function property_check_send_report()
         }
 
         $attachments[] = $destination;
-    }
-    if (
-        !isset($_POST['property_check_nonce']) ||
-        !wp_verify_nonce(
-            $_POST['property_check_nonce'],
-            'property_check_form'
-        )
-    ) {
-        wp_send_json_error([
-            'message' => 'Security check failed. Please refresh the page and try again.'
-        ]);
+        $has_valid_upload = true;
     }
 
     // Customer options
@@ -374,8 +379,40 @@ function property_check_send_report()
         ]);
     }
 
-    $to = 'lead.nextgengrannyflats@gmail.com';
-    // $to = 'christopher.bj.hidalgo@gmail.com';
+
+    $owner_points = [
+        'I own it' => 30,
+        'Buying it' => 20,
+        'Family owns it' => 20,
+        'I rent' => 0
+    ];
+
+    $timing_points = [
+        'ASAP' => 60,
+        '1-3 months' => 45,
+        '3-6 months' => 25,
+        'Researching' => 0
+    ];
+
+    $priority_score = ($owner_points[$owner] ?? 0)
+        + ($timing_points[$timing] ?? 0);
+
+    if ($has_valid_upload) {
+        $priority_score += 10;
+    }
+
+    // if ($priority_score >= 75) {
+    //     $priority = 'Very High';
+    // } elseif ($priority_score >= 50) {
+    //     $priority = 'High';
+    // } else {
+    //     $priority = 'Medium';
+    // }
+
+    $priority = 'Low';
+
+    // $to = 'lead.nextgengrannyflats@gmail.com';
+    $to = 'christopher.bj.hidalgo@gmail.com';
     $subject = 'Property Check Report - ' . $property_address;
 
     // Build email
@@ -408,7 +445,9 @@ function property_check_send_report()
     $message .= "EPI Heritage: " . ($epi_heritage ?: 'No') . "\n\n";
 
     $message .= "SOURCE\n";
-    $message .= "NSW Planning Portal\n";
+    $message .= "NSW Planning Portal\n\n";
+
+    $message .= "Priority: " . strtoupper($priority) . "\n";
 
     $odoo_data = [
         'contact_name' => $name,

@@ -21,6 +21,10 @@ if (!window.propertyCheckFormScriptLoaded) {
         var emailInput = document.getElementById('em');
         var errorElement = document.getElementById('e3');
 
+        var fileInput = document.getElementById('property-file');
+        var priorityInput = document.getElementById('property-priority');
+        var priorityScoreInput = document.getElementById('property-priority-score');
+
         var OWNER_OPTIONS = ['I own it', 'Buying it', 'Family owns it', 'I rent'];
         var TIMING_OPTIONS = ['ASAP', '1-3 months', '3-6 months', 'Researching'];
 
@@ -98,16 +102,61 @@ if (!window.propertyCheckFormScriptLoaded) {
             sendButton.style.opacity = valid ? '1' : '0.4';
         }
 
+
+        function calculatePriority() {
+            var ownerPoints = {
+                'I own it': 30,
+                'Buying it': 20,
+                'Family owns it': 20,
+                'I rent': 0
+            };
+
+            var timingPoints = {
+                'ASAP': 60,
+                '1-3 months': 45,
+                '3-6 months': 25,
+                'Researching': 0
+            };
+
+            var score = (ownerPoints[owner] || 0) + (timingPoints[timing] || 0);
+
+            if (fileInput && fileInput.files.length > 0) {
+                score += 10;
+            }
+
+            var priority = score >= 75
+                ? 'Very High'
+                : score >= 50
+                    ? 'High'
+                    : 'Medium';
+
+            if (priorityInput) priorityInput.value = priority;
+            if (priorityScoreInput) priorityScoreInput.value = score;
+
+            return {
+                priority: priority,
+                score: score
+            };
+        }
+
+
         buildChips('own', OWNER_OPTIONS, function (value) {
             owner = value;
             updateRunButton();
+            calculatePriority();
         });
 
         buildChips('tim', TIMING_OPTIONS, function (value) {
             timing = value;
             updateRunButton();
+            calculatePriority();
         });
 
+        if (fileInput) {
+            fileInput.addEventListener('change', calculatePriority);
+        }
+
+        calculatePriority();
         updateRunButton();
         updateGoButton();
         updateSendButton();
@@ -516,10 +565,12 @@ if (!window.propertyCheckFormScriptLoaded) {
                 sendButton.textContent = 'Sending report...';
             }
 
+            var priorityData = calculatePriority();
             var formData = new FormData(form);
             formData.set('action', 'property_check_send');
 
             var fields = {
+
                 property_address: suburbInput?.value.trim() || '',
                 zoning_code: document.getElementById('zoning-code')?.value || '',
                 zoning_name: document.getElementById('zoning-name')?.value || '',
@@ -531,6 +582,8 @@ if (!window.propertyCheckFormScriptLoaded) {
                 flood: document.getElementById('property-flood')?.value || '',
                 state_heritage: document.getElementById('property-state-heritage')?.value || '',
                 epi_heritage: document.getElementById('property-epi-heritage')?.value || '',
+                priority: priorityData.priority,
+                priority_score: priorityData.score,
                 name: name,
                 phone: phone,
                 email: email,

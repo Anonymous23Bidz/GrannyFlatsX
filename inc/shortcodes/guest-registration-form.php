@@ -146,6 +146,8 @@ function gxf_guest_registration_send()
         ]);
     }
 
+    $priority = 'VERY HIGH';
+
     $to = 'lead.nextgengrannyflats@gmail.com';
 
     $subject = 'Guest Registration For ' . $source_page_title . ' - ' . $name;
@@ -160,7 +162,9 @@ function gxf_guest_registration_send()
 
     $message .= "\nRegistration Source\n";
     $message .= "Event Title: " . $source_page_title . "\n";
-    $message .= "Page URL: " . $source_page_url . "\n";
+    $message .= "Page URL: " . $source_page_url . "\n\n";
+
+    $message .= "Priority: " . strtoupper($priority) . "\n";
 
     $headers = [
         'Content-Type: text/plain; charset=UTF-8',
