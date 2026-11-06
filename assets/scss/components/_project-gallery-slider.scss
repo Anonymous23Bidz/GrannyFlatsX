@@ -8,7 +8,7 @@
         width: 100%;
         aspect-ratio: 16 / 9;
         border: 2px solid #c3cad7;
-        border-radius: 20px;
+        border-radius: 18px;
         overflow: visible;
         background: #f5f5f5;
     }
@@ -31,15 +31,15 @@
             width: 100%;
             height: 100%;
             display: block;
-            object-fit: cover;
+            object-fit: contain;
         }
 
-        // &:first-child {
-        //     padding: 32px !important;
-        //     background: #ffffff !important;
-        //     box-sizing: border-box !important;
-        //     border-radius: 16px;
-        // }
+        &:first-child {
+            padding: 32px !important;
+            background: #ffffff !important;
+            box-sizing: border-box !important;
+            border-radius: 16px;
+        }
     }
 
     &:hover {
@@ -152,12 +152,12 @@
             border-radius: 0px;
         }
 
-        // &:first-child img {
-        //     padding: 16px !important;
-        //     background: #ffffff !important;
-        //     object-fit: contain !important;
-        //     background: #fff !important;
-        // }
+        &:first-child img {
+            padding: 16px !important;
+            background: #ffffff !important;
+            object-fit: contain !important;
+            background: #fff !important;
+        }
     }
 }
 

@@ -50,11 +50,11 @@ function gxf_project_gallery_slider_shortcode()
     };
 
     // 1. Studio Floor Plan - FIRST
-    // $floorplan = get_field('project_floorplan_image', $post_id);
+    $floorplan = get_field('project_floorplan_image', $post_id);
 
-    // if ($floorplan) {
-    //     $add_image($floorplan);
-    // }
+    if ($floorplan) {
+        $add_image($floorplan);
+    }
 
     // 2. Project Main Image - SECOND
     $main_image = get_field('project_main_image', $post_id);
