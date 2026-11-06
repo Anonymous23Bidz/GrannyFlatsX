@@ -3861,10 +3861,10 @@ h5.gqf-sub-heading {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: fill;
+  object-fit: contain;
 }
 .gxf-project-gallery .gxf-gallery-slide:first-child {
-  padding: 40px !important;
+  padding: 32px !important;
   background: #ffffff !important;
   box-sizing: border-box !important;
   border-radius: 16px;
