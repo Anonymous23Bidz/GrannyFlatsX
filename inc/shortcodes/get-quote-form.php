@@ -545,8 +545,6 @@ function get_quote_send_email()
 
     $labels = [
         'form_name'        => 'Form',
-        'priority'         => 'Lead Priority',
-        // 'priority_score'   => 'Priority Score',
         'bedrooms'         => 'Bedrooms',
         'price'            => 'Budget Range',
         'property_address' => 'Property Address',
