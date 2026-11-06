@@ -3864,7 +3864,7 @@ h5.gqf-sub-heading {
   object-fit: contain;
 }
 .gxf-project-gallery .gxf-gallery-slide:first-child {
-  padding: 32px !important;
+  padding: 16px !important;
   background: #ffffff !important;
   box-sizing: border-box !important;
   border-radius: 16px;
