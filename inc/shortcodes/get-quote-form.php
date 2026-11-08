@@ -24,7 +24,7 @@ function get_quote_form_shortcode()
         <input type="hidden" name="priority" value="Medium">
         <input type="hidden" name="priority_score" value="0">
 
-        <img id="close-btn" src="http://localhost:8888/grannyflatsx/wp-content/uploads/2024/04/darl-close.svg" alt="Close">
+        <img id="close-btn" src="/wp-content/uploads/2024/04/darl-close.svg" alt="Close">
 
         <h1 class="heading">Get a Free Quote in 30 Seconds</h1>
         <p class="sub-heading">Tell us what you’re looking to build. Every granny flat is custom designed at no extra cost.</p>
