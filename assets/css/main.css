@@ -3830,6 +3830,28 @@ h5.gqf-sub-heading {
   overflow-y: hidden !important;
 }
 
+#free-quote #close-btn {
+  display: none !important;
+}
+
+.get-quote-form .heading {
+  text-align: center;
+  color: var(--e-global-color-primary);
+}
+.get-quote-form .sub-heading {
+  text-align: center;
+  font-weight: 400;
+}
+.get-quote-form #close-btn {
+  position: absolute;
+  right: -11px;
+  top: -14px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  object-fit: contain;
+}
+
 .gxf-project-gallery {
   width: 100%;
   position: relative;
