@@ -96,13 +96,21 @@ function initBedroomFilter() {
 
     document.querySelectorAll('.bedrooms-fpf-results').forEach(wrapper => {
         const cards = [...wrapper.querySelectorAll('.bedrooms-floor-plan-card')];
-        const viewAllWrap = wrapper.querySelector('.bedrooms-fpf-view-all-wrap');
-        const viewAllBtn = wrapper.querySelector('.bedrooms-fpf-view-all-btn');
+
+        const viewAllWrap = wrapper.nextElementSibling?.classList.contains('bedrooms-fpf-view-all-wrap')
+            ? wrapper.nextElementSibling
+            : null;
+
+        const viewAllBtn = viewAllWrap?.querySelector('.bedrooms-fpf-view-all-btn');
 
         viewAllBtn?.addEventListener('click', event => {
             event.preventDefault();
-            cards.forEach(card => { card.hidden = false; });
-            if (viewAllWrap) viewAllWrap.hidden = true;
+
+            cards.forEach(card => {
+                card.hidden = false;
+            });
+
+            viewAllWrap.hidden = true;
         });
     });
 
