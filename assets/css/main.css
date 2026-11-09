@@ -1008,7 +1008,7 @@ button.faq-question .faq-question__icon {
   background: #fff;
   border: 1px solid var(--e-global-color-216baa0);
   border-radius: 18px;
-  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.16);
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
 }
 
@@ -1046,7 +1046,7 @@ button.faq-question .faq-question__icon {
 
 .floor-filter-field select:focus {
   border-color: var(--e-global-color-accent);
-  box-shadow: 0 0 0 2px rgba(229, 169, 0, 0.15);
+  box-shadow: 0 0 0 2px rgba(229, 169, 0, 0.08);
 }
 
 .floor-plan-reset {
@@ -1335,7 +1335,7 @@ button.faq-question .faq-question__icon {
   background: #ffffff;
   border-radius: 24px;
   padding: 28px 32px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   margin-bottom: 24px;
 }
 
@@ -1472,7 +1472,7 @@ button.faq-question .faq-question__icon {
   background: #ffffff;
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
   z-index: 999;
 }
 
@@ -1729,7 +1729,7 @@ button.faq-question .faq-question__icon {
   background: #ffffff;
   border-radius: 20px;
   padding: 28px 32px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
   grid-template-columns: repeat(3, 1fr);
   gap: 24px 28px;
   z-index: 1000;
@@ -2465,7 +2465,7 @@ button.faq-question .faq-question__icon {
   background-color: #FFFFFF !important;
   border: 1.5px solid var(--gold) !important;
   border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
   font-family: inherit !important;
   margin-top: 4px !important;
   z-index: 999999 !important;
@@ -2564,7 +2564,7 @@ select {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  box-shadow: rgba(69, 81, 115, 0.12) 0px 0px 16px;
+  box-shadow: rgba(69, 81, 115, 0.08) 0px 0px 16px;
   box-sizing: border-box;
 }
 
@@ -2729,7 +2729,7 @@ select {
   background: #fff;
   border: 1px solid #dce1eb;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(69, 81, 115, 0.12);
+  box-shadow: 0 8px 20px rgba(69, 81, 115, 0.08);
   box-sizing: border-box;
 }
 
@@ -2781,7 +2781,7 @@ select {
   background: #fff;
   border: 1px solid #dce1eb;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(69, 81, 115, 0.12);
+  box-shadow: 0 8px 20px rgba(69, 81, 115, 0.08);
   box-sizing: border-box;
 }
 
@@ -2912,7 +2912,7 @@ select {
   background: #fff;
   border: 1px solid var(--e-global-color-216baa0);
   border-radius: 18px;
-  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.16);
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
 }
 
@@ -3022,7 +3022,7 @@ select {
   background: #fff;
   border: 0;
   border-radius: 20px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
 .bedrooms-fpf-filter .bedrooms-fpf-layout-popover.is-open {
@@ -3187,7 +3187,7 @@ select {
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
 .bedrooms-fpf-filter .bedrooms-fpf-features-popover.is-open {
