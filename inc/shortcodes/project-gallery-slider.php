@@ -49,18 +49,20 @@ function gxf_project_gallery_slider_shortcode()
         ];
     };
 
-    // 1. Studio Floor Plan - FIRST
-    $floorplan = get_field('project_floorplan_image', $post_id);
+    $images = [];
 
-    if ($floorplan) {
-        $add_image($floorplan);
-    }
-
-    // 2. Project Main Image - SECOND
+    // 1. Project Main Image - FIRST
     $main_image = get_field('project_main_image', $post_id);
 
     if ($main_image) {
         $add_image($main_image);
+    }
+
+    // 2. Studio Floor Plan - SECOND
+    $floorplan = get_field('project_floorplan_image', $post_id);
+
+    if ($floorplan) {
+        $add_image($floorplan);
     }
 
     // 3. Project Gallery Photos - LAST
@@ -70,10 +72,6 @@ function gxf_project_gallery_slider_shortcode()
         foreach ($gallery as $gallery_image) {
             $add_image($gallery_image);
         }
-    }
-
-    if (empty($images)) {
-        return '';
     }
 
     $slider_id = wp_unique_id('gxf-project-gallery-');
@@ -106,19 +104,19 @@ function gxf_project_gallery_slider_shortcode()
 
             <?php endforeach; ?>
 
-            <?php if (count($images) > 1) : ?>
-
-                <button type="button" class="gxf-gallery-nav gxf-gallery-prev" aria-label="Previous image">
-                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                </button>
-
-                <button type="button" class="gxf-gallery-nav gxf-gallery-next" aria-label="Next image">
-                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-                </button>
-
-            <?php endif; ?>
-
         </div>
+
+        <?php if (count($images) > 1) : ?>
+
+            <button type="button" class="gxf-gallery-nav gxf-gallery-prev" aria-label="Previous image">
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            </button>
+
+            <button type="button" class="gxf-gallery-nav gxf-gallery-next" aria-label="Next image">
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </button>
+
+        <?php endif; ?>
 
         <?php if (count($images) > 1) : ?>
 
