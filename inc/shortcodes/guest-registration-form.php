@@ -25,7 +25,6 @@ function gxf_guest_registration_form_shortcode()
         <input type="hidden" name="source_page_title" value="<?php echo esc_attr(get_the_title()); ?>">
         <input type="hidden" name="source_page_url" value="<?php echo esc_url(get_permalink()); ?>">
         <input type="hidden" name="source_post_id" value="<?php echo esc_attr(get_the_ID()); ?>">
-        <input type="hidden" name="event_address" value="<?php echo esc_attr($event_address); ?>">
 
         <div class="gxf-guest-field">
             <label for="gxf-guest-name">Full Name</label>
