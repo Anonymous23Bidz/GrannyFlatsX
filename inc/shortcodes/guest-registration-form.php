@@ -171,7 +171,8 @@ function gxf_guest_registration_send()
 
     $priority = 'Medium';
 
-    $to = 'lead.nextgengrannyflats@gmail.com';
+    // $to = 'lead.nextgengrannyflats@gmail.com';
+    $to = 'christopher.bj.hidalgo@gmail.com';
 
     $subject = 'Guest Registration For ' . $source_page_title . ' - ' . $name;
 
