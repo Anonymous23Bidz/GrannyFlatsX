@@ -3359,8 +3359,8 @@ select {
 }
 
 .bedrooms-fpf-results .bedrooms-floor-plan-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transform: scale(1.01);
+  box-shadow: 0 0px 8px rgba(0, 0, 0, 0.08);
 }
 
 .bedrooms-fpf-results .bedrooms-floor-plan-card[hidden] {

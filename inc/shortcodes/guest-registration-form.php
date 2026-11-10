@@ -20,6 +20,7 @@ function gxf_guest_registration_form_shortcode()
         <input type="hidden" name="gxf_guest_nonce" value="<?php echo esc_attr(wp_create_nonce('gxf_guest_registration')); ?>">
         <input type="hidden" name="source_page_title" value="<?php echo esc_attr(get_the_title()); ?>">
         <input type="hidden" name="source_page_url" value="<?php echo esc_url(get_permalink()); ?>">
+        <input type="hidden" name="source_post_id" value="<?php echo esc_attr(get_the_ID()); ?>">
 
         <div class="gxf-guest-field">
             <label for="gxf-guest-name">Full Name</label>
@@ -104,6 +105,24 @@ function gxf_guest_registration_send()
         ]);
     }
 
+    $event_address = 'Not specified';
+
+    $source_post_id = isset($_POST['source_post_id'])
+        ? absint($_POST['source_post_id'])
+        : 0;
+
+    if (
+        $source_post_id &&
+        get_post_type($source_post_id) === 'event' &&
+        function_exists('get_field')
+    ) {
+        $address = get_field('event_address', $source_post_id);
+
+        if (is_string($address) && $address !== '') {
+            $event_address = sanitize_text_field($address);
+        }
+    }
+
     $source_page_title = isset($_POST['source_page_title'])
         ? sanitize_text_field(wp_unslash($_POST['source_page_title']))
         : '';
@@ -146,7 +165,7 @@ function gxf_guest_registration_send()
         ]);
     }
 
-    $priority = 'VERY HIGH';
+    $priority = 'Medium';
 
     $to = 'lead.nextgengrannyflats@gmail.com';
 
@@ -160,8 +179,9 @@ function gxf_guest_registration_send()
     $message .= "Phone Number: " . $phone . "\n";
     $message .= "Number of Guests: " . $guests . "\n";
 
-    $message .= "\nRegistration Source\n";
+    $message .= "\nEVENT DETAILS\n";
     $message .= "Event Title: " . $source_page_title . "\n";
+    $message .= "Event Address: " . $event_address . "\n";
     $message .= "Page URL: " . $source_page_url . "\n\n";
 
     $message .= "Priority: " . strtoupper($priority) . "\n";
