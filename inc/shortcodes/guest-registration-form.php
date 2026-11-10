@@ -6,6 +6,9 @@ if (!defined('ABSPATH')) {
 
 function gxf_guest_registration_form_shortcode()
 {
+    $event_address = function_exists('get_field')
+        ? get_field('event_address', get_the_ID())
+        : '';
 
     ob_start();
 ?>
@@ -17,10 +20,12 @@ function gxf_guest_registration_form_shortcode()
 
         <input type="hidden" name="action" value="gxf_guest_registration_send">
 
+        <input type="hidden" name="action" value="gxf_guest_registration_send">
         <input type="hidden" name="gxf_guest_nonce" value="<?php echo esc_attr(wp_create_nonce('gxf_guest_registration')); ?>">
         <input type="hidden" name="source_page_title" value="<?php echo esc_attr(get_the_title()); ?>">
         <input type="hidden" name="source_page_url" value="<?php echo esc_url(get_permalink()); ?>">
         <input type="hidden" name="source_post_id" value="<?php echo esc_attr(get_the_ID()); ?>">
+        <input type="hidden" name="event_address" value="<?php echo esc_attr($event_address); ?>">
 
         <div class="gxf-guest-field">
             <label for="gxf-guest-name">Full Name</label>
