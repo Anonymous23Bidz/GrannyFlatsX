@@ -169,6 +169,7 @@ function gxf_guest_registration_send()
         ]);
     }
 
+
     $priority = 'Medium';
 
     $to = 'lead.nextgengrannyflats@gmail.com';

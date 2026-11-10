@@ -21,8 +21,8 @@ function get_quote_form_shortcode()
         <input type="hidden" name="action" value="get_quote_send">
         <?php wp_nonce_field('get_quote_form', 'get_quote_nonce'); ?>
         <input type="hidden" name="form_name" value="Get a Quote">
-        <input type="text" name="priority" value="Medium">
-        <input type="text" name="priority_score" value="0">
+        <input type="hidden" name="priority" value="Medium">
+        <input type="hidden" name="priority_score" value="0">
 
         <img id="close-btn" src="/wp-content/uploads/2024/04/darl-close.svg" alt="Close">
 
