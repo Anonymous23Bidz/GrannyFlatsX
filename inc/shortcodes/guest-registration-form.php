@@ -226,7 +226,8 @@ function gxf_guest_registration_send()
                 <strong>Name:</strong> ' . esc_html($name) . '<br>
                 <strong>Email:</strong> ' . esc_html($email) . '<br>
                 <strong>Phone:</strong> ' . esc_html($phone) . '<br>
-                <strong>Number of Guests:</strong> ' . esc_html($guests) . '
+                <strong>Number of Guests:</strong> ' . esc_html($guests) . '<br>
+                <strong>Event Address:</strong> ' . esc_html($event_address) . '
             </p>
 
             <p>We look forward to seeing you!</p>
