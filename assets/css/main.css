@@ -818,6 +818,64 @@ body.no-recent-events .recent-event-section {
     transition: none !important;
   }
 }
+html {
+  scroll-padding-top: 100px;
+  scroll-snap-type: y proximity;
+}
+
+.elementor-widget-theme-post-content h2 {
+  scroll-snap-align: start;
+}
+
+.in-this-guide-wrapper .toc-header {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+}
+.in-this-guide-wrapper .toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.in-this-guide-wrapper .toc-list li {
+  margin-bottom: 14px;
+}
+.in-this-guide-wrapper .toc-list li:last-child {
+  margin-bottom: 0;
+}
+.in-this-guide-wrapper .toc-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  text-decoration: none;
+  color: #868BA0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: color 0.2s ease, font-weight 0.2s ease;
+}
+.in-this-guide-wrapper .toc-link:hover {
+  color: rgba(204, 164, 59, 0.9098039216);
+}
+.in-this-guide-wrapper .toc-link:hover .toc-number {
+  color: #d4a373;
+  transition: color 0.2s ease, font-weight 0.2s ease;
+}
+.in-this-guide-wrapper .toc-link.active {
+  color: #d4a373 !important;
+  font-weight: 700;
+}
+.in-this-guide-wrapper .toc-link.active .toc-number {
+  color: #d4a373;
+}
+.in-this-guide-wrapper .toc-number {
+  color: #C6C6C6;
+  font-weight: 600;
+  min-width: 20px;
+}
+
 .faq {
   width: 100%;
   max-width: 620px;

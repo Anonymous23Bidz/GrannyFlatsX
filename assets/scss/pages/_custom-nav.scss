@@ -623,3 +623,76 @@
         transition: none !important;
     }
 }
+
+// Global scroll behaviors
+html {
+    scroll-padding-top: 100px;
+    scroll-snap-type: y proximity;
+}
+
+.elementor-widget-theme-post-content {
+    h2 {
+        scroll-snap-align: start;
+    }
+}
+
+// Table of Contents Widget Styles
+.in-this-guide-wrapper {
+    .toc-header {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+    }
+
+    .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            margin-bottom: 14px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .toc-link {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        text-decoration: none;
+        color: #868BA0;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+        transition: color 0.2s ease, font-weight 0.2s ease;
+
+        &:hover {
+            color: #CCA43BE8;
+
+            .toc-number {
+                color: #d4a373;
+                transition: color 0.2s ease, font-weight 0.2s ease;
+            }
+        }
+
+        &.active {
+            color: #d4a373 !important;
+            font-weight: 700;
+
+            .toc-number {
+                color: #d4a373;
+            }
+        }
+    }
+
+    .toc-number {
+        color: #C6C6C6;
+        font-weight: 600;
+        min-width: 20px;
+    }
+}

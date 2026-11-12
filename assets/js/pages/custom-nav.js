@@ -129,3 +129,121 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('resize', toggleAppointmentButton);
+
+
+// Blog Post Navigation TOC
+(function () {
+    function buildToc() {
+        const tocList = document.querySelector('#dynamic-guide-toc .toc-list');
+        if (!tocList) return false;
+
+        const contentArea = document.querySelector('.elementor-widget-theme-post-content') ||
+            document.querySelector('.elementor-post__content') ||
+            document.querySelector('.entry-content') ||
+            document.body;
+
+        const headings = contentArea.querySelectorAll('h2');
+        if (headings.length === 0) return false;
+
+        tocList.innerHTML = '';
+        let count = 1;
+        const linksMap = [];
+
+        headings.forEach((heading) => {
+            const innerSpan = heading.querySelector('[id]');
+            let elementId = heading.id || (innerSpan ? innerSpan.id : null);
+
+            if (!elementId) {
+                const cleanSlug = heading.textContent
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, '');
+
+                elementId = `toc-sec-${cleanSlug}`;
+                heading.setAttribute('id', elementId);
+            }
+
+            // Truncate to first 6 words
+            const fullText = heading.textContent.trim();
+            const words = fullText.split(/\s+/);
+            const truncatedText = words.slice(0, 4).join(' ');
+            const headingText = words.length > 4 ? `${truncatedText}` : truncatedText;
+
+            const itemNumber = String(count).padStart(2, '0');
+            count++;
+
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <a href="#${elementId}" class="toc-link" data-target="${elementId}">
+                    <span class="toc-number">${itemNumber}</span>
+                    <span class="toc-title">${headingText}</span>
+                </a>
+            `;
+
+            const linkElement = listItem.querySelector('a');
+
+            // Smooth scroll click handler
+            linkElement.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.getElementById(elementId) || heading;
+                if (target) {
+                    const headerOffset = 90; // Fixed header height in px
+                    const elementPos = target.getBoundingClientRect().top;
+                    const offsetPos = elementPos + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPos,
+                        behavior: 'smooth'
+                    });
+
+                    history.pushState(null, null, `#${elementId}`);
+                }
+            });
+
+            tocList.appendChild(listItem);
+            linksMap.push({ id: elementId, element: linkElement });
+        });
+
+        // --- SCROLL SPY (ACTIVE LINK HIGHLIGHTING) ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '-100px 0px -50% 0px', // Triggers when heading reaches upper portion of viewport
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const activeId = entry.target.getAttribute('id');
+
+                    // Remove active class from all links, add to current
+                    linksMap.forEach(item => {
+                        if (item.id === activeId) {
+                            item.element.classList.add('active');
+                        } else {
+                            item.element.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        headings.forEach(heading => observer.observe(heading));
+
+        return true;
+    }
+
+    if (!buildToc()) {
+        document.addEventListener('DOMContentLoaded', buildToc);
+        window.addEventListener('load', buildToc);
+
+        let attempts = 0;
+        const interval = setInterval(function () {
+            attempts++;
+            if (buildToc() || attempts > 15) {
+                clearInterval(interval);
+            }
+        }, 200);
+    }
+})();
