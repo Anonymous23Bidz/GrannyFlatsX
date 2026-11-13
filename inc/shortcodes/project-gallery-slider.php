@@ -58,9 +58,6 @@ function gxf_project_gallery_slider_shortcode()
         $add_image($main_image);
     }
 
-    // 2. Studio Floor Plan - SECOND
-    $floorplan = get_field('project_floorplan_image', $post_id);
-
     if ($floorplan) {
         $add_image($floorplan);
     }

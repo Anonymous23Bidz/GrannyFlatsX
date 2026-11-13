@@ -1,5 +1,6 @@
 // Only request a feature's JavaScript on pages that render its markup.
 // Keep the paths as literals so esbuild can create minified code-split chunks.
+
 if (document.querySelector('.gxf-mega-nav')) {
     import('./pages/custom-nav.js');
 }

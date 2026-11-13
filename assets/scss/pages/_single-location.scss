@@ -163,3 +163,9 @@ body strong,
 .read-more-btn:hover {
     opacity: 1;
 }
+
+.near-project-section {
+    &:has(.recent-projects .e-loop-nothing-found-message) {
+        display: none !important;
+    }
+}

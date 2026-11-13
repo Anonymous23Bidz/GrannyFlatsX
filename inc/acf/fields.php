@@ -48,6 +48,39 @@ add_shortcode('get_acf', function ($atts) {
 });
 
 
+add_shortcode('acf_split', function ($atts) {
+
+    $atts = shortcode_atts([
+        'field'   => '',
+        'part'    => 'number',
+        'post_id' => get_the_ID(),
+    ], $atts, 'acf_split');
+
+    if (empty($atts['field'])) {
+        return '';
+    }
+
+    $value = get_field($atts['field'], $atts['post_id']);
+
+    if (empty($value) || !is_scalar($value)) {
+        return '';
+    }
+
+    $value = trim((string) $value);
+
+    // Extract number and remaining text
+    if (!preg_match('/^(\d+(?:\.\d+)?)\s*(.*)$/u', $value, $matches)) {
+        return '';
+    }
+
+    if ($atts['part'] === 'string') {
+        return esc_html(trim($matches[2]));
+    }
+
+    return esc_html($matches[1]);
+});
+
+
 add_shortcode('acf_calculate', function ($atts) {
     $atts = shortcode_atts([
         'width'     => '',

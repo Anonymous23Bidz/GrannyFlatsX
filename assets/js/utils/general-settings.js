@@ -1,4 +1,3 @@
-
 (function () {
     const elements = document.querySelectorAll('.gxf-reading-time');
 
@@ -50,3 +49,4 @@
         setInterval(updateReadingTime, 1000);
     });
 })();
+

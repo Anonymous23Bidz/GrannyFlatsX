@@ -35,16 +35,16 @@
         }
 
         // First slide: Floor Plan
-        &:nth-of-type(2) {
-            padding: 16px !important;
-            background: #fff !important;
-            box-sizing: border-box !important;
-            border-radius: 16px;
+        // &:nth-of-type(2) {
+        //     padding: 16px !important;
+        //     background: #fff !important;
+        //     box-sizing: border-box !important;
+        //     border-radius: 16px;
 
-            img {
-                object-fit: contain !important;
-            }
-        }
+        //     img {
+        //         object-fit: contain !important;
+        //     }
+        // }
     }
 
     &:hover {
@@ -158,12 +158,12 @@
         }
 
         // First thumbnail: Floor Plan
-        &:nth-of-type(2) img {
-            padding: 16px !important;
-            background: #fff !important;
-            object-fit: contain !important;
-            box-sizing: border-box !important;
-        }
+        // &:nth-of-type(2) img {
+        //     padding: 16px !important;
+        //     background: #fff !important;
+        //     object-fit: contain !important;
+        //     box-sizing: border-box !important;
+        // }
     }
 }
 
