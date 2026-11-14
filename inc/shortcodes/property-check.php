@@ -411,8 +411,8 @@ function property_check_send_report()
 
     $priority = 'Low';
 
-    // $to = 'lead.nextgengrannyflats@gmail.com';
-    $to = 'christopher.bj.hidalgo@gmail.com';
+    $to = 'lead.nextgengrannyflats@gmail.com';
+    // $to = 'christopher.bj.hidalgo@gmail.com';
     $subject = 'Property Check Report - ' . $property_address;
 
     // Build email
