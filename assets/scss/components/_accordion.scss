@@ -5,20 +5,20 @@
 }
 
 .faq-item {
-    border: 1px solid #dfe3eb;
+    border: 1px solid #dfe3eb00;
     border-radius: 16px;
     margin-bottom: 12px;
     overflow: hidden;
     background: #ffffff !important;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px;
     transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+
+    &.is-active {
+        box-shadow: rgba(215, 178, 28, 0.2) 0px 0px 2px 2px;
+    }
 }
 
-.faq-item.is-active {
-    border-color: #e1a900;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.faq .faq-question,
+.faq-item .faq .faq-question,
 button.faq-question {
     width: 100%;
     min-height: 68px;
@@ -116,7 +116,7 @@ button.faq-question .faq-question__icon {
     transform: rotate(-45deg) !important;
     background: var(--e-global-color-accent, #dfa300) !important;
     border-color: var(--e-global-color-accent, #dfa300) !important;
-    color: var(--e-global-color-primary, #ffffff) !important;
+    color: #ffffff !important;
 }
 
 /* FAQ Answer Grid Wrapper */
