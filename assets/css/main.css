@@ -220,10 +220,6 @@ body strong,
   opacity: 1;
 }
 
-.near-project-section:has(.recent-projects .e-loop-nothing-found-message) {
-  display: none !important;
-}
-
 .taxonomy-value-tabs {
   display: flex;
   flex-wrap: wrap;

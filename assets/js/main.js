@@ -33,9 +33,8 @@ if (document.querySelector('.gxf-guest-form')) {
     import('./components/guest-registration-form.js');
 }
 
-if (document.querySelector('.gxf-reading-time')) {
-    import('./utils/general-settings.js');
-}
+import('./utils/general-settings.js');
+
 // The quote form lives in the global off-canvas header, so it exists on every
 // page. Load its chunk only when a visitor starts interacting with the form.
 let quoteFormModule;

@@ -50,3 +50,28 @@
     });
 })();
 
+
+(function () {
+    const loopGrid = document.querySelector('.loop-grid-recent-projects');
+    const recentSection = document.querySelector('.near-project-section');
+    const ctaSection = document.querySelector('.cta-section');
+
+    if (!loopGrid) {
+        console.warn('[Project Count] Loop Grid not found.');
+        return;
+    }
+
+    const count = loopGrid.querySelectorAll(
+        '.elementor-loop-container .e-loop-item'
+    ).length;
+
+    if (count === 0) {
+        if (recentSection) {
+            recentSection.style.setProperty('display', 'none', 'important');
+        }
+
+        if (ctaSection) {
+            ctaSection.style.setProperty('display', 'none', 'important');
+        }
+    }
+})();
