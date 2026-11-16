@@ -892,11 +892,11 @@ html {
   margin-bottom: 12px;
   overflow: hidden;
   background: #ffffff !important;
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px;
+  box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 4px;
   transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
 }
 .faq-item.is-active {
-  box-shadow: rgba(215, 178, 28, 0.2) 0px 0px 2px 2px;
+  box-shadow: rgba(204, 164, 58, 0.4) 0px 0px 3px 1px;
 }
 
 .faq-item .faq .faq-question,
