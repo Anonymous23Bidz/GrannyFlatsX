@@ -898,6 +898,9 @@ html {
 .faq-item.is-active {
   box-shadow: rgba(204, 164, 58, 0.4) 0px 0px 2px 1px;
 }
+.faq-item.is-active .faq-question__text {
+  color: var(--e-global-color-accent) !important;
+}
 
 .faq-item .faq .faq-question,
 button.faq-question {
@@ -935,7 +938,7 @@ button.faq-question:active {
   background-color: transparent !important;
   border: none !important;
   border-color: transparent !important;
-  box-shadow: none !important;
+  box-shadow: rgba(204, 164, 58, 0.4) 0px 0px 2px 1px;
   outline: none !important;
 }
 
