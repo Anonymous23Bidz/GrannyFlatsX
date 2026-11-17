@@ -3932,6 +3932,7 @@ h5.gqf-sub-heading {
   display: block;
   object-fit: cover !important;
   border-radius: 0px !important;
+  cursor: zoom-in;
 }
 .gxf-project-gallery:hover .gxf-gallery-nav {
   opacity: 1;
@@ -4023,6 +4024,129 @@ h5.gqf-sub-heading {
   border-radius: 0;
 }
 
+/* LIGHTBOX */
+.gxf-gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+  background: rgba(21, 27, 48, 0.98);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.gxf-gallery-lightbox.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+.gxf-gallery-lightbox .gxf-lightbox-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gxf-gallery-lightbox .gxf-lightbox-content img {
+  display: block;
+  max-width: 1080px;
+  max-height: 640px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 24px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3), 0 0 8px -5px rgba(0, 0, 0, 0.3);
+  cursor: default;
+}
+.gxf-gallery-lightbox .gxf-lightbox-counter {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+}
+.gxf-gallery-lightbox .gxf-lightbox-close {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  z-index: 3;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 44px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+.gxf-gallery-lightbox .gxf-lightbox-close:hover {
+  border: none;
+  color: #fff;
+  background: transparent;
+}
+.gxf-gallery-lightbox .gxf-lightbox-close:focus {
+  border: none;
+  color: #fff;
+  background: transparent;
+}
+.gxf-gallery-lightbox .gxf-lightbox-prev,
+.gxf-gallery-lightbox .gxf-lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(170, 173, 187, 0.35);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+.gxf-gallery-lightbox .gxf-lightbox-prev:hover,
+.gxf-gallery-lightbox .gxf-lightbox-next:hover {
+  background: #455173;
+  color: #fff;
+  border-radius: 50%;
+}
+.gxf-gallery-lightbox .gxf-lightbox-prev:focus,
+.gxf-gallery-lightbox .gxf-lightbox-next:focus {
+  background: #455173;
+  color: #fff;
+  border-radius: 50%;
+}
+.gxf-gallery-lightbox .gxf-lightbox-prev {
+  left: 25px;
+}
+.gxf-gallery-lightbox .gxf-lightbox-next {
+  right: 25px;
+}
+
+body.gxf-lightbox-open {
+  overflow: hidden;
+}
+
+/* MOBILE */
 @media (max-width: 767px) {
   .gxf-project-gallery .gxf-gallery-main {
     aspect-ratio: 4/3;
@@ -4034,6 +4158,7 @@ h5.gqf-sub-heading {
     height: 36px !important;
     min-width: 36px !important;
     min-height: 36px !important;
+    opacity: 1;
   }
   .gxf-project-gallery .gxf-gallery-prev {
     left: 10px !important;
@@ -4050,6 +4175,36 @@ h5.gqf-sub-heading {
     height: 130px !important;
     border-radius: 14px !important;
     border-width: 2px !important;
+  }
+  .gxf-gallery-lightbox {
+    padding: 15px;
+  }
+  .gxf-gallery-lightbox .gxf-lightbox-content {
+    width: 100%;
+    height: 100%;
+  }
+  .gxf-gallery-lightbox .gxf-lightbox-content img {
+    max-width: 100%;
+    max-height: 80%;
+  }
+  .gxf-gallery-lightbox .gxf-lightbox-close {
+    top: 12px;
+    right: 12px;
+    font-size: 36px;
+  }
+  .gxf-gallery-lightbox .gxf-lightbox-prev,
+  .gxf-gallery-lightbox .gxf-lightbox-next {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 17px;
+  }
+  .gxf-gallery-lightbox .gxf-lightbox-prev {
+    left: 8px;
+  }
+  .gxf-gallery-lightbox .gxf-lightbox-next {
+    right: 8px;
   }
 }
 .gxf-guest-form {

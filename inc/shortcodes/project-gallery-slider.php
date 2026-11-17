@@ -18,51 +18,50 @@ function gxf_project_gallery_slider_shortcode()
     $images = [];
 
     $add_image = function ($image) use (&$images) {
+        if (empty($image)) return;
 
-        if (empty($image)) {
-            return;
-        }
+        $image_id = 0;
+        $alt = '';
 
         if (is_numeric($image)) {
             $image_id = (int) $image;
-            $url = wp_get_attachment_image_url($image_id, 'full');
             $alt = get_post_meta($image_id, '_wp_attachment_image_alt', true);
         } elseif (is_array($image)) {
             $image_id = !empty($image['ID']) ? (int) $image['ID'] : 0;
-            $url = !empty($image['url']) ? $image['url'] : '';
             $alt = !empty($image['alt']) ? $image['alt'] : '';
-        } elseif (is_string($image)) {
-            $image_id = 0;
-            $url = $image;
-            $alt = '';
         } else {
             return;
         }
 
-        if (!$url) {
-            return;
-        }
+        if (!$image_id) return;
+
+        $thumbnail_url = wp_get_attachment_image_url($image_id, 'large');
+        $full_url = wp_get_attachment_image_url($image_id, 'full');
+
+        if (!$thumbnail_url || !$full_url) return;
 
         $images[] = [
-            'url' => esc_url($url),
+            'url' => esc_url($thumbnail_url),
+            'full_url' => esc_url($full_url),
             'alt' => sanitize_text_field($alt),
         ];
     };
 
-    $images = [];
-
-    // 1. Project Main Image - FIRST
+    // 1. Project Main Image
     $main_image = get_field('project_main_image', $post_id);
 
     if ($main_image) {
         $add_image($main_image);
     }
 
+    // 2. Floor Plan (if applicable)
+    $floorplan = get_field('floorplan', $post_id);
+
     if ($floorplan) {
         $add_image($floorplan);
     }
 
-    // 3. Project Gallery Photos - LAST
+    // 3. Project Gallery Photos
     $gallery = get_field('projects_gallery_photos', $post_id);
 
     if (!empty($gallery) && is_array($gallery)) {
@@ -71,17 +70,12 @@ function gxf_project_gallery_slider_shortcode()
         }
     }
 
+    if (empty($images)) return '';
+
     $slider_id = wp_unique_id('gxf-project-gallery-');
 
     ob_start();
-
-    static $assets_loaded = false;
-
-    if (!$assets_loaded) :
-        $assets_loaded = true;
 ?>
-
-    <?php endif; ?>
 
     <div class="gxf-project-gallery" id="<?php echo esc_attr($slider_id); ?>">
 
@@ -93,9 +87,13 @@ function gxf_project_gallery_slider_shortcode()
 
                     <img
                         src="<?php echo esc_url($image['url']); ?>"
+                        data-full-image="<?php echo esc_url($image['url']); ?>"
                         alt="<?php echo esc_attr($image['alt']); ?>"
                         loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
-                        <?php echo $index === 0 ? 'fetchpriority="high"' : ''; ?>>
+                        <?php echo $index === 0 ? 'fetchpriority="high"' : ''; ?>
+                        role="button"
+                        tabindex="0"
+                        aria-label="Enlarge image <?php echo esc_attr($index + 1); ?>">
 
                 </div>
 
@@ -112,10 +110,6 @@ function gxf_project_gallery_slider_shortcode()
             <button type="button" class="gxf-gallery-nav gxf-gallery-next" aria-label="Next image">
                 <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
             </button>
-
-        <?php endif; ?>
-
-        <?php if (count($images) > 1) : ?>
 
             <div class="gxf-gallery-thumbnails">
 
