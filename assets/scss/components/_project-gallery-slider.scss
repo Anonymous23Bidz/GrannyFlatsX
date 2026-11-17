@@ -143,6 +143,8 @@
 }
 
 /* LIGHTBOX */
+
+/* LIGHTBOX */
 .gxf-gallery-lightbox {
     position: fixed;
     inset: 0;
@@ -154,11 +156,15 @@
     background: rgb(21 27 48 / 98%);
     opacity: 0;
     visibility: hidden;
-    transition: opacity .3s ease, visibility .3s ease;
+    pointer-events: none;
+    transition:
+        opacity .4s cubic-bezier(.22, 1, .36, 1),
+        visibility .4s ease;
 
     &.is-active {
         opacity: 1;
         visibility: visible;
+        pointer-events: auto;
     }
 
     .gxf-lightbox-content {
@@ -178,7 +184,19 @@
             border-radius: 24px;
             box-shadow: 0 0 30px rgba(0, 0, 0, .3), 0 0 8px -5px rgba(0, 0, 0, .3);
             cursor: default;
+
+            opacity: 0;
+            transform: translateY(12px) scale(.96);
+            transition:
+                opacity .4s cubic-bezier(.22, 1, .36, 1),
+                transform .5s cubic-bezier(.22, 1, .36, 1);
+            will-change: opacity, transform;
         }
+    }
+
+    &.is-active .gxf-lightbox-content img {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 
     .gxf-lightbox-counter {
@@ -212,12 +230,7 @@
         line-height: 1;
         cursor: pointer;
 
-        &:hover {
-            border: none;
-            color: #fff;
-            background: transparent;
-        }
-
+        &:hover,
         &:focus {
             border: none;
             color: #fff;
@@ -246,14 +259,9 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: .25s ease;
+        transition: background .25s ease;
 
-        &:hover {
-            background: #455173;
-            color: #fff;
-            border-radius: 50%;
-        }
-
+        &:hover,
         &:focus {
             background: #455173;
             color: #fff;
@@ -275,46 +283,7 @@ body.gxf-lightbox-open {
 }
 
 /* MOBILE */
-
 @media (max-width: 767px) {
-
-    .gxf-project-gallery {
-
-        .gxf-gallery-main {
-            aspect-ratio: 4 / 3;
-            border-width: 2px;
-            border-radius: 22px;
-        }
-
-        .gxf-gallery-nav {
-            width: 36px !important;
-            height: 36px !important;
-            min-width: 36px !important;
-            min-height: 36px !important;
-            opacity: 1;
-        }
-
-        .gxf-gallery-prev {
-            left: 10px !important;
-        }
-
-        .gxf-gallery-next {
-            right: 10px !important;
-        }
-
-        .gxf-gallery-thumbnails {
-            gap: 10px;
-            padding-top: 12px;
-        }
-
-        .gxf-gallery-thumb {
-            flex: 0 0 65% !important;
-            height: 130px !important;
-            border-radius: 14px !important;
-            border-width: 2px !important;
-        }
-    }
-
     .gxf-gallery-lightbox {
         padding: 15px;
 

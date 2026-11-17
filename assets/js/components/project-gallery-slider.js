@@ -45,12 +45,30 @@ document.querySelectorAll('.gxf-project-gallery').forEach((slider) => {
     const lightboxPrev = lightbox.querySelector('.gxf-lightbox-prev');
     const lightboxNext = lightbox.querySelector('.gxf-lightbox-next');
 
-    // Update Lightbox
     function updateLightbox() {
         const image = slides[currentIndex].querySelector('img');
 
-        lightboxImage.src = image.dataset.fullImage || image.currentSrc || image.src;
-        lightboxImage.alt = image.alt;
+        const newSrc = image.dataset.fullImage || image.currentSrc || image.src;
+
+        if (lightboxImage.src === new URL(newSrc, window.location.href).href) {
+            lightboxImage.alt = image.alt;
+            return;
+        }
+
+        lightboxImage.style.opacity = '0';
+
+        const preload = new Image();
+
+        preload.onload = function () {
+            lightboxImage.src = newSrc;
+            lightboxImage.alt = image.alt;
+
+            requestAnimationFrame(() => {
+                lightboxImage.style.opacity = '1';
+            });
+        };
+
+        preload.src = newSrc;
     }
 
     // Show Slide
@@ -82,12 +100,14 @@ document.querySelectorAll('.gxf-project-gallery').forEach((slider) => {
 
     // Open Lightbox
     function openLightbox(index) {
-
         showSlide(index);
         updateLightbox();
 
-        lightbox.classList.add('is-active');
         document.body.classList.add('gxf-lightbox-open');
+
+        lightbox.offsetHeight;
+
+        lightbox.classList.add('is-active');
 
         closeButton.focus();
     }
