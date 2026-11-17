@@ -26,6 +26,9 @@ document.querySelectorAll('.gxf-project-gallery').forEach((slider) => {
                 <span>/</span>
                 <span class="gxf-lightbox-total">${slides.length}</span>
             </div>
+            <button type="button" class="gxf-lightbox-fullscreen" aria-label="Enter fullscreen" title="Fullscreen">
+                <i class="fas fa-expand"></i>
+            </button>
             <button type="button" class="gxf-lightbox-close" aria-label="Close">&times;</button>
             <button type="button" class="gxf-lightbox-prev" aria-label="Previous image">&#10094;</button>
             <div class="gxf-lightbox-content"><img src="" alt=""></div>
@@ -44,6 +47,21 @@ document.querySelectorAll('.gxf-project-gallery').forEach((slider) => {
     const closeButton = lightbox.querySelector('.gxf-lightbox-close');
     const lightboxPrev = lightbox.querySelector('.gxf-lightbox-prev');
     const lightboxNext = lightbox.querySelector('.gxf-lightbox-next');
+
+    const fullscreenButton = lightbox.querySelector('.gxf-lightbox-fullscreen');
+
+    fullscreenButton.addEventListener('click', () => {
+        const isExpanded = lightbox.classList.toggle('is-image-expanded');
+
+        fullscreenButton.innerHTML = isExpanded
+            ? '<i class="fas fa-compress"></i>'
+            : '<i class="fas fa-expand"></i>';
+
+        fullscreenButton.setAttribute(
+            'aria-label',
+            isExpanded ? 'Restore image size' : 'Expand image'
+        );
+    });
 
     function updateLightbox() {
         const image = slides[currentIndex].querySelector('img');
