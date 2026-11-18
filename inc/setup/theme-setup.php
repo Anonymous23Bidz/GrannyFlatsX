@@ -11,6 +11,7 @@ function gxf_taxonomy_acf_shortcode($atts)
         'separator' => ', ',
         'style'     => 'text',
         'post_id'   => '',
+        'limit'     => '',
     ], $atts);
 
     $style   = sanitize_key($atts['style']);
@@ -109,6 +110,14 @@ function gxf_taxonomy_acf_shortcode($atts)
     $output = [];
 
     foreach ($values as $value) {
+
+        if (isset($atts['limit']) && absint($atts['limit']) > 0) {
+            $value = wp_trim_words(
+                wp_strip_all_tags((string) $value),
+                absint($atts['limit']),
+                '...'
+            );
+        }
 
         if ($style === 'tab') {
 
